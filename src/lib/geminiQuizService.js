@@ -13,6 +13,29 @@ export class QuizGenerationError extends Error {
 }
 
 /**
+ * Safely retrieves and validates VITE_GEMINI_API_KEY from Vite environment variables.
+ * Logs an explicit error if VITE_GEMINI_API_KEY is undefined, empty, or unconfigured.
+ * @returns {string|null} The cleaned API key string or null if missing/invalid.
+ */
+export function getGeminiApiKey() {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (
+    !apiKey ||
+    typeof apiKey !== 'string' ||
+    apiKey.trim() === '' ||
+    apiKey === 'YOUR_GEMINI_API_KEY'
+  ) {
+    console.error(
+      '[Gemini API Error] VITE_GEMINI_API_KEY is undefined, empty, or placeholder! Please check your .env file.'
+    );
+    return null;
+  }
+
+  return apiKey.trim();
+}
+
+/**
  * Shuffle array in-place / copy
  */
 function shuffleArray(array) {
@@ -127,12 +150,12 @@ function validateLightweightQuestion(q, targetCard, seenDialogues) {
 export async function generateQuizWithGemini(flashcards) {
   console.log(`[Gemini] model: ${GEMINI_MODEL}`);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
 
-  if (!apiKey || apiKey.trim() === '' || apiKey === 'YOUR_GEMINI_API_KEY') {
+  if (!apiKey) {
     throw new QuizGenerationError(
       'API_ERROR',
-      'Không thể kết nối với Gemini AI. Vui lòng kiểm tra lại cấu hình API key trong môi trường.'
+      'Không thể kết nối với Gemini AI. Vui lòng kiểm tra lại cấu hình VITE_GEMINI_API_KEY trong môi trường.'
     );
   }
 
@@ -154,8 +177,9 @@ export async function generateQuizWithGemini(flashcards) {
 
   let ai;
   try {
-    ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+    ai = new GoogleGenAI({ apiKey });
   } catch (err) {
+    console.error('[Gemini API Error] Failed to initialize GoogleGenAI SDK:', err);
     throw new QuizGenerationError(
       'API_ERROR',
       'Không thể kết nối với Gemini AI. Vui lòng thử lại.'
@@ -323,10 +347,10 @@ export async function generateBulkFlashcardDetails(terms) {
 
   if (!terms || terms.length === 0) return [];
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
 
-  if (!apiKey || apiKey.trim() === '' || apiKey === 'YOUR_GEMINI_API_KEY') {
-    console.warn('[FlashcardAI] VITE_GEMINI_API_KEY missing. Returning terms for manual entry.');
+  if (!apiKey) {
+    console.warn('[FlashcardAI] VITE_GEMINI_API_KEY missing or invalid. Returning terms for manual entry.');
     return terms.map((t, idx) => ({
       id: `bulk-${Date.now()}-${idx}`,
       term: t,
@@ -340,7 +364,7 @@ export async function generateBulkFlashcardDetails(terms) {
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+    const ai = new GoogleGenAI({ apiKey });
     const termsText = terms.map((t) => `- ${t}`).join('\n');
 
     const prompt = `You are an expert English dictionary assistant. For each English word or multi-word phrase in the list below, provide:
