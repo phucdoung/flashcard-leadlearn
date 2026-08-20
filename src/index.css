@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: 'Poppins', sans-serif;
+
+  --color-primary: #A8D672;
+  --color-primary-hover: #97C95E;
+  --color-bg-main: #F8FCF4;
+  --color-card: #FFFFFF;
+  --color-border-custom: #E7EEDC;
+  --color-text-main: #2E3A28;
+  --color-secondary-text: #6B7665;
+  --color-success: #7BC47F;
+  --color-danger: #E57373;
+}
+
+:root {
+  --color-primary: #A8D672;
+  --color-primary-hover: #97C95E;
+  --color-background: #F8FCF4;
+  --color-card: #FFFFFF;
+  --color-border: #E7EEDC;
+  --color-text: #2E3A28;
+  --color-secondary-text: #6B7665;
+  --color-success: #7BC47F;
+  --color-danger: #E57373;
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #F8FCF4;
+  color: #2E3A28;
+  margin: 0;
+  padding: 0;
+}
+
+/* Subtle Botanical Accent Decorations */
+.leaf-decoration-top {
+  position: fixed;
+  top: -30px;
+  left: -30px;
+  width: 240px;
+  height: 190px;
+  background-image: url('/leaf-accent.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: left top;
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  transform: rotate(180deg);
+}
+
+.leaf-decoration-bottom {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 520px;
+  height: 320px;
+  background-image: url('/leaf-accent.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right bottom;
+  mix-blend-mode: multiply;
+  opacity: 0.38;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+@media (max-width: 640px) {
+  .leaf-decoration-top {
+    width: 140px;
+    height: 110px;
+    opacity: 0.10;
+    top: -20px;
+    left: -20px;
+  }
+  .leaf-decoration-bottom {
+    width: 280px;
+    height: 180px;
+    opacity: 0.22;
+  }
+}
+
+/* Floating Leaves Animation Keyframes */
+@keyframes leafFloatLeft {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--leaf-opacity, 0.14);
+  }
+  50% {
+    transform: translateY(45vh) translateX(22px) rotate(32deg);
+    opacity: var(--leaf-opacity, 0.14);
+  }
+  85% {
+    opacity: var(--leaf-opacity, 0.14);
+  }
+  100% {
+    transform: translateY(104vh) translateX(-14px) rotate(64deg);
+    opacity: 0;
+  }
+}
+
+@keyframes leafFloatRight {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--leaf-opacity, 0.12);
+  }
+  50% {
+    transform: translateY(48vh) translateX(-24px) rotate(-35deg);
+    opacity: var(--leaf-opacity, 0.12);
+  }
+  85% {
+    opacity: var(--leaf-opacity, 0.12);
+  }
+  100% {
+    transform: translateY(106vh) translateX(16px) rotate(-70deg);
+    opacity: 0;
+  }
+}
+
+/* Accessibility: Disable floating leaf animation for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .floating-leaf {
+    animation: none !important;
+    display: none !important;
+  }
+}
