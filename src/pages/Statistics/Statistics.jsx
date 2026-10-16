@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 
@@ -206,20 +207,27 @@ export default function Statistics() {
 
               <div className="space-y-2">
                 {recentResults.map((res) => (
-                  <div
+                  <Link
                     key={res.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-[#F8FCF4] border border-[#E7EEDC]/70 text-xs sm:text-sm"
+                    to={`/result/${res.id}?details=true`}
+                    className="flex items-center justify-between p-3.5 rounded-xl bg-[#F8FCF4] hover:bg-[#F0F7EB] border border-[#E7EEDC] hover:border-[#A8D672] text-xs sm:text-sm transition-all group cursor-pointer"
                   >
-                    <span className="font-semibold text-[#2E3A28] truncate flex-1 pr-2">
+                    <span className="font-semibold text-[#2E3A28] group-hover:text-[#1F5C24] truncate flex-1 pr-3 transition-colors">
                       {res.title}
                     </span>
-                    <div className="flex items-center gap-4 shrink-0">
-                      <span className="font-bold text-[#5B9E60]">
+                    <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                      <span className="font-bold text-[#5B9E60] bg-[#5B9E60]/10 px-2 py-0.5 rounded-md">
                         {res.score} / {res.totalQuestions}
                       </span>
-                      <span className="text-[#6B7665] text-xs font-mono">{res.date}</span>
+                      <span className="text-[#6B7665] text-xs font-mono hidden sm:inline-block">
+                        {res.date}
+                      </span>
+                      <span className="text-xs font-semibold text-[#5B9E60] group-hover:text-[#4A854F] group-hover:translate-x-0.5 transition-all inline-flex items-center gap-1">
+                        <span>Xem chi tiết</span>
+                        <span>&rarr;</span>
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

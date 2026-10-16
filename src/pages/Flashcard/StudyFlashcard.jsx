@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { speakText, stopSpeech } from '../../lib/speechService';
 
 export default function StudyFlashcard() {
   const { id } = useParams();
@@ -62,45 +63,41 @@ export default function StudyFlashcard() {
     fetchStudyData();
   }, [id]);
 
-  // Web Speech API Pronunciation Handler
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechNotice, setSpeechNotice] = useState(null);
+
+  const showSpeechNotice = (msg) => {
+    setSpeechNotice(msg);
+    setTimeout(() => {
+      setSpeechNotice(null);
+    }, 3000);
+  };
+
+  // Web Speech API Pronunciation Handler (Shared speechService)
   const handleSpeak = (e, textToSpeak) => {
     if (e) {
       e.stopPropagation();
     }
 
-    if (!textToSpeak || typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return;
-    }
+    if (!textToSpeak) return;
 
-    try {
-      // 1. Cancel active speech to avoid speech queue buildup
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-      // 2. Set language (use set language if defined, default to en-US)
-      let lang = setDetail?.language || 'en-US';
-      if (lang === 'en') lang = 'en-US';
-      if (lang === 'vi') lang = 'vi-VN';
-      utterance.lang = lang;
-
-      // 3. Speech settings: rate 0.85-0.95, pitch 1, volume 1
-      utterance.rate = 0.9;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-
-      // 4. Speak
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.error('Speech synthesis error:', err);
-    }
+    speakText(textToSpeak, {
+      forceVietnamese: setDetail?.language === 'vi' || setDetail?.language === 'vi-VN',
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: (err) => {
+        setIsSpeaking(false);
+        if (err === 'NO_ENGLISH_VOICE') {
+          showSpeechNotice('Thiết bị chưa cài đặt giọng đọc tiếng Anh.');
+        }
+      },
+    });
   };
 
   // Stop current speech when card changes, card is completed, or component unmounts
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopSpeech();
+    setIsSpeaking(false);
   }, [currentIndex, isCompleted]);
 
   const totalCards = cards.length;
@@ -348,7 +345,11 @@ export default function StudyFlashcard() {
                         onClick={(e) => handleSpeak(e, currentCard.term)}
                         aria-label="Phát âm từ vựng"
                         title="Nghe phát âm"
-                        className="shrink-0 p-1.5 rounded-full text-[#6B7665] hover:text-[#5B9E60] hover:bg-[#F8FCF4] border border-transparent hover:border-[#E7EEDC] transition-all active:scale-95 cursor-pointer"
+                        className={`shrink-0 p-1.5 rounded-full transition-all active:scale-95 cursor-pointer border ${
+                          isSpeaking
+                            ? 'text-[#5B9E60] bg-[#5B9E60]/15 border-[#5B9E60]/30'
+                            : 'text-[#6B7665] hover:text-[#5B9E60] hover:bg-[#F8FCF4] border-transparent hover:border-[#E7EEDC]'
+                        }`}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
@@ -411,7 +412,11 @@ export default function StudyFlashcard() {
                         onClick={(e) => handleSpeak(e, currentCard.term)}
                         aria-label="Phát âm từ vựng"
                         title="Nghe phát âm"
-                        className="shrink-0 p-1 rounded-full text-[#6B7665] hover:text-[#5B9E60] hover:bg-[#F8FCF4] border border-transparent hover:border-[#E7EEDC] transition-all active:scale-95 cursor-pointer"
+                        className={`shrink-0 p-1 rounded-full transition-all active:scale-95 cursor-pointer border ${
+                          isSpeaking
+                            ? 'text-[#5B9E60] bg-[#5B9E60]/15 border-[#5B9E60]/30'
+                            : 'text-[#6B7665] hover:text-[#5B9E60] hover:bg-[#F8FCF4] border-transparent hover:border-[#E7EEDC]'
+                        }`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
@@ -484,6 +489,13 @@ export default function StudyFlashcard() {
             </span>{' '}
             Thẻ tiếp theo
           </div>
+        </div>
+      )}
+
+      {/* Speech Notification Toast */}
+      {speechNotice && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#2E3A28]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#E7EEDC]/20">
+          {speechNotice}
         </div>
       )}
     </div>

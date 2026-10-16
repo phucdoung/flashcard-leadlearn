@@ -20,6 +20,10 @@ export default function CreateQuiz() {
 
   const [quizTitle, setQuizTitle] = useState('Bài kiểm tra tổng hợp từ vựng');
 
+  // Flashcard Scope Selection state: 'all' | 'unlearned' | 'custom'
+  const [scope, setScope] = useState('all');
+  const [selectedCardIds, setSelectedCardIds] = useState(new Set());
+
   // Flashcard Quality Audit Modal State
   const [showQualityModal, setShowQualityModal] = useState(false);
   const [auditIssues, setAuditIssues] = useState([]);
@@ -44,6 +48,7 @@ export default function CreateQuiz() {
             title: setData.name || setData.title || 'Bộ thẻ',
           });
           setCards(rawCards);
+          setSelectedCardIds(new Set(rawCards.map((c) => c.id)));
         }
       } catch (err) {
         console.error('Error fetching set for quiz creation:', err);
@@ -55,8 +60,53 @@ export default function CreateQuiz() {
     fetchSetInfo();
   }, [id]);
 
+  // Card scope handlers
+  const handleToggleCard = (cardId) => {
+    setSelectedCardIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(cardId)) {
+        next.delete(cardId);
+      } else {
+        next.add(cardId);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    setSelectedCardIds(new Set(cards.map((c) => c.id)));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedCardIds(new Set());
+  };
+
+  const unlearnedCardsCount = cards.filter(
+    (c) => c.learning_status !== 'learned' && c.learning_status !== 'mastered'
+  ).length;
+
+  const getScopedCards = () => {
+    if (scope === 'unlearned') {
+      return cards.filter(
+        (c) => c.learning_status !== 'learned' && c.learning_status !== 'mastered'
+      );
+    }
+    if (scope === 'custom') {
+      return cards.filter((c) => selectedCardIds.has(c.id));
+    }
+    return cards;
+  };
+
+  const scopedCards = getScopedCards();
+  const validScopedCards = scopedCards.filter(
+    (f) =>
+      (f.word || f.term || '').trim().length > 0 &&
+      (f.meaning || f.definition || '').trim().length > 0
+  );
+
   const availableCardsCount = cards.length;
-  const hasMinimumCards = availableCardsCount >= 10;
+  const scopedValidCount = validScopedCards.length;
+  const hasMinimumCards = scopedValidCount >= 10;
 
   // Execute actual Quiz generation with verified card pool
   const executeQuizGeneration = async (cardList) => {
@@ -131,7 +181,7 @@ export default function CreateQuiz() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!hasMinimumCards || generating || !user) return;
-    await executeQuizGeneration(cards);
+    await executeQuizGeneration(validScopedCards);
   };
 
   // Apply AI Suggestion & Update Supabase
@@ -303,6 +353,152 @@ export default function CreateQuiz() {
             />
           </div>
 
+          {/* Flashcard Scope Selection */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-semibold text-[#2E3A28]">
+                Phạm vi 
+              </label>
+              <span className="text-xs text-[#6B7665]">
+                Từ hợp lệ: <strong className={scopedValidCount >= 10 ? 'text-[#5B9E60]' : 'text-[#E57373]'}>{scopedValidCount} từ</strong>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {/* Option A: Tất cả flashcard */}
+              <button
+                type="button"
+                onClick={() => setScope('all')}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                  scope === 'all'
+                    ? 'border-[#A8D672] bg-[#A8D672]/15 ring-1 ring-[#A8D672]'
+                    : 'border-[#E7EEDC] bg-white hover:bg-[#F8FCF4]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-bold text-[#2E3A28]">Tất cả</span>
+                  <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${scope === 'all' ? 'border-[#5B9E60] bg-[#5B9E60]' : 'border-[#CBD5E1]'}`}>
+                    {scope === 'all' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#6B7665]">
+                  Toàn bộ {availableCardsCount} từ trong bộ thẻ
+                </span>
+              </button>
+
+              {/* Option B: Từ chưa thuộc */}
+              <button
+                type="button"
+                onClick={() => setScope('unlearned')}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                  scope === 'unlearned'
+                    ? 'border-[#A8D672] bg-[#A8D672]/15 ring-1 ring-[#A8D672]'
+                    : 'border-[#E7EEDC] bg-white hover:bg-[#F8FCF4]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-bold text-[#2E3A28]">Từ chưa thuộc</span>
+                  <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${scope === 'unlearned' ? 'border-[#5B9E60] bg-[#5B9E60]' : 'border-[#CBD5E1]'}`}>
+                    {scope === 'unlearned' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#6B7665]">
+                  {unlearnedCardsCount} từ được đánh dấu chưa thuộc
+                </span>
+              </button>
+
+              {/* Option C: Tự chọn flashcard */}
+              <button
+                type="button"
+                onClick={() => setScope('custom')}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                  scope === 'custom'
+                    ? 'border-[#A8D672] bg-[#A8D672]/15 ring-1 ring-[#A8D672]'
+                    : 'border-[#E7EEDC] bg-white hover:bg-[#F8FCF4]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-bold text-[#2E3A28]">Chọn chi tiết</span>
+                  <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${scope === 'custom' ? 'border-[#5B9E60] bg-[#5B9E60]' : 'border-[#CBD5E1]'}`}>
+                    {scope === 'custom' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#6B7665]">
+                  Đã chọn {selectedCardIds.size} / {availableCardsCount} từ
+                </span>
+              </button>
+            </div>
+
+            {/* Custom Flashcard Checklist (Only shown when scope === 'custom') */}
+            {scope === 'custom' && (
+              <div className="rounded-xl border border-[#E7EEDC] bg-[#F8FCF4] p-3.5 space-y-3">
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-[#E7EEDC]">
+                  <span className="font-semibold text-[#2E3A28]">
+                    Danh sách từ trong bộ ({selectedCardIds.size}/{availableCardsCount} đã chọn)
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSelectAll}
+                      className="text-[11px] font-semibold text-[#5B9E60] hover:underline cursor-pointer"
+                    >
+                      Chọn tất cả
+                    </button>
+                    <span className="text-[#CBD5E1]">•</span>
+                    <button
+                      type="button"
+                      onClick={handleDeselectAll}
+                      className="text-[11px] font-semibold text-[#6B7665] hover:underline cursor-pointer"
+                    >
+                      Bỏ chọn tất cả
+                    </button>
+                  </div>
+                </div>
+
+                <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
+                  {cards.map((card) => {
+                    const isChecked = selectedCardIds.has(card.id);
+                    const isMastered = card.learning_status === 'learned' || card.learning_status === 'mastered';
+                    const word = card.word || card.term || '';
+                    const meaning = card.meaning || card.definition || '';
+
+                    return (
+                      <label
+                        key={card.id}
+                        className={`flex items-center justify-between p-2 rounded-lg border text-xs cursor-pointer transition-colors ${
+                          isChecked
+                            ? 'bg-white border-[#A8D672]/80 shadow-2xs'
+                            : 'bg-white/50 border-[#E7EEDC] text-[#6B7665]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 truncate flex-1 pr-2">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => handleToggleCard(card.id)}
+                            className="rounded border-[#CBD5E1] text-[#5B9E60] focus:ring-[#A8D672] cursor-pointer"
+                          />
+                          <span className="font-bold text-[#2E3A28] truncate">{word}</span>
+                          <span className="text-[#6B7665] truncate">- {meaning}</span>
+                        </div>
+
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold shrink-0 ${
+                            isMastered
+                              ? 'bg-[#5B9E60]/10 text-[#5B9E60]'
+                              : 'bg-[#E57373]/10 text-[#E57373]'
+                          }`}
+                        >
+                          {isMastered ? 'Đã thuộc' : 'Chưa thuộc'}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Dynamic AI Question Count Guidance Box */}
           <div className="space-y-2 rounded-2xl border border-[#E7EEDC] bg-[#F8FCF4] p-4 sm:p-5">
             <div className="flex items-center gap-2">
@@ -310,22 +506,37 @@ export default function CreateQuiz() {
                 AI
               </span>
               <h4 className="text-xs font-bold text-[#2E3A28]">
-                Quy trình sinh câu hỏi tự động
+                Khởi tạo bài kiểm tra
               </h4>
             </div>
 
             <p className="text-xs text-[#4A5545] leading-relaxed pt-0.5">
-              Bài kiểm tra sẽ được AI tạo tự động từ các từ/cụm từ hợp lệ trong bộ Flashcard (yêu cầu tối thiểu 10 câu hỏi).
+              Bài kiểm tra sẽ được AI tạo tự động từ các từ vựng thuộc phạm vi đã chọn (yêu cầu tối thiểu 10 từ/cụm từ hợp lệ).
             </p>
 
             <p className="text-[11px] text-[#6B7665] italic">
-              * Số lượng câu hỏi thực tế phụ thuộc vào số từ vựng hợp lệ và kết quả sinh câu hỏi chất lượng cao từ Gemini.
+              * Số lượng câu hỏi thực tế phụ thuộc vào số từ vựng hợp lệ trong phạm vi.
             </p>
 
+            {/* Condition Warning If < 10 Cards */}
             {!loading && !hasMinimumCards && (
-              <span className="block text-xs text-[#E57373] font-semibold pt-1.5">
-                Yêu cầu bộ thẻ phải có tối thiểu 10 Flashcards mới có thể tạo bài kiểm tra (Hiện có {availableCardsCount} thẻ).
-              </span>
+              <div className="p-3 rounded-xl bg-[#FEE2E2]/70 border border-[#FCA5A5] text-xs text-[#DC2626] font-medium space-y-1 mt-2">
+                {scope === 'unlearned' && (
+                  <p>
+                    Phạm vi <strong>"Từ chưa thuộc"</strong> chỉ có {scopedValidCount} từ hợp lệ (yêu cầu tối thiểu 10 từ để tạo đề thi). Vui lòng chọn phạm vi <strong>"Tất cả flashcard"</strong> hoặc thêm từ chưa thuộc.
+                  </p>
+                )}
+                {scope === 'custom' && (
+                  <p>
+                    Bạn đã chọn {scopedValidCount} từ hợp lệ (cần tối thiểu 10 từ để AI sinh câu hỏi chất lượng cao). Vui lòng chọn thêm ít nhất {10 - scopedValidCount} từ nữa.
+                  </p>
+                )}
+                {scope === 'all' && (
+                  <p>
+                    Bộ thẻ cần có tối thiểu 10 Flashcard hợp lệ mới có thể tạo bài kiểm tra (Hiện có {scopedValidCount} thẻ).
+                  </p>
+                )}
+              </div>
             )}
           </div>
 

@@ -52,6 +52,8 @@ export default function AppRoutes() {
                 <Route path="/quiz/create/:id" element={<CreateQuiz />} />
                 <Route path="/quiz/:id" element={<Quiz />} />
                 <Route path="/result/:id" element={<QuizResult />} />
+                <Route path="/quiz/result/:id" element={<QuizResult />} />
+                <Route path="/quiz/:id/result" element={<QuizResult />} />
               </Route>
             </Route>
           </Routes>

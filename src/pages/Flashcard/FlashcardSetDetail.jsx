@@ -760,21 +760,32 @@ export default function FlashcardSetDetail() {
                       )}
                     </span>
 
-                    {hasQuestions ? (
-                      <Link
-                        to={`/quiz/${quiz.id}`}
-                        className="inline-flex items-center text-xs font-semibold text-[#2E3A28] bg-[#A8D672] hover:bg-[#97C95E] px-4 py-2 rounded-xl transition-all"
-                      >
-                        Làm bài
-                      </Link>
-                    ) : (
-                      <button
-                        disabled
-                        className="inline-flex items-center text-xs font-semibold text-[#6B7665] bg-[#E7EEDC] px-4 py-2 rounded-xl opacity-50 cursor-not-allowed"
-                      >
-                        Làm bài
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {hasQuestions && latestResult && (
+                        <Link
+                          to={`/result/${latestResult.id}?details=true`}
+                          className="inline-flex items-center text-xs font-semibold text-[#2E3A28] bg-white border border-[#E7EEDC] hover:bg-[#F8FCF4] hover:border-[#A8D672] px-3.5 py-2 rounded-xl transition-all shadow-2xs cursor-pointer"
+                        >
+                          Xem chi tiết
+                        </Link>
+                      )}
+
+                      {hasQuestions ? (
+                        <Link
+                          to={`/quiz/${quiz.id}`}
+                          className="inline-flex items-center text-xs font-semibold text-[#2E3A28] bg-[#A8D672] hover:bg-[#97C95E] px-4 py-2 rounded-xl transition-all shadow-2xs cursor-pointer"
+                        >
+                          {latestResult ? 'Làm lại' : 'Làm bài'}
+                        </Link>
+                      ) : (
+                        <button
+                          disabled
+                          className="inline-flex items-center text-xs font-semibold text-[#6B7665] bg-[#E7EEDC] px-4 py-2 rounded-xl opacity-50 cursor-not-allowed"
+                        >
+                          Làm bài
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

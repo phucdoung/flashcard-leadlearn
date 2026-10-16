@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import HomeBanner from '../../components/HomeBanner';
 import {
   generateBulkFlashcardDetails,
   generateSingleFlashcardDetails,
@@ -502,14 +501,11 @@ export default function Home() {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-4">
-      {/* 1. Carousel Home Banner */}
-      <HomeBanner />
-
-      {/* 2. Section Heading & Compact Integrated Toolbar (Banner -> Heading: 30px) */}
-      <div id="sets-section" className="mt-[30px]">
+      {/* Section Heading & Compact Integrated Toolbar */}
+      <div id="sets-section">
         {/* Section Heading (Desktop 28px, Tablet 25px, Mobile 22px, line-height 1.2, margin-bottom 14px) */}
         <h2 className="text-[22px] sm:text-[25px] md:text-[28px] font-bold leading-[1.2] text-[#2E3A28] tracking-tight mb-[14px]">
-          Bộ thẻ Flashcard của bạn
+          Flashcard 
         </h2>
 
         {/* Compact Toolbar (Search 44px + Custom Sort 145px + Create Set 44px, margin-bottom 24px) */}

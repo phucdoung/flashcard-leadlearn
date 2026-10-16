@@ -1,4 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
+import {
+  normalizeDialogue,
+  normalizeVietnameseTranslation,
+} from './speakerUtils';
 
 const GEMINI_MODEL = 'gemini-3.6-flash';
 
@@ -56,7 +60,7 @@ function shuffleArray(array) {
  * 4. correctAnswer exists in options & matches target word (trim/lowercase)
  * 5. no exact duplicate dialogue text
  */
-function validateLightweightQuestion(q, targetCard, seenDialogues) {
+function validateLightweightQuestion(q, targetCard, seenDialogues, qIdx = 0) {
   if (!q) return null;
 
   const targetWord = (targetCard.word || targetCard.term || '').trim();
@@ -70,10 +74,13 @@ function validateLightweightQuestion(q, targetCard, seenDialogues) {
     return null;
   }
 
-  const dialogueText = q.dialogue
+  // Normalize speakers to ensure natural names
+  const normalizedDiag = normalizeDialogue(q.dialogue, qIdx);
+
+  const dialogueText = normalizedDiag
     .map((d) => `${d.speaker || ''}: ${d.text || ''}`)
     .join('\n');
-  const fullTextStr = q.dialogue.map((d) => d.text || '').join(' ');
+  const fullTextStr = normalizedDiag.map((d) => d.text || '').join(' ');
 
   // 2. Exactly one blank check (or contains blank)
   const blankMatches = fullTextStr.match(/_{2,}/g);
@@ -116,12 +123,17 @@ function validateLightweightQuestion(q, targetCard, seenDialogues) {
 
   seenDialogues.add(normDialogue);
 
+  const normalizedTrans = q.vietnameseTranslation
+    ? normalizeVietnameseTranslation(q.vietnameseTranslation, {}, qIdx)
+    : null;
+
   return {
     id: `q-${Date.now()}-${Math.random()}`,
     word: matchedTargetWord,
     answer: matchedTargetWord,
     type: 'dialogue',
-    dialogue: q.dialogue,
+    dialogue: normalizedDiag,
+    vietnameseTranslation: normalizedTrans,
     options: shuffledOpts,
     correctAnswerIndex: correctIndex,
     explanation: {
@@ -204,7 +216,8 @@ ${JSON.stringify(formattedItems, null, 2)}
 DISTRACTOR SELECTION STRATEGY & RULES FOR EACH QUESTION:
 1. TARGET WORD & DIALOGUE:
    - Target word MUST be the exact word/phrase from the list.
-   - Create a realistic 2-line English dialogue between SpeakerA and SpeakerB.
+   - Create a realistic 2-line English dialogue between two natural characters using common English names (e.g., Anna, John, David, Emma, Michael, Sarah, Tom, Emily, Hoa).
+   - NEVER use generic labels like 'Speaker A', 'Speaker B', 'Speaker 1', or 'Speaker'. Always use natural character names.
    - Replace the EXACT target word or multi-word phrase with ONE single blank "______".
    - Design the sentence structure so that the blank "______" accepts the exact dictionary form of the target word/phrase without requiring grammatical inflection changes.
    - DO NOT expose the target word or phrase anywhere in the dialogue text.
@@ -226,6 +239,11 @@ DISTRACTOR SELECTION STRATEGY & RULES FOR EACH QUESTION:
      b) "wrongReason": 1-2 sentences explaining why other options or incorrect choices do not fit this context.
      c) "memoryTip": 1 short memory tip (e.g. "recommend = tiến cử, đề xuất").
 
+4. VIETNAMESE TRANSLATION:
+   - Provide full, natural Vietnamese translation for the COMPLETE dialogue with the correct word already filled into the blank.
+   - Do NOT translate blanks as "chỗ trống" or "gạch dưới" - translate the complete, natural meaning.
+   - Match structure: Array of { "speaker": "Name", "text": "Vietnamese translated line" }.
+
 RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code blocks):
 [
   {
@@ -234,6 +252,10 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
     "dialogue": [
       { "speaker": "Anna", "text": "Why don't you drive through the city center?" },
       { "speaker": "Ben", "text": "I usually ______ that area during rush hour." }
+    ],
+    "vietnameseTranslation": [
+      { "speaker": "Anna", "text": "Tại sao bạn không lái xe qua trung tâm thành phố?" },
+      { "speaker": "Ben", "text": "Tôi thường tránh khu vực đó vào giờ cao điểm." }
     ],
     "options": ["enter", "avoid", "cross", "follow"],
     "explanation": {
@@ -320,7 +342,7 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
         return qWord === cleanWord;
       }) || parsedList[idx];
 
-    const validated = validateLightweightQuestion(matchedQ, card, seenDialogues);
+    const validated = validateLightweightQuestion(matchedQ, card, seenDialogues, idx);
     if (validated) {
       validQuestions.push(validated);
     }
@@ -537,3 +559,69 @@ export async function generateSingleFlashcardDetails(term) {
     throw err;
   }
 }
+
+const translationCache = new Map();
+
+/**
+ * Translate an English dialogue or sentence into natural Vietnamese.
+ * Used for reviewing older quizzes that were created before vietnameseTranslation was saved.
+ * @param {Array|string} dialogue - Dialogue array [{ speaker, text }] or string
+ * @param {string} correctWord - Target correct word to fill into blank
+ * @returns {Promise<Array|string|null>} Translated dialogue array or string, or null on failure
+ */
+export async function translateDialogueWithGemini(dialogue, correctWord = '', qIndex = 0) {
+  if (!dialogue) return null;
+
+  // Normalize speakers first so dialogue has natural character names (Anna, John, etc.)
+  const normalizedDialogue = normalizeDialogue(dialogue, qIndex);
+
+  // Build clean representation with the blank filled by the correct word
+  let linesToTranslate = [];
+  if (Array.isArray(normalizedDialogue) && normalizedDialogue.length > 0) {
+    linesToTranslate = normalizedDialogue.map((line) => {
+      const cleanText = (line.text || '').replace(/_{2,}/g, correctWord || '');
+      return { speaker: line.speaker || 'Person', text: cleanText };
+    });
+  } else if (typeof dialogue === 'string') {
+    const cleanText = dialogue.replace(/_{2,}/g, correctWord || '');
+    linesToTranslate = [{ speaker: '', text: cleanText }];
+  }
+
+  const cacheKey = JSON.stringify(linesToTranslate);
+  if (translationCache.has(cacheKey)) {
+    return translationCache.get(cacheKey);
+  }
+
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) return null;
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const prompt = `Translate this English conversational dialogue into natural, contextually accurate Vietnamese.
+The correct answer has already been filled in. 
+Input dialogue:
+${JSON.stringify(linesToTranslate, null, 2)}
+
+Return ONLY a JSON array of objects with the exact structure [{ "speaker": "...", "text": "..." }] with Vietnamese translated lines. No markdown, no code blocks:`;
+
+    const res = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+      },
+    });
+
+    const parsed = JSON.parse(res.text);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      const normalizedParsed = normalizeVietnameseTranslation(parsed, {}, qIndex);
+      translationCache.set(cacheKey, normalizedParsed);
+      return normalizedParsed;
+    }
+    return null;
+  } catch (err) {
+    console.warn('[translateDialogueWithGemini] Error during translation:', err);
+    return null;
+  }
+}
+

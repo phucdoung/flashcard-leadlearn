@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { generateQuizWithGemini } from '../../lib/geminiQuizService';
+import { speakDialogue, stopSpeech } from '../../lib/speechService';
+import { normalizeDialogue } from '../../lib/speakerUtils';
 
 /**
  * Format seconds into MM:SS string
@@ -29,6 +31,10 @@ export default function Quiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Audio Playing State
+  const [activeAudioIndex, setActiveAudioIndex] = useState(null);
+  const [speechNotice, setSpeechNotice] = useState(null);
 
   // Timer States & Refs
   const [remainingSeconds, setRemainingSeconds] = useState(null);
@@ -155,7 +161,40 @@ export default function Quiz() {
     }));
   };
 
+  // Dialogue Audio Player Handler
+  const handleToggleAudio = (qIdx, dialogueContent) => {
+    if (activeAudioIndex === qIdx) {
+      stopSpeech();
+      setActiveAudioIndex(null);
+      return;
+    }
+
+    stopSpeech();
+    setActiveAudioIndex(qIdx);
+
+    speakDialogue(dialogueContent, {
+      qIndex: qIdx,
+      onStart: () => setActiveAudioIndex(qIdx),
+      onEnd: () => setActiveAudioIndex((current) => (current === qIdx ? null : current)),
+      onError: (err) => {
+        setActiveAudioIndex(null);
+        if (err === 'NO_ENGLISH_VOICE') {
+          setSpeechNotice('Thiết bị chưa cài đặt giọng đọc tiếng Anh.');
+          setTimeout(() => setSpeechNotice(null), 3000);
+        }
+      },
+    });
+  };
+
+  // Stop speech when component unmounts
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
   const handleFinishAndSave = async (options = {}) => {
+    stopSpeech();
     if (submitting) return;
     setSubmitting(true);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
@@ -310,19 +349,91 @@ export default function Quiz() {
               </div>
 
               {/* Dialogue / Sentence Content */}
-              {q.dialogue && Array.isArray(q.dialogue) ? (
-                <div className="mb-4 space-y-2 rounded-xl bg-[#F8FCF4] p-3.5 sm:p-4 border border-[#E7EEDC]">
-                  {q.dialogue.map((line, lIdx) => (
-                    <div key={lIdx} className="text-sm sm:text-base text-[#2E3A28] leading-relaxed">
-                      <span className="font-bold text-[#2E3A28]">{line.speaker}:</span>{' '}
-                      {line.text}
+              {q.dialogue && (Array.isArray(q.dialogue) || typeof q.dialogue === 'string') ? (() => {
+                const normalizedDiag = normalizeDialogue(q.dialogue, qIdx);
+                return (
+                  <div className="mb-4 rounded-xl bg-[#F8FCF4] p-3.5 sm:p-4 border border-[#E7EEDC] space-y-2.5">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#E7EEDC]/80">
+                      <span className="text-[11px] font-semibold text-[#6B7665] uppercase tracking-wider">
+                        Đoạn hội thoại
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleAudio(qIdx, normalizedDiag)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                          activeAudioIndex === qIdx
+                            ? 'bg-[#A8D672] text-[#2E3A28] border-[#86B84E] shadow-2xs'
+                            : 'bg-white text-[#2E3A28] border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4]'
+                        }`}
+                        title={activeAudioIndex === qIdx ? 'Dừng phát âm thanh' : 'Nghe hội thoại'}
+                      >
+                        {activeAudioIndex === qIdx ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 animate-pulse text-[#2E3A28]" fill="currentColor" viewBox="0 0 24 24">
+                              <rect x="6" y="4" width="4" height="16" rx="1" />
+                              <rect x="14" y="4" width="4" height="16" rx="1" />
+                            </svg>
+                            <span>Dừng phát</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-[#5B9E60]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                            <span>Nghe hội thoại</span>
+                          </>
+                        )}
+                      </button>
                     </div>
-                  ))}
+
+                    <div className="space-y-2">
+                      {normalizedDiag.map((line, lIdx) => (
+                        <div key={lIdx} className="text-sm sm:text-base text-[#2E3A28] leading-relaxed">
+                          {line.speaker && <span className="font-bold text-[#2E3A28]">{line.speaker}: </span>}
+                          {line.text}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })() : (
+                <div className="mb-4 rounded-xl bg-[#F8FCF4] p-3.5 sm:p-4 border border-[#E7EEDC] space-y-2">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-[#E7EEDC]/80">
+                    <span className="text-[11px] font-semibold text-[#6B7665] uppercase tracking-wider">
+                      Câu hỏi
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleAudio(qIdx, q.sentence)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                        activeAudioIndex === qIdx
+                          ? 'bg-[#A8D672] text-[#2E3A28] border-[#86B84E] shadow-2xs'
+                          : 'bg-white text-[#2E3A28] border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4]'
+                      }`}
+                      title={activeAudioIndex === qIdx ? 'Dừng phát âm thanh' : 'Nghe câu hỏi'}
+                    >
+                      {activeAudioIndex === qIdx ? (
+                        <>
+                          <svg className="w-3.5 h-3.5 animate-pulse text-[#2E3A28]" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="6" y="4" width="4" height="16" rx="1" />
+                            <rect x="14" y="4" width="4" height="16" rx="1" />
+                          </svg>
+                          <span>Dừng phát</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5 text-[#5B9E60]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                          </svg>
+                          <span>Nghe câu hỏi</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-base font-medium text-[#2E3A28] leading-relaxed pt-0.5">
+                    {q.sentence}
+                  </p>
                 </div>
-              ) : (
-                <p className="mb-4 text-base font-medium text-[#2E3A28] leading-relaxed">
-                  {q.sentence}
-                </p>
               )}
 
               {/* Options list (Desktop: 2 columns A/B & C/D, Mobile: 1 column) */}
@@ -408,6 +519,13 @@ export default function Quiz() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Speech Notice Toast */}
+      {speechNotice && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#2E3A28]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#E7EEDC]/20">
+          {speechNotice}
         </div>
       )}
     </div>
