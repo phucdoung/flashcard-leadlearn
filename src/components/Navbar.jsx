@@ -33,7 +33,7 @@ export default function Navbar() {
   const isProfileActive = pathname === '/profile';
 
   return (
-    <header className="bg-white border-b border-[#DCE5D8] sticky top-0 z-50">
+    <header className="bg-white border-b border-[#DCE5D8] sticky top-0 z-50 w-full shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-[64px] sm:h-[68px] flex items-center w-full">
         {/* 1. Left Brand Logo Unit */}
         <Link href="/" className="flex items-center group shrink-0 focus:outline-none" aria-label="LeafLearn">
