@@ -26,3 +26,5 @@ out/
 *.sw?
 
 .env
+.env.local
+.env*.local

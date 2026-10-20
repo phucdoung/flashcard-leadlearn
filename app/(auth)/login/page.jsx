@@ -81,26 +81,77 @@ function LoginForm() {
       });
 
       if (error) {
-        console.error('Login error:', error);
-        const errMsg = error.message ? error.message.toLowerCase() : '';
+        console.error('[Supabase Auth Error]', {
+          name: error.name,
+          status: error.status,
+          code: error.code,
+          message: error.message,
+        });
 
-        // Check if error is due to unconfirmed email
-        if (errMsg.includes('email not confirmed') || errMsg.includes('email_not_confirmed')) {
+        const errMsg = (error.message || '').toLowerCase();
+        const errName = error.name || '';
+        const errStatus = error.status;
+
+        // 1. Unconfirmed email error
+        if (
+          errMsg.includes('email not confirmed') ||
+          errMsg.includes('email_not_confirmed') ||
+          error.code === 'email_not_confirmed'
+        ) {
           setAuthError(
             'Email của bạn chưa được xác nhận. Vui lòng kiểm tra hộp thư và xác nhận tài khoản trước khi đăng nhập.'
           );
           setShowResendOption(true);
-        } else if (errMsg.includes('failed to fetch') || errMsg.includes('network error')) {
-          setAuthError('Không thể kết nối. Vui lòng kiểm tra kết nối mạng và thử lại.');
-        } else {
+        }
+        // 2. Network / connection error / failed to fetch (DO NOT treat as wrong password!)
+        else if (
+          errName === 'AuthRetryableFetchError' ||
+          errName === 'TypeError' ||
+          errStatus === 0 ||
+          errMsg.includes('failed to fetch') ||
+          errMsg.includes('fetch') ||
+          errMsg.includes('network') ||
+          errMsg.includes('connection')
+        ) {
+          setAuthError(
+            'Không thể kết nối đến máy chủ Supabase. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.'
+          );
+        }
+        // 3. Rate limit / too many requests
+        else if (
+          errStatus === 429 ||
+          errMsg.includes('rate limit') ||
+          errMsg.includes('too many requests')
+        ) {
+          setAuthError('Bạn đã thử đăng nhập quá nhiều lần. Vui lòng đợi ít phút rồi thử lại.');
+        }
+        // 4. Invalid credentials (email / password incorrect)
+        else if (
+          errStatus === 400 ||
+          error.code === 'invalid_credentials' ||
+          errMsg.includes('invalid login credentials') ||
+          errMsg.includes('invalid credentials')
+        ) {
           setAuthError('Email hoặc mật khẩu không chính xác.');
+        }
+        // 5. Server-side error (5xx)
+        else if (errStatus && errStatus >= 500) {
+          setAuthError('Máy chủ xác thực đang gặp sự cố. Vui lòng thử lại sau.');
+        }
+        // 6. Generic fallback without assuming wrong password
+        else {
+          setAuthError(error.message || 'Đăng nhập không thành công. Vui lòng thử lại.');
         }
       } else {
         router.push('/');
       }
     } catch (err) {
-      console.error('Login exception:', err);
-      setAuthError('Không thể kết nối đến máy chủ Supabase. Vui lòng thử lại sau.');
+      console.error('[Supabase Auth Exception]', {
+        name: err?.name,
+        message: err?.message,
+        err,
+      });
+      setAuthError('Không thể kết nối đến máy chủ Supabase. Vui lòng kiểm tra kết nối mạng và thử lại sau.');
     } finally {
       setSubmitting(false);
     }

@@ -92,6 +92,7 @@ export default function RegisterPage() {
       if (error) {
         console.error('Sign up error:', error);
         const errMsg = error.message ? error.message.toLowerCase() : '';
+        const errName = error.name || '';
 
         if (
           errMsg.includes('already registered') ||
@@ -100,10 +101,17 @@ export default function RegisterPage() {
           error.code === 'user_already_exists'
         ) {
           setAuthError('Email này đã được sử dụng. Vui lòng đăng nhập hoặc sử dụng email khác.');
-        } else if (errMsg.includes('failed to fetch') || errMsg.includes('network error')) {
-          setAuthError('Không thể kết nối. Vui lòng kiểm tra kết nối mạng và thử lại.');
+        } else if (
+          errName === 'AuthRetryableFetchError' ||
+          errName === 'TypeError' ||
+          error.status === 0 ||
+          errMsg.includes('failed to fetch') ||
+          errMsg.includes('fetch') ||
+          errMsg.includes('network')
+        ) {
+          setAuthError('Không thể kết nối đến máy chủ Supabase. Vui lòng kiểm tra kết nối mạng và thử lại.');
         } else {
-          setAuthError('Không thể đăng ký tài khoản lúc này. Vui lòng thử lại sau.');
+          setAuthError(error.message || 'Không thể đăng ký tài khoản lúc này. Vui lòng thử lại sau.');
         }
       } else if (
         data?.user &&

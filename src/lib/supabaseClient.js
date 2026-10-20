@@ -1,24 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Safe environment variable retrieval across Next.js and Vite
-const getEnvVar = (nextKey, viteKey) => {
-  if (typeof process !== 'undefined' && process.env) {
-    if (process.env[nextKey]) return process.env[nextKey];
-    if (process.env[viteKey]) return process.env[viteKey];
-  }
-  try {
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
-      if (import.meta.env[nextKey]) return import.meta.env[nextKey];
-      if (import.meta.env[viteKey]) return import.meta.env[viteKey];
-    }
-  } catch (_e) {
-    // import.meta may not be available in standard CJS/Next.js bundle
-  }
-  return '';
-};
+// Direct static access allows Next.js (Webpack/Turbopack) to inline NEXT_PUBLIC_* variables into the client bundle
+const rawUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  (typeof process !== 'undefined' && process.env ? process.env.VITE_SUPABASE_URL : '') ||
+  '';
 
-const rawUrl = getEnvVar('NEXT_PUBLIC_SUPABASE_URL', 'VITE_SUPABASE_URL');
-const rawKey = getEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY');
+const rawKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  (typeof process !== 'undefined' && process.env ? process.env.VITE_SUPABASE_ANON_KEY : '') ||
+  '';
 
 const supabaseUrl = (rawUrl && typeof rawUrl === 'string' && rawUrl.trim() !== '')
   ? rawUrl.trim()
@@ -27,5 +18,14 @@ const supabaseUrl = (rawUrl && typeof rawUrl === 'string' && rawUrl.trim() !== '
 const supabaseKey = (rawKey && typeof rawKey === 'string' && rawKey.trim() !== '')
   ? rawKey.trim()
   : 'placeholder-anon-key';
+
+if (typeof window !== 'undefined') {
+  if (supabaseUrl === 'https://placeholder.supabase.co' || supabaseKey === 'placeholder-anon-key') {
+    console.error(
+      '[LeafLearn Supabase Client] LỖI CẤU HÌNH: Không tìm thấy NEXT_PUBLIC_SUPABASE_URL hoặc NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
+      'Vui lòng kiểm tra file .env.local hoặc .env.'
+    );
+  }
+}
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
