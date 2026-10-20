@@ -8,20 +8,20 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
 import AuthLayout from '../layouts/AuthLayout';
 
-import Login from '../pages/Auth/Login';
-import Register from '../pages/Auth/Register';
-import ForgotPassword from '../pages/Auth/ForgotPassword';
-import ResetPassword from '../pages/Auth/ResetPassword';
-import Home from '../pages/Home/Home';
-import Statistics from '../pages/Statistics/Statistics';
-import Community from '../pages/Community/Community';
-import PublicProfile from '../pages/Community/PublicProfile';
-import FlashcardSetDetail from '../pages/Flashcard/FlashcardSetDetail';
-import StudyFlashcard from '../pages/Flashcard/StudyFlashcard';
-import CreateQuiz from '../pages/Quiz/CreateQuiz';
-import Quiz from '../pages/Quiz/Quiz';
-import QuizResult from '../pages/Quiz/QuizResult';
-import Profile from '../pages/Profile/Profile';
+import Login from '../views/Auth/Login';
+import Register from '../views/Auth/Register';
+import ForgotPassword from '../views/Auth/ForgotPassword';
+import ResetPassword from '../views/Auth/ResetPassword';
+import Home from '../views/Home/Home';
+import Statistics from '../views/Statistics/Statistics';
+import Community from '../views/Community/Community';
+import PublicProfile from '../views/Community/PublicProfile';
+import FlashcardSetDetail from '../views/Flashcard/FlashcardSetDetail';
+import StudyFlashcard from '../views/Flashcard/StudyFlashcard';
+import CreateQuiz from '../views/Quiz/CreateQuiz';
+import Quiz from '../views/Quiz/Quiz';
+import QuizResult from '../views/Quiz/QuizResult';
+import Profile from '../views/Profile/Profile';
 
 export default function AppRoutes() {
   return (

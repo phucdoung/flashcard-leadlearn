@@ -1,10 +1,11 @@
+'use client';
+
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FloatingLeaves from '../components/FloatingLeaves';
 
-export default function MainLayout() {
+export default function MainLayout({ children }) {
   return (
     <div className="relative min-h-screen flex flex-col bg-[#F8FCF4] text-[#2E3A28] overflow-x-hidden">
       {/* Floating Leaves Background Animation */}
@@ -23,7 +24,7 @@ export default function MainLayout() {
 
       {/* Main Content */}
       <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 pt-6 sm:pt-7 pb-8">
-        <Outlet />
+        {children}
       </main>
 
       {/* Footer */}

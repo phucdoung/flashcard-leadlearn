@@ -1,9 +1,25 @@
 import { createClient } from '@supabase/supabase-js';
 
-const rawUrl = import.meta.env.VITE_SUPABASE_URL;
-const rawKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Safe environment variable retrieval across Next.js and Vite
+const getEnvVar = (nextKey, viteKey) => {
+  if (typeof process !== 'undefined' && process.env) {
+    if (process.env[nextKey]) return process.env[nextKey];
+    if (process.env[viteKey]) return process.env[viteKey];
+  }
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      if (import.meta.env[nextKey]) return import.meta.env[nextKey];
+      if (import.meta.env[viteKey]) return import.meta.env[viteKey];
+    }
+  } catch (_e) {
+    // import.meta may not be available in standard CJS/Next.js bundle
+  }
+  return '';
+};
 
-// Sanitize URL and key from environment variables
+const rawUrl = getEnvVar('NEXT_PUBLIC_SUPABASE_URL', 'VITE_SUPABASE_URL');
+const rawKey = getEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'VITE_SUPABASE_ANON_KEY');
+
 const supabaseUrl = (rawUrl && typeof rawUrl === 'string' && rawUrl.trim() !== '')
   ? rawUrl.trim()
   : 'https://placeholder.supabase.co';

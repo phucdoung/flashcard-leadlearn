@@ -1,16 +1,19 @@
+'use client';
+
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './common';
 
 export default function Navbar() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname() || '';
+  const router = useRouter();
   const { user, signOut } = useAuth();
 
   const handleLogout = async () => {
     await signOut();
-    navigate('/login');
+    router.push('/login');
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email || 'User';
@@ -21,19 +24,19 @@ export default function Navbar() {
       : user?.email?.charAt(0) || 'U'
   ).toUpperCase();
 
-  const isHomeActive = location.pathname === '/';
+  const isHomeActive = pathname === '/';
   const isCommunityActive =
-    location.pathname.startsWith('/community') ||
-    location.pathname.startsWith('/users') ||
-    location.pathname.startsWith('/explore');
-  const isStatsActive = location.pathname === '/statistics';
-  const isProfileActive = location.pathname === '/profile';
+    pathname.startsWith('/community') ||
+    pathname.startsWith('/users') ||
+    pathname.startsWith('/explore');
+  const isStatsActive = pathname === '/statistics';
+  const isProfileActive = pathname === '/profile';
 
   return (
     <header className="bg-white border-b border-[#DCE5D8] sticky top-0 z-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 h-[64px] sm:h-[68px] flex items-center w-full">
         {/* 1. Left Brand Logo Unit */}
-        <Link to="/" className="flex items-center group shrink-0 focus:outline-none" aria-label="LeafLearn">
+        <Link href="/" className="flex items-center group shrink-0 focus:outline-none" aria-label="LeafLearn">
           <img
             src="/logo.png"
             alt="LeafLearn Logo"
@@ -46,7 +49,7 @@ export default function Navbar() {
         <nav className="ml-auto flex items-center gap-3.5 sm:gap-5">
           {/* Trang chủ */}
           <Link
-            to="/"
+            href="/"
             className={`text-sm py-1 relative focus:outline-none transition-colors ${
               isHomeActive
                 ? 'text-[#24693D] font-bold'
@@ -61,7 +64,7 @@ export default function Navbar() {
 
           {/* Cộng đồng */}
           <Link
-            to="/community"
+            href="/community"
             className={`text-sm py-1 relative focus:outline-none transition-colors ${
               isCommunityActive
                 ? 'text-[#24693D] font-bold'
@@ -76,7 +79,7 @@ export default function Navbar() {
 
           {/* Thống kê */}
           <Link
-            to="/statistics"
+            href="/statistics"
             className={`text-sm py-1 relative focus:outline-none transition-colors ${
               isStatsActive
                 ? 'text-[#24693D] font-bold'
@@ -94,7 +97,7 @@ export default function Navbar() {
             <>
               {/* Compact User Profile Pill */}
               <Link
-                to="/profile"
+                href="/profile"
                 className={`inline-flex items-center gap-2 h-[36px] sm:h-[38px] px-2.5 sm:px-3 rounded-full border text-sm font-medium max-w-[120px] sm:max-w-[160px] transition-all cursor-pointer focus:outline-none ${
                   isProfileActive
                     ? 'bg-[#F0F7EE] border-[#24693D] text-[#24693D] font-semibold'
@@ -126,7 +129,7 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link to="/login">
+            <Link href="/login">
               <Button type="primary" size="small">
                 Đăng nhập
               </Button>
