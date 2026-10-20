@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Input, Tag, Empty } from '../../components/common';
 
 export default function Explore() {
   const navigate = useNavigate();
@@ -110,98 +111,104 @@ export default function Explore() {
   );
 
   return (
-    <div className="py-2 px-4 max-w-4xl mx-auto space-y-6 w-full">
+    <div className="py-4 px-4 max-w-4xl mx-auto space-y-6 w-full">
       {/* Header Section */}
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#2E3A28]">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
           Khám phá bộ thẻ
         </h1>
-        <p className="text-xs sm:text-sm text-[#6B7665]">
+        <p className="text-xs sm:text-sm text-[#556551]">
           Khám phá và học từ những bộ Flashcard được chia sẻ bởi cộng đồng LeafLearn.
         </p>
       </div>
 
       {/* Search Input */}
-      <div className="relative">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Tìm kiếm bộ Flashcard..."
-          className="w-full h-[44px] px-4 bg-white border border-[#E7EEDC] rounded-xl text-sm text-[#2E3A28] placeholder-[#6B7665]/60 focus:outline-none focus:border-[#A8D672] transition-all shadow-2xs"
-        />
-      </div>
+      <Input
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Tìm kiếm bộ Flashcard..."
+        allowClear
+        onClear={() => setSearchQuery('')}
+        prefix={
+          <svg className="w-4 h-4 text-[#8C9B86]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        }
+      />
 
       {/* Grid of Public Sets */}
       {loading ? (
-        <div className="py-16 text-center text-sm text-[#6B7665] font-medium animate-pulse">
-          Đang tải danh sách bộ thẻ công khai...
+        <div className="py-24 text-center max-w-md mx-auto px-4">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
+          <p className="mt-4 text-sm font-medium text-[#556551]">
+            Đang tải danh sách bộ thẻ công khai...
+          </p>
         </div>
       ) : filteredSets.length === 0 ? (
-        <div className="bg-white border border-[#E7EEDC] rounded-2xl p-10 text-center space-y-2 shadow-2xs">
-          <p className="text-base font-bold text-[#2E3A28]">
-            {searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Chưa có bộ thẻ công khai nào'}
-          </p>
-          <p className="text-xs text-[#6B7665]">
-            {searchQuery
-              ? 'Thử tìm kiếm với từ khóa khác.'
-              : 'Hãy là người đầu tiên chia sẻ bộ thẻ từ vựng của bạn với cộng đồng!'}
-          </p>
+        <div className="bg-white border border-[#DCE5D8] rounded-xl p-8 text-center shadow-xs">
+          <Empty
+            title={searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Chưa có bộ thẻ công khai nào'}
+            description={
+              searchQuery
+                ? 'Thử tìm kiếm với từ khóa khác.'
+                : 'Hãy là người đầu tiên chia sẻ bộ thẻ từ vựng của bạn với cộng đồng!'
+            }
+          />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredSets.map((set) => {
             const isOwnSet = user && set.userId === user.id;
 
             return (
               <div
                 key={set.id}
-                className="bg-white border border-[#E7EEDC] rounded-2xl p-5 sm:p-6 hover:border-[#A8D672]/70 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between space-y-4 shadow-2xs"
+                className="bg-white border border-[#DCE5D8] rounded-xl p-5 hover:border-[#24693D]/50 transition-colors flex flex-col justify-between space-y-4 shadow-xs"
               >
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-base text-[#2E3A28] truncate flex-1">
+                    <h3 className="font-bold text-base text-[#14261C] truncate flex-1">
                       {set.title}
                     </h3>
-                    <span className="text-xs font-semibold text-[#5B9E60] bg-[#5B9E60]/10 px-2 py-0.5 rounded-md shrink-0">
-                      Công khai
-                    </span>
+                    <Tag color="green">Công khai</Tag>
                   </div>
 
-                  <p className="text-xs text-[#6B7665] font-medium">
-                    Tác giả: <span className="text-[#2E3A28]">{isOwnSet ? 'Bạn' : 'Cộng đồng LeafLearn'}</span>
+                  <p className="text-xs text-[#556551]">
+                    Tác giả: <strong className="text-[#14261C]">{isOwnSet ? 'Bạn' : 'Cộng đồng LeafLearn'}</strong>
                   </p>
 
                   {set.description && (
-                    <p className="text-xs text-[#6B7665] truncate pt-1">
+                    <p className="text-xs text-[#556551] line-clamp-2 leading-relaxed">
                       {set.description}
                     </p>
                   )}
                 </div>
 
                 {/* Stats */}
-                <div className="text-xs text-[#6B7665] font-medium">
+                <div className="text-xs font-medium text-[#556551]">
                   <span>{set.totalCards} thẻ từ vựng</span>
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="flex items-center gap-2 pt-1">
-                  <Link
-                    to={`/flashcard/${set.id}`}
-                    className="flex-1 text-center bg-white border border-[#E7EEDC] hover:bg-[#F8FCF4] text-[#2E3A28] font-bold text-xs py-2.5 px-3 rounded-xl transition-all shadow-2xs"
-                  >
-                    Xem bộ
+                <div className="flex items-center gap-2 pt-2 border-t border-[#E8EFE5]">
+                  <Link to={`/flashcard/${set.id}`} className="flex-1">
+                    <Button type="default" size="middle" block>
+                      Xem bộ
+                    </Button>
                   </Link>
 
                   {!isOwnSet && (
-                    <button
-                      type="button"
-                      onClick={() => handleSaveToLibrary(set)}
-                      disabled={savingSetId === set.id}
-                      className="flex-1 text-center bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-bold text-xs py-2.5 px-3 rounded-xl transition-all shadow-2xs cursor-pointer disabled:opacity-50"
-                    >
-                      {savingSetId === set.id ? 'Đang lưu...' : 'Lưu vào thư viện'}
-                    </button>
+                    <div className="flex-1">
+                      <Button
+                        type="primary"
+                        size="middle"
+                        block
+                        onClick={() => handleSaveToLibrary(set)}
+                        loading={savingSetId === set.id}
+                      >
+                        Lưu vào thư viện
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>

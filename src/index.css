@@ -4,27 +4,44 @@
   --font-poppins: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  --color-primary: #A8D672;
-  --color-primary-hover: #97C95E;
+  /* LeafLearn Brand & Ant Design Tokens */
+  --color-primary: #24693D;
+  --color-primary-hover: #1D5732;
+  --color-primary-active: #154225;
+  --color-primary-light: #F0F7EE;
+  --color-primary-border: #C8DEC2;
+  --color-brand-dark: #10473E;
+  --color-brand-accent: #A8D672;
+
   --color-bg-main: #F8FCF4;
   --color-card: #FFFFFF;
-  --color-border-custom: #E7EEDC;
+  --color-border-custom: #DCE5D8;
+  --color-text-title: #1A2416;
   --color-text-main: #2E3A28;
-  --color-secondary-text: #6B7665;
-  --color-success: #7BC47F;
-  --color-danger: #E57373;
+  --color-secondary-text: #66705F;
+  --color-muted-text: #8C9785;
+
+  --color-success: #389E0D;
+  --color-warning: #D48806;
+  --color-danger: #CF1322;
+  --color-info: #0958D9;
 }
 
 :root {
-  --color-primary: #A8D672;
-  --color-primary-hover: #97C95E;
+  --color-primary: #24693D;
+  --color-primary-hover: #1D5732;
+  --color-primary-active: #154225;
+  --color-primary-light: #F0F7EE;
+  --color-brand-dark: #10473E;
   --color-background: #F8FCF4;
   --color-card: #FFFFFF;
-  --color-border: #E7EEDC;
+  --color-border: #DCE5D8;
   --color-text: #2E3A28;
-  --color-secondary-text: #6B7665;
-  --color-success: #7BC47F;
-  --color-danger: #E57373;
+  --color-secondary-text: #66705F;
+  --color-success: #389E0D;
+  --color-warning: #D48806;
+  --color-danger: #CF1322;
+  --color-info: #0958D9;
 
   font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

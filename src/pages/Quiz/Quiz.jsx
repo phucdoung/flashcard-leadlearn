@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { generateQuizWithGemini } from '../../lib/geminiQuizService';
 import { speakDialogue, stopSpeech } from '../../lib/speechService';
 import { normalizeDialogue } from '../../lib/speakerUtils';
+import { Button, Modal, Tag, Empty } from '../../components/common';
 
 /**
  * Format seconds into MM:SS string
@@ -268,83 +269,104 @@ export default function Quiz() {
 
   if (loading) {
     return (
-      <div className="py-20 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#7BC47F] border-r-transparent"></div>
-        <p className="mt-4 text-sm font-medium text-[#6B7665]">Đang chuẩn bị đề thi bài kiểm tra từ Gemini AI...</p>
+      <div className="py-24 text-center max-w-md mx-auto px-4">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
+        <p className="mt-4 text-sm font-medium text-[#556551]">
+          Đang chuẩn bị đề thi bài kiểm tra từ AI...
+        </p>
       </div>
     );
   }
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="py-16 text-center">
-        <h2 className="text-xl font-bold text-[#2E3A28]">Chưa có câu hỏi bài kiểm tra nào.</h2>
-        <p className="mt-2 text-sm text-[#6B7665]">Vui lòng kiểm tra lại bộ thẻ từ vựng của bạn.</p>
-        <Link
-          to="/"
-          className="mt-6 inline-block rounded-xl bg-[#97C95E] px-6 py-2.5 text-sm font-semibold text-[#2E3A28] shadow-xs transition hover:bg-[#86B84E]"
-        >
-          Quay lại Trang chủ
-        </Link>
+      <div className="py-16 max-w-md mx-auto px-4">
+        <Empty
+          title="Chưa có câu hỏi bài kiểm tra"
+          description="Vui lòng kiểm tra lại bộ thẻ từ vựng của bạn để tạo bài kiểm tra mới."
+          actionText="Quay lại Trang chủ"
+          onAction={() => navigate('/')}
+        />
       </div>
     );
   }
 
+  const answeredPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-2 sm:py-3 space-y-4">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl bg-white p-4 sm:p-5 border border-[#E7EEDC] shadow-2xs">
-        <div className="space-y-1">
-          <h1 className="text-xl sm:text-2xl font-bold text-[#2E3A28]">{quizTitle}</h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-medium text-[#6B7665]">
-            <p>
-              Đã trả lời: <span className="font-bold text-[#2E3A28]">{answeredCount}</span> / {totalQuestions} câu hỏi
-            </p>
-            {remainingSeconds !== null && (
-              <p
-                className={`font-semibold ${
-                  remainingSeconds <= 30
-                    ? 'text-[#E57373] font-bold'
-                    : remainingSeconds <= 120
-                    ? 'text-amber-700 font-semibold'
-                    : 'text-[#2E3A28] font-semibold'
-                }`}
-              >
-                Thời gian còn lại: <span className="font-mono font-bold">{formatTimeMMSS(remainingSeconds)}</span>
-              </p>
-            )}
+    <div className="mx-auto max-w-4xl px-4 py-4 space-y-5">
+      {/* Quiz Progress & Timer Header */}
+      <div className="rounded-xl bg-white p-4 sm:p-5 border border-[#DCE5D8] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
+              {quizTitle}
+            </h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs sm:text-sm text-[#556551]">
+              <span>
+                Đã trả lời: <strong className="text-[#14261C]">{answeredCount}</strong> / {totalQuestions} câu hỏi
+              </span>
+              {remainingSeconds !== null && (
+                <div className="flex items-center gap-1.5">
+                  <span>Thời gian còn:</span>
+                  <Tag
+                    color={
+                      remainingSeconds <= 30
+                        ? 'red'
+                        : remainingSeconds <= 120
+                        ? 'gold'
+                        : 'leaf'
+                    }
+                  >
+                    <span className="font-mono font-bold">{formatTimeMMSS(remainingSeconds)}</span>
+                  </Tag>
+                </div>
+              )}
+            </div>
           </div>
+
+          <Button
+            type="primary"
+            onClick={() => setShowConfirmModal(true)}
+            icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+            }
+          >
+            Nộp bài kiểm tra
+          </Button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowConfirmModal(true)}
-          className="h-[40px] px-5 rounded-xl text-xs sm:text-sm font-bold bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] transition-all shadow-2xs cursor-pointer shrink-0"
-        >
-          Nộp bài kiểm tra
-        </button>
+        {/* Linear Progress Bar */}
+        <div className="w-full bg-[#E8EFE5] h-1.5 rounded-full overflow-hidden">
+          <div
+            className="bg-[#24693D] h-full transition-all duration-300 rounded-full"
+            style={{ width: `${answeredPercent}%` }}
+          />
+        </div>
       </div>
 
-      {/* Questions list */}
-      <div className="space-y-4 sm:space-y-5">
+      {/* Questions List */}
+      <div className="space-y-4">
         {questions.map((q, qIdx) => {
           const isAnswered = selectedAnswers[qIdx] !== undefined;
 
           return (
             <div
               key={q.id || qIdx}
-              className="rounded-2xl border border-[#E7EEDC] bg-white p-4 sm:p-5 shadow-2xs transition-all hover:border-[#A8D672]/60"
+              className="rounded-xl border border-[#DCE5D8] bg-white p-4 sm:p-6 shadow-xs transition-colors hover:border-[#24693D]/40"
             >
-              {/* Question Index Badge */}
-              <div className="mb-3 flex items-center justify-between">
-                <span className="rounded-lg bg-[#F8FCF4] px-2.5 py-1 text-xs font-semibold text-[#6B7665] border border-[#E7EEDC]">
+              {/* Question Header */}
+              <div className="mb-3.5 flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#556551]">
                   Câu hỏi {qIdx + 1} / {totalQuestions}
                 </span>
 
-                {isAnswered && (
-                  <span className="text-xs font-semibold text-[#5B9E60] bg-[#5B9E60]/10 px-2.5 py-0.5 rounded-md">
-                    Đã chọn đáp án
-                  </span>
+                {isAnswered ? (
+                  <Tag color="green">Đã chọn đáp án</Tag>
+                ) : (
+                  <Tag color="default">Chưa trả lời</Tag>
                 )}
               </div>
 
@@ -352,44 +374,36 @@ export default function Quiz() {
               {q.dialogue && (Array.isArray(q.dialogue) || typeof q.dialogue === 'string') ? (() => {
                 const normalizedDiag = normalizeDialogue(q.dialogue, qIdx);
                 return (
-                  <div className="mb-4 rounded-xl bg-[#F8FCF4] p-3.5 sm:p-4 border border-[#E7EEDC] space-y-2.5">
-                    <div className="flex items-center justify-between pb-2 border-b border-[#E7EEDC]/80">
-                      <span className="text-[11px] font-semibold text-[#6B7665] uppercase tracking-wider">
+                  <div className="mb-4 rounded-xl bg-[#F8FCF4] p-4 border border-[#E8EFE5] space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#DCE5D8]">
+                      <span className="text-[11px] font-semibold text-[#8C9B86] uppercase tracking-wider">
                         Đoạn hội thoại
                       </span>
-                      <button
-                        type="button"
+                      <Button
+                        size="small"
+                        type={activeAudioIndex === qIdx ? 'primary' : 'default'}
                         onClick={() => handleToggleAudio(qIdx, normalizedDiag)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
-                          activeAudioIndex === qIdx
-                            ? 'bg-[#A8D672] text-[#2E3A28] border-[#86B84E] shadow-2xs'
-                            : 'bg-white text-[#2E3A28] border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4]'
-                        }`}
-                        title={activeAudioIndex === qIdx ? 'Dừng phát âm thanh' : 'Nghe hội thoại'}
-                      >
-                        {activeAudioIndex === qIdx ? (
-                          <>
-                            <svg className="w-3.5 h-3.5 animate-pulse text-[#2E3A28]" fill="currentColor" viewBox="0 0 24 24">
+                        icon={
+                          activeAudioIndex === qIdx ? (
+                            <svg className="w-3.5 h-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
                               <rect x="6" y="4" width="4" height="16" rx="1" />
                               <rect x="14" y="4" width="4" height="16" rx="1" />
                             </svg>
-                            <span>Dừng phát</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg className="w-3.5 h-3.5 text-[#5B9E60]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          ) : (
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                             </svg>
-                            <span>Nghe hội thoại</span>
-                          </>
-                        )}
-                      </button>
+                          )
+                        }
+                      >
+                        {activeAudioIndex === qIdx ? 'Dừng phát' : 'Nghe hội thoại'}
+                      </Button>
                     </div>
 
                     <div className="space-y-2">
                       {normalizedDiag.map((line, lIdx) => (
-                        <div key={lIdx} className="text-sm sm:text-base text-[#2E3A28] leading-relaxed">
-                          {line.speaker && <span className="font-bold text-[#2E3A28]">{line.speaker}: </span>}
+                        <div key={lIdx} className="text-sm sm:text-base text-[#14261C] leading-relaxed">
+                          {line.speaker && <strong className="text-[#14261C]">{line.speaker}: </strong>}
                           {line.text}
                         </div>
                       ))}
@@ -397,40 +411,32 @@ export default function Quiz() {
                   </div>
                 );
               })() : (
-                <div className="mb-4 rounded-xl bg-[#F8FCF4] p-3.5 sm:p-4 border border-[#E7EEDC] space-y-2">
-                  <div className="flex items-center justify-between pb-1.5 border-b border-[#E7EEDC]/80">
-                    <span className="text-[11px] font-semibold text-[#6B7665] uppercase tracking-wider">
+                <div className="mb-4 rounded-xl bg-[#F8FCF4] p-4 border border-[#E8EFE5] space-y-2.5">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#DCE5D8]">
+                    <span className="text-[11px] font-semibold text-[#8C9B86] uppercase tracking-wider">
                       Câu hỏi
                     </span>
-                    <button
-                      type="button"
+                    <Button
+                      size="small"
+                      type={activeAudioIndex === qIdx ? 'primary' : 'default'}
                       onClick={() => handleToggleAudio(qIdx, q.sentence)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
-                        activeAudioIndex === qIdx
-                          ? 'bg-[#A8D672] text-[#2E3A28] border-[#86B84E] shadow-2xs'
-                          : 'bg-white text-[#2E3A28] border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4]'
-                      }`}
-                      title={activeAudioIndex === qIdx ? 'Dừng phát âm thanh' : 'Nghe câu hỏi'}
-                    >
-                      {activeAudioIndex === qIdx ? (
-                        <>
-                          <svg className="w-3.5 h-3.5 animate-pulse text-[#2E3A28]" fill="currentColor" viewBox="0 0 24 24">
+                      icon={
+                        activeAudioIndex === qIdx ? (
+                          <svg className="w-3.5 h-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="6" y="4" width="4" height="16" rx="1" />
                             <rect x="14" y="4" width="4" height="16" rx="1" />
                           </svg>
-                          <span>Dừng phát</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-3.5 h-3.5 text-[#5B9E60]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        ) : (
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                           </svg>
-                          <span>Nghe câu hỏi</span>
-                        </>
-                      )}
-                    </button>
+                        )
+                      }
+                    >
+                      {activeAudioIndex === qIdx ? 'Dừng phát' : 'Nghe câu hỏi'}
+                    </Button>
                   </div>
-                  <p className="text-base font-medium text-[#2E3A28] leading-relaxed pt-0.5">
+                  <p className="text-base font-medium text-[#14261C] leading-relaxed pt-0.5">
                     {q.sentence}
                   </p>
                 </div>
@@ -448,22 +454,26 @@ export default function Quiz() {
                         key={optIdx}
                         type="button"
                         onClick={() => handleSelectOption(qIdx, optIdx)}
-                        className={`w-full flex items-center gap-3 rounded-xl border p-2.5 sm:p-3 text-left font-medium transition-all cursor-pointer ${
+                        className={`w-full flex items-center gap-3 rounded-lg border p-3 text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'border-[#A8D672] bg-[#A8D672]/15 text-[#2E3A28] font-bold shadow-2xs ring-1 ring-[#A8D672]'
-                            : 'border-[#E7EEDC] bg-white text-[#2E3A28] hover:border-[#A8D672]/60 hover:bg-[#F8FCF4]'
+                            ? 'border-[#24693D] bg-[#F0F7EE] text-[#14261C] ring-1 ring-[#24693D]'
+                            : 'border-[#DCE5D8] bg-white text-[#14261C] hover:border-[#24693D]/50 hover:bg-[#F8FCF4]'
                         }`}
                       >
                         <span
-                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${
                             isSelected
-                              ? 'bg-[#A8D672] text-[#2E3A28]'
-                              : 'bg-[#F8FCF4] text-[#6B7665] border border-[#E7EEDC]'
+                              ? 'bg-[#24693D] text-white'
+                              : 'bg-[#F8FCF4] text-[#556551] border border-[#DCE5D8]'
                           }`}
                         >
                           {optionLabel}
                         </span>
-                        <span className="text-sm font-semibold text-[#2E3A28] truncate">
+                        <span
+                          className={`text-sm truncate ${
+                            isSelected ? 'font-semibold text-[#14261C]' : 'font-normal text-[#14261C]'
+                          }`}
+                        >
                           {optText}
                         </span>
                       </button>
@@ -475,56 +485,60 @@ export default function Quiz() {
         })}
       </div>
 
-      {/* Submit Action Bar */}
+      {/* Bottom Submit Action Bar */}
       <div className="pt-2 flex justify-end">
-        <button
-          type="button"
+        <Button
+          type="primary"
+          size="large"
           onClick={() => setShowConfirmModal(true)}
-          className="h-[44px] px-7 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] text-sm font-bold shadow-2xs transition-all cursor-pointer"
+          icon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+          }
         >
           Nộp bài kiểm tra
-        </button>
+        </Button>
       </div>
 
       {/* Confirmation Modal */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-[#E7EEDC]">
-            <h3 className="text-xl font-bold text-[#2E3A28]">Xác nhận nộp bài</h3>
-            <p className="mt-2 text-sm text-[#6B7665]">
-              Bạn đã hoàn thành <span className="font-bold text-[#2E3A28]">{answeredCount}</span> / {totalQuestions} câu hỏi.
-              {unansweredCount > 0 && (
-                <span className="block mt-1 text-xs font-medium text-[#E57373]">
-                  Còn {unansweredCount} câu hỏi chưa chọn đáp án!
-                </span>
-              )}
-            </p>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowConfirmModal(false)}
-                disabled={submitting}
-                className="rounded-xl border border-[#E7EEDC] bg-white px-4 py-2 text-sm font-medium text-[#6B7665] hover:bg-[#FAFDF8] cursor-pointer"
-              >
-                Tiếp tục làm bài
-              </button>
-              <button
-                type="button"
-                onClick={() => handleFinishAndSave()}
-                disabled={submitting}
-                className="rounded-xl bg-[#97C95E] px-5 py-2 text-sm font-semibold text-[#2E3A28] shadow-xs transition hover:bg-[#86B84E] cursor-pointer"
-              >
-                {submitting ? 'Đang nộp...' : 'Đồng ý Nộp bài'}
-              </button>
-            </div>
+      <Modal
+        open={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        title="Xác nhận nộp bài kiểm tra"
+        width="max-w-md"
+        footer={
+          <div className="flex justify-end gap-2.5">
+            <Button
+              type="default"
+              onClick={() => setShowConfirmModal(false)}
+              disabled={submitting}
+            >
+              Tiếp tục làm bài
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleFinishAndSave()}
+              loading={submitting}
+            >
+              Đồng ý Nộp bài
+            </Button>
           </div>
-        </div>
-      )}
+        }
+      >
+        <p className="text-sm text-[#556551]">
+          Bạn đã hoàn thành <strong className="text-[#14261C]">{answeredCount}</strong> / {totalQuestions} câu hỏi.
+        </p>
+        {unansweredCount > 0 && (
+          <div className="mt-3 p-3 rounded-lg bg-[#FFF2F0] border border-[#FFA39E] text-xs font-medium text-[#CF1322]">
+            Còn <strong>{unansweredCount} câu hỏi</strong> chưa chọn đáp án. Bạn có chắc chắn muốn nộp bài?
+          </div>
+        )}
+      </Modal>
 
       {/* Speech Notice Toast */}
       {speechNotice && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#2E3A28]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#E7EEDC]/20">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#14261C]/95 text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#DCE5D8]/20">
           {speechNotice}
         </div>
       )}

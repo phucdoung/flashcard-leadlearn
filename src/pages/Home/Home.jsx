@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Input, Card, Modal, Tag, Empty } from '../../components';
 import {
   generateBulkFlashcardDetails,
   generateSingleFlashcardDetails,
@@ -502,42 +503,46 @@ export default function Home() {
   return (
     <div className="max-w-4xl mx-auto w-full px-4">
       {/* Section Heading & Compact Integrated Toolbar */}
-      <div id="sets-section">
-        {/* Section Heading (Desktop 28px, Tablet 25px, Mobile 22px, line-height 1.2, margin-bottom 14px) */}
-        <h2 className="text-[22px] sm:text-[25px] md:text-[28px] font-bold leading-[1.2] text-[#2E3A28] tracking-tight mb-[14px]">
-          Flashcard 
+      <div id="sets-section" className="mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold leading-tight text-[#1A2416] tracking-tight mb-3.5">
+          Flashcard của bạn
         </h2>
 
-        {/* Compact Toolbar (Search 44px + Custom Sort 145px + Create Set 44px, margin-bottom 24px) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_145px_auto] gap-[10px] items-center mb-[24px]">
-          {/* Search Input (44px height, 10px radius, soft green focus ring) */}
-          <div className="relative w-full sm:col-span-2 md:col-span-1">
-            <input
-              type="text"
+        {/* Ant Design Compact Toolbar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_150px_auto] gap-2.5 items-center">
+          {/* Search Input */}
+          <div className="w-full sm:col-span-2 md:col-span-1">
+            <Input
+              prefix={
+                <svg className="w-4 h-4 text-[#8C9785]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              }
+              allowClear
+              size="large"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm..."
-              className="w-full h-[44px] px-4 bg-white border border-[#DDE6D7] focus:border-[#A8D672] focus:ring-2 focus:ring-[#A8D672]/20 rounded-[10px] text-sm text-[#2E3A28] placeholder-[#6B7665]/60 focus:outline-none transition-all shadow-2xs"
+              placeholder="Tìm kiếm bộ thẻ..."
             />
           </div>
 
-          {/* Custom Sort Dropdown (44px height, 145px width, 10px radius) */}
+          {/* Custom Sort Dropdown */}
           <div className="relative w-full" ref={sortRef}>
             <button
               type="button"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="w-full h-[44px] px-3.5 bg-white border border-[#DDE6D7] hover:border-[#A8D672] rounded-[10px] text-sm font-medium text-[#2E3A28] flex items-center justify-between shadow-2xs transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full h-10 sm:h-11 px-3.5 bg-white border border-[#DCE5D8] hover:border-[#24693D] rounded-lg text-sm font-medium text-[#2E3A28] flex items-center justify-between shadow-2xs transition-all cursor-pointer focus:outline-none"
             >
               <span className="truncate">
                 {sortOptions.find((o) => o.value === sortBy)?.label || 'Mới nhất'}
               </span>
-              <span className={`transition-transform duration-200 text-[#6B7665] ml-1.5 text-xs ${isSortOpen ? 'rotate-180' : ''}`}>
+              <span className={`transition-transform duration-200 text-[#66705F] ml-1.5 text-xs ${isSortOpen ? 'rotate-180' : ''}`}>
                 ▾
               </span>
             </button>
 
             {isSortOpen && (
-              <div className="absolute top-full left-0 mt-1 w-[145px] sm:w-[155px] bg-white border border-[#E1E8DC] rounded-xl shadow-lg p-1.5 z-30 space-y-0.5">
+              <div className="absolute top-full left-0 mt-1 w-full sm:w-[160px] bg-white border border-[#DCE5D8] rounded-lg shadow-lg p-1 z-30 space-y-0.5">
                 {sortOptions.map((opt) => (
                   <button
                     key={opt.value}
@@ -546,10 +551,10 @@ export default function Home() {
                       setSortBy(opt.value);
                       setIsSortOpen(false);
                     }}
-                    className={`w-full h-[38px] px-3 rounded-lg text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
+                    className={`w-full h-8 px-3 rounded-md text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
                       sortBy === opt.value
-                        ? 'bg-[#A8D672]/20 text-[#2E3A28] font-bold'
-                        : 'text-[#2E3A28] hover:bg-[#F8FCF4] font-medium'
+                        ? 'bg-[#F0F7EE] text-[#24693D] font-bold'
+                        : 'text-[#2E3A28] hover:bg-[#F9FCF8] font-medium'
                     }`}
                   >
                     {opt.label}
@@ -559,44 +564,50 @@ export default function Home() {
             )}
           </div>
 
-          {/* Create Set Primary Button (44px height, min-145px width, 10px radius) */}
-          <button
-            type="button"
+          {/* Create Set Primary Button */}
+          <Button
+            type="primary"
+            size="large"
             onClick={handleOpenCreate}
-            className="w-full sm:col-span-2 md:col-span-1 h-[44px] px-[18px] min-w-[145px] rounded-[10px] bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer shadow-2xs whitespace-nowrap"
+            icon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+              </svg>
+            }
+            className="w-full sm:col-span-2 md:col-span-1 shadow-xs"
           >
             Tạo bộ thẻ mới
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* 3. Grid of Flashcard Sets (20-22px gap) */}
+      {/* 3. Grid of Flashcard Sets */}
       {loading ? (
-        <div className="py-16 text-center text-sm text-[#6B7665] font-medium animate-pulse">
-          Đang tải danh sách bộ thẻ từ Supabase...
+        <div className="py-16 text-center text-sm text-[#66705F] font-medium animate-pulse flex items-center justify-center gap-2">
+          <svg className="animate-spin h-4 w-4 text-[#24693D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          Đang tải danh sách bộ thẻ...
         </div>
       ) : processedSets.length === 0 ? (
-        <div className="bg-white border border-[#E7EEDC] rounded-2xl p-10 text-center space-y-3 shadow-2xs">
-          <p className="text-base font-bold text-[#2E3A28]">
-            {searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Bạn chưa có bộ Flashcard nào.'}
-          </p>
-          <p className="text-xs text-[#6B7665]">
-            {searchQuery
+        <Empty
+          title={searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Bạn chưa có bộ Flashcard nào'}
+          description={
+            searchQuery
               ? 'Thử tìm kiếm với từ khóa khác.'
-              : 'Hãy bắt đầu tạo bộ thẻ đầu tiên để lưu trữ và học từ vựng.'}
-          </p>
-          {!searchQuery && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-2xs mt-2 cursor-pointer"
-            >
-              Tạo bộ thẻ mới
-            </button>
-          )}
-        </div>
+              : 'Hãy bắt đầu tạo bộ thẻ đầu tiên để lưu trữ và học từ vựng hiệu quả cùng AI.'
+          }
+          action={
+            !searchQuery && (
+              <Button type="primary" onClick={handleOpenCreate}>
+                Tạo bộ thẻ mới
+              </Button>
+            )
+          }
+        />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[22px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
           {processedSets.map((set) => {
             const hasCards = set.totalCards > 0;
             const progress = hasCards
@@ -608,20 +619,18 @@ export default function Home() {
               <div
                 key={set.id}
                 onClick={() => handleCardClick(set.id)}
-                className="bg-white border border-[#E7EEDC] rounded-2xl p-5 sm:p-6 hover:border-[#A8D672]/70 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-5 min-h-[220px] shadow-2xs relative group"
+                className="bg-white border border-[#DCE5D8] hover:border-[#24693D]/40 hover:shadow-[0_4px_16px_rgba(36,105,61,0.08)] rounded-xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 min-h-[210px] relative group"
               >
                 {/* Header: Title + Visibility Badge + Menu */}
                 <div className="space-y-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 truncate flex-1">
-                      <h3 className="font-bold text-base text-[#2E3A28] truncate">
+                      <h3 className="font-bold text-base text-[#1A2416] truncate">
                         {set.title}
                       </h3>
-                      {set.visibility === 'public' && (
-                        <span className="text-[11px] font-semibold text-[#5B9E60] bg-[#5B9E60]/10 px-2 py-0.5 rounded-md shrink-0">
-                          Công khai
-                        </span>
-                      )}
+                      <Tag color={set.visibility === 'public' ? 'leaf' : 'default'}>
+                        {set.visibility === 'public' ? 'Công khai' : 'Riêng tư'}
+                      </Tag>
                     </div>
 
                     {/* 3-dots Dropdown Menu */}
@@ -629,7 +638,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => toggleMenu(set.id)}
-                        className="p-1 rounded-lg hover:bg-[#F8FCF4] text-[#6B7665] hover:text-[#2E3A28] transition-colors cursor-pointer text-xs"
+                        className="p-1 rounded-md hover:bg-[#F0F4EE] text-[#66705F] hover:text-[#1A2416] transition-colors cursor-pointer text-xs"
                         title="Tùy chọn"
                       >
                         •••
@@ -641,20 +650,20 @@ export default function Home() {
                             className="fixed inset-0 z-10"
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="absolute right-0 mt-1 w-40 bg-white border border-[#E7EEDC] rounded-xl shadow-md py-1 z-20">
+                          <div className="absolute right-0 mt-1 w-44 bg-white border border-[#DCE5D8] rounded-lg shadow-lg py-1 z-20">
                             <button
                               type="button"
                               onClick={() => handleOpenEdit(set)}
-                              className="w-full text-left px-4 py-2 text-xs font-semibold text-[#2E3A28] hover:bg-[#F8FCF4] transition-colors cursor-pointer"
+                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-[#2E3A28] hover:bg-[#F9FCF8] transition-colors cursor-pointer flex items-center gap-2"
                             >
-                              Đổi tên / Chỉnh sửa
+                              <span>✏️</span> Đổi tên / Chỉnh sửa
                             </button>
                             <button
                               type="button"
                               onClick={() => handleOpenDelete(set)}
-                              className="w-full text-left px-4 py-2 text-xs font-semibold text-[#E57373] hover:bg-[#F8FCF4] transition-colors cursor-pointer"
+                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-[#CF1322] hover:bg-[#FFF1F0] transition-colors cursor-pointer flex items-center gap-2"
                             >
-                              Xóa bộ Flashcard
+                              <span>🗑️</span> Xóa bộ Flashcard
                             </button>
                           </div>
                         </>
@@ -663,7 +672,7 @@ export default function Home() {
                   </div>
 
                   {set.description && (
-                    <p className="text-xs text-[#6B7665] truncate">
+                    <p className="text-xs text-[#66705F] line-clamp-2">
                       {set.description}
                     </p>
                   )}
@@ -671,75 +680,76 @@ export default function Home() {
 
                 {/* Content: Clean Typography Stats & Progress OR Compact Empty State */}
                 {hasCards ? (
-                  <div className="space-y-4">
-                    {/* Clean Minimal Text Stats (13-14px) */}
-                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs sm:text-[13px] text-[#6B7665]">
-                      <span className="font-medium">{set.totalCards} thẻ</span>
-                      <span className="text-[#6B7665]/40">•</span>
-                      <span className="font-medium text-[#5B9E60]">{set.masteredCards} đã thuộc</span>
-                      <span className="text-[#6B7665]/40">•</span>
-                      <span className="font-medium text-[#E57373]">{set.unmasteredCards} chưa thuộc</span>
-                      <span className="text-[#6B7665]/40">•</span>
-                      <span className="font-medium text-[#2E3A28]">{set.quizCount} bài kiểm tra</span>
+                  <div className="space-y-3.5">
+                    {/* Clean Minimal Text Stats */}
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#66705F]">
+                      <span className="font-semibold text-[#1A2416]">{set.totalCards} thẻ</span>
+                      <span className="text-[#DCE5D8]">•</span>
+                      <span className="font-medium text-[#389E0D]">{set.masteredCards} đã thuộc</span>
+                      <span className="text-[#DCE5D8]">•</span>
+                      <span className="font-medium text-[#CF1322]">{set.unmasteredCards} chưa thuộc</span>
+                      <span className="text-[#DCE5D8]">•</span>
+                      <span className="font-medium text-[#66705F]">{set.quizCount} bài test</span>
                     </div>
 
-                    {/* Tiến độ học Progress Bar (8px height) */}
-                    <div className="space-y-1.5 pt-1">
-                      <div className="flex items-center justify-between text-xs sm:text-[13px]">
-                        <span className="font-medium text-[#6B7665]">Tiến độ học</span>
-                        <span className="font-bold text-[#2E3A28]">{progress}%</span>
+                    {/* Tiến độ học Progress Bar */}
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-[#66705F]">Tiến độ học</span>
+                        <span className="font-bold text-[#1A2416]">{progress}%</span>
                       </div>
-                      <div className="h-2 w-full rounded-full bg-[#E7EEDC]/60 overflow-hidden">
+                      <div className="h-1.5 w-full rounded-full bg-[#E8EFE5] overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#A8D672] transition-all duration-300"
+                          className="h-full rounded-full bg-[#24693D] transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  /* Compact Empty State cho bộ chưa có từ vựng (22px padding, min 105px) */
-                  <div className="py-[22px] px-4 rounded-[14px] bg-[#F8FCF4] border border-[#E7EEDC]/60 text-center space-y-3 min-h-[105px] my-auto">
-                    <p className="text-xs sm:text-sm font-medium text-[#6B7665]">
+                  <div className="py-4 px-3.5 rounded-lg bg-[#F9FCF8] border border-[#E8EFE5] text-center space-y-2 my-auto">
+                    <p className="text-xs font-medium text-[#66705F]">
                       Chưa có Flashcard trong bộ này.
                     </p>
                     {isOwner && (
-                      <button
-                        type="button"
+                      <Button
+                        type="outlined"
+                        size="small"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenAddCardModal(set);
                         }}
-                        className="inline-block text-xs sm:text-sm font-semibold text-[#5B9E60] hover:text-[#2E3A28] hover:underline transition-colors cursor-pointer"
                       >
                         + Thêm thẻ
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}
 
-                {/* Footer Action Buttons (42px height, 10px radius, 10px gap, 600 font weight) */}
+                {/* Footer Action Buttons */}
                 {hasCards && (
-                  <div className="flex items-center gap-[10px] pt-1">
+                  <div className="flex items-center gap-2 pt-1">
                     <Link
                       to={`/study/${set.id}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 h-[42px] inline-flex items-center justify-center text-center bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-xs sm:text-sm rounded-[10px] transition-all shadow-2xs"
+                      className="flex-1"
                     >
-                      Học ngay
+                      <Button type="primary" block>
+                        Học ngay
+                      </Button>
                     </Link>
 
                     {isOwner && (
-                      <button
-                        type="button"
+                      <Button
+                        type="default"
+                        className="flex-1"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenAddCardModal(set);
                         }}
-                        className="flex-1 h-[42px] inline-flex items-center justify-center text-center bg-white border border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4] text-[#2E3A28] font-semibold text-xs sm:text-sm rounded-[10px] transition-all cursor-pointer shadow-2xs"
                       >
                         + Thêm thẻ
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}
@@ -750,439 +760,378 @@ export default function Home() {
       )}
 
       {/* Modal 1: Create Flashcard Set */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-[#2E3A28]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#E7EEDC] rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-lg space-y-6">
-            <h2 className="text-xl font-bold text-[#2E3A28]">Tạo bộ Flashcard</h2>
-            <form onSubmit={handleCreateSet} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Tên bộ Flashcard</label>
-                <input
-                  type="text"
-                  required
-                  value={setName}
-                  onChange={(e) => setSetName(e.target.value)}
-                  placeholder="Ví dụ: Từ vựng IELTS Listening"
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Mô tả (không bắt buộc)</label>
-                <textarea
-                  rows={3}
-                  value={setDescription}
-                  onChange={(e) => setSetDescription(e.target.value)}
-                  placeholder="Nhập mô tả ngắn cho bộ thẻ..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                />
-              </div>
-
-              {/* Visibility Option */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Quyền riêng tư</label>
-                <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                  <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
-                    <input
-                      type="radio"
-                      name="create-visibility"
-                      value="private"
-                      checked={visibility === 'private'}
-                      onChange={() => setVisibility('private')}
-                      className="accent-[#5B9E60]"
-                    />
-                    Riêng tư (Chỉ mình bạn)
-                  </label>
-                  <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
-                    <input
-                      type="radio"
-                      name="create-visibility"
-                      value="public"
-                      checked={visibility === 'public'}
-                      onChange={() => setVisibility('public')}
-                      className="accent-[#5B9E60]"
-                    />
-                    Công khai (Cộng đồng)
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E7EEDC]">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] shadow-2xs cursor-pointer disabled:opacity-50"
-                >
-                  {submitting ? 'Đang tạo...' : 'Tạo mới'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={isCreateModalOpen}
+        title="Tạo bộ Flashcard"
+        onCancel={() => setIsCreateModalOpen(false)}
+        onOk={handleCreateSet}
+        okText={submitting ? 'Đang tạo...' : 'Tạo mới'}
+        confirmLoading={submitting}
+      >
+        <form onSubmit={handleCreateSet} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">
+              Tên bộ Flashcard <span className="text-[#CF1322]">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={setName}
+              onChange={(e) => setSetName(e.target.value)}
+              placeholder="Ví dụ: Từ vựng IELTS Listening"
+              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+            />
           </div>
-        </div>
-      )}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">Mô tả (không bắt buộc)</label>
+            <textarea
+              rows={3}
+              value={setDescription}
+              onChange={(e) => setSetDescription(e.target.value)}
+              placeholder="Nhập mô tả ngắn cho bộ thẻ..."
+              className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+            />
+          </div>
+
+          {/* Visibility Option */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">Quyền riêng tư</label>
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+                <input
+                  type="radio"
+                  name="create-visibility"
+                  value="private"
+                  checked={visibility === 'private'}
+                  onChange={() => setVisibility('private')}
+                  className="accent-[#24693D]"
+                />
+                Riêng tư (Chỉ mình bạn)
+              </label>
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+                <input
+                  type="radio"
+                  name="create-visibility"
+                  value="public"
+                  checked={visibility === 'public'}
+                  onChange={() => setVisibility('public')}
+                  className="accent-[#24693D]"
+                />
+                Công khai (Cộng đồng)
+              </label>
+            </div>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal 2: Edit Flashcard Set */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-[#2E3A28]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#E7EEDC] rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-lg space-y-6">
-            <h2 className="text-xl font-bold text-[#2E3A28]">Chỉnh sửa bộ Flashcard</h2>
-            <form onSubmit={handleUpdateSet} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Tên bộ Flashcard</label>
-                <input
-                  type="text"
-                  required
-                  value={setName}
-                  onChange={(e) => setSetName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Mô tả</label>
-                <textarea
-                  rows={3}
-                  value={setDescription}
-                  onChange={(e) => setSetDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                />
-              </div>
-
-              {/* Visibility Option */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">Quyền riêng tư</label>
-                <div className="flex flex-col sm:flex-row gap-3 pt-1">
-                  <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
-                    <input
-                      type="radio"
-                      name="edit-visibility"
-                      value="private"
-                      checked={visibility === 'private'}
-                      onChange={() => setVisibility('private')}
-                      className="accent-[#5B9E60]"
-                    />
-                    Riêng tư (Chỉ mình bạn)
-                  </label>
-                  <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
-                    <input
-                      type="radio"
-                      name="edit-visibility"
-                      value="public"
-                      checked={visibility === 'public'}
-                      onChange={() => setVisibility('public')}
-                      className="accent-[#5B9E60]"
-                    />
-                    Công khai (Cộng đồng)
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E7EEDC]">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] shadow-2xs cursor-pointer disabled:opacity-50"
-                >
-                  {submitting ? 'Đang lưu...' : 'Lưu chỉnh sửa'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={isEditModalOpen}
+        title="Chỉnh sửa bộ Flashcard"
+        onCancel={() => setIsEditModalOpen(false)}
+        onOk={handleUpdateSet}
+        okText={submitting ? 'Đang lưu...' : 'Lưu chỉnh sửa'}
+        confirmLoading={submitting}
+      >
+        <form onSubmit={handleUpdateSet} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">
+              Tên bộ Flashcard <span className="text-[#CF1322]">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={setName}
+              onChange={(e) => setSetName(e.target.value)}
+              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+            />
           </div>
-        </div>
-      )}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">Mô tả</label>
+            <textarea
+              rows={3}
+              value={setDescription}
+              onChange={(e) => setSetDescription(e.target.value)}
+              className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-[#1A2416]">Quyền riêng tư</label>
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+                <input
+                  type="radio"
+                  name="edit-visibility"
+                  value="private"
+                  checked={visibility === 'private'}
+                  onChange={() => setVisibility('private')}
+                  className="accent-[#24693D]"
+                />
+                Riêng tư (Chỉ mình bạn)
+              </label>
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+                <input
+                  type="radio"
+                  name="edit-visibility"
+                  value="public"
+                  checked={visibility === 'public'}
+                  onChange={() => setVisibility('public')}
+                  className="accent-[#24693D]"
+                />
+                Công khai (Cộng đồng)
+              </label>
+            </div>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal 3: Delete Flashcard Set */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-[#2E3A28]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#E7EEDC] rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-lg space-y-4">
-            <h3 className="text-lg font-bold text-[#2E3A28]">Xác nhận xóa bộ Flashcard</h3>
-            <p className="text-xs text-[#6B7665]">
-              Bạn có chắc chắn muốn xóa bộ thẻ{' '}
-              <strong className="text-[#2E3A28]">"{selectedSet?.title}"</strong>? Tất cả thẻ từ vựng và bài kiểm tra thuộc bộ thẻ này cũng sẽ bị xóa. Hành động này không thể hoàn tác.
-            </p>
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsDeleteModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-medium text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteSet}
-                disabled={submitting}
-                className="px-5 py-2 rounded-xl bg-[#E57373] text-white text-xs font-bold hover:bg-[#D32F2F] cursor-pointer disabled:opacity-50 shadow-2xs"
-              >
-                {submitting ? 'Đang xóa...' : 'Đồng ý xóa'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={isDeleteModalOpen}
+        title="Xác nhận xóa bộ Flashcard"
+        danger
+        onCancel={() => setIsDeleteModalOpen(false)}
+        onOk={handleDeleteSet}
+        okText={submitting ? 'Đang xóa...' : 'Đồng ý xóa'}
+        confirmLoading={submitting}
+      >
+        <p className="text-sm text-[#5A6553] leading-relaxed">
+          Bạn có chắc chắn muốn xóa bộ thẻ{' '}
+          <strong className="text-[#1A2416]">"{selectedSet?.title}"</strong>? Tất cả thẻ từ vựng và bài kiểm tra thuộc bộ thẻ này cũng sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+        </p>
+      </Modal>
 
       {/* Modal 4: Add Flashcard Direct Modal */}
-      {isAddCardModalOpen && selectedSetForAdd && (
-        <div className="fixed inset-0 bg-[#2E3A28]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white border border-[#E7EEDC] rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-lg space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#E7EEDC] pb-4">
-              <div>
-                <h2 className="text-xl font-bold text-[#2E3A28]">
-                  {addStep === 'manual' && 'Thêm Flashcard mới'}
-                  {addStep === 'bulk_input' && 'Nhập nhiều Flashcard cùng lúc'}
-                  {addStep === 'bulk_preview' && 'Xem trước danh sách Flashcard'}
-                </h2>
-                <p className="text-xs text-[#6B7665] mt-0.5">
-                  Bộ thẻ: <strong className="text-[#2E3A28]">{selectedSetForAdd.title}</strong>
-                </p>
+      <Modal
+        open={isAddCardModalOpen && !!selectedSetForAdd}
+        title={
+          <div>
+            <div className="font-bold text-[#1A2416] text-base sm:text-lg">
+              {addStep === 'manual' && 'Thêm Flashcard mới'}
+              {addStep === 'bulk_input' && 'Nhập nhiều Flashcard cùng lúc'}
+              {addStep === 'bulk_preview' && 'Xem trước danh sách Flashcard'}
+            </div>
+            <p className="text-xs text-[#66705F] font-normal mt-0.5">
+              Bộ thẻ: <strong className="text-[#2E3A28]">{selectedSetForAdd?.title}</strong>
+            </p>
+          </div>
+        }
+        onCancel={handleCloseAddCardModal}
+        width="max-w-xl"
+        footer={null}
+      >
+        {/* STEP 1: MANUAL ENTRY */}
+        {addStep === 'manual' && (
+          <div className="space-y-4">
+            <div className="space-y-3.5">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-[#1A2416]">
+                    Từ hoặc cụm từ <span className="text-[#CF1322]">*</span>
+                  </label>
+                  <Button
+                    type="default"
+                    size="small"
+                    onClick={handleFetchSingleAISuggestion}
+                    disabled={!singleCard.term.trim() || fetchingSingleAI}
+                    loading={fetchingSingleAI}
+                    icon={<span>✨</span>}
+                  >
+                    AI gợi ý
+                  </Button>
+                </div>
+                <input
+                  type="text"
+                  name="term"
+                  value={singleCard.term}
+                  onChange={handleSingleInputChange}
+                  placeholder="Ví dụ: take care of hoặc serendipity"
+                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                />
               </div>
-              <button
-                type="button"
-                onClick={handleCloseAddCardModal}
-                className="text-[#6B7665] hover:text-[#2E3A28] text-lg font-bold cursor-pointer"
-              >
-                ✕
-              </button>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-[#1A2416]">
+                  Phiên âm
+                </label>
+                <input
+                  type="text"
+                  name="phonetic"
+                  value={singleCard.phonetic}
+                  onChange={handleSingleInputChange}
+                  placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
+                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-[#1A2416]">
+                  Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  name="definition"
+                  value={singleCard.definition}
+                  onChange={handleSingleInputChange}
+                  placeholder="Ví dụ: Sự tình cờ may mắn tìm thấy điều gì đó..."
+                  className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                />
+              </div>
+
+              <div className="bg-[#F9FCF8] border border-[#E8EFE5] px-3.5 py-2 rounded-lg text-xs text-[#66705F]">
+                Trạng thái học mặc định: <strong className="text-[#24693D]">Chưa thuộc</strong>
+              </div>
             </div>
 
-            {/* STEP 1: MANUAL ENTRY */}
-            {addStep === 'manual' && (
-              <div className="space-y-5">
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-xs font-semibold text-[#2E3A28]">
-                        Từ hoặc cụm từ <span className="text-[#E57373]">*</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={handleFetchSingleAISuggestion}
-                        disabled={!singleCard.term.trim() || fetchingSingleAI}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        {fetchingSingleAI ? 'Đang gợi ý...' : '✨ AI gợi ý'}
-                      </button>
-                    </div>
-                    <input
-                      type="text"
-                      name="term"
-                      value={singleCard.term}
-                      onChange={handleSingleInputChange}
-                      placeholder="Ví dụ: take care of hoặc serendipity"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                    />
-                  </div>
+            <div className="pt-1">
+              <Button
+                type="link"
+                onClick={() => setAddStep('bulk_input')}
+                className="text-xs"
+              >
+                Nhập nhiều từ cùng lúc
+              </Button>
+            </div>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-[#2E3A28]">
-                      Phiên âm
-                    </label>
-                    <input
-                      type="text"
-                      name="phonetic"
-                      value={singleCard.phonetic}
-                      onChange={handleSingleInputChange}
-                      placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-[#2E3A28]">
-                      Nghĩa
-                    </label>
-                    <textarea
-                      rows={3}
-                      name="definition"
-                      value={singleCard.definition}
-                      onChange={handleSingleInputChange}
-                      placeholder="Ví dụ: Sự tình cờ may mắn tìm thấy điều gì đó..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                    />
-                  </div>
-
-                  <div className="bg-[#F8FCF4] border border-[#E7EEDC] px-4 py-2 rounded-xl text-xs text-[#6B7665]">
-                    Trạng thái học mặc định: <strong className="text-[#2E3A28]">Chưa thuộc</strong>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setAddStep('bulk_input')}
-                    className="text-xs font-semibold text-[#2E3A28] underline hover:text-[#5B9E60] transition-colors cursor-pointer"
-                  >
-                    Nhập nhiều từ
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E7EEDC]">
-                  <button
-                    type="button"
-                    onClick={handleCloseAddCardModal}
-                    className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveFlashcards}
-                    disabled={submittingCard || !singleCard.term.trim()}
-                    className="px-5 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] disabled:opacity-50 cursor-pointer shadow-2xs"
-                  >
-                    {submittingCard ? 'Đang lưu...' : 'Lưu Flashcard'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: BULK INPUT */}
-            {addStep === 'bulk_input' && (
-              <div className="space-y-5">
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-[#2E3A28]">
-                    Nhập danh sách từ (Mỗi dòng một từ hoặc cụm từ)
-                  </label>
-                  <textarea
-                    rows={8}
-                    value={bulkText}
-                    onChange={(e) => setBulkText(e.target.value)}
-                    placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
-                    className="w-full p-4 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4]/50 text-sm font-mono text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                  />
-                  <p className="text-xs text-[#6B7665]">
-                    Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-[#E7EEDC]">
-                  <button
-                    type="button"
-                    onClick={() => setAddStep('manual')}
-                    className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGeneratePreview}
-                    disabled={!bulkText.trim() || generatingPreview}
-                    className="px-5 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-2xs"
-                  >
-                    {generatingPreview ? 'Đang tạo gợi ý bằng AI Gemini...' : 'Xem trước'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: BULK PREVIEW & EDIT */}
-            {addStep === 'bulk_preview' && (
-              <div className="space-y-5">
-                <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
-                  {bulkPreviewList.map((item, idx) => (
-                    <div
-                      key={item.id || idx}
-                      className="bg-[#F8FCF4] border border-[#E7EEDC] p-4 rounded-xl space-y-3 relative"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#2E3A28]">
-                          Từ #{idx + 1}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemovePreviewItem(idx)}
-                          className="text-xs font-semibold text-[#E57373] hover:underline cursor-pointer"
-                        >
-                          Xóa
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-[11px] font-semibold text-[#6B7665] mb-1">
-                            Từ/Cụm từ <span className="text-[#E57373]">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={item.term}
-                            onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
-                            className="w-full px-3 py-1.5 rounded-lg border border-[#E7EEDC] bg-[#FAFDF8] text-xs text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-semibold text-[#6B7665] mb-1">
-                            Phiên âm
-                          </label>
-                          <input
-                            type="text"
-                            value={item.phonetic}
-                            onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
-                            className="w-full px-3 py-1.5 rounded-lg border border-[#E7EEDC] bg-[#FAFDF8] text-xs text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-semibold text-[#6B7665] mb-1">
-                            Nghĩa tiếng Việt <span className="text-[#E57373]">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={item.definition}
-                            onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
-                            placeholder="Nhập nghĩa..."
-                            className="w-full px-3 py-1.5 rounded-lg border border-[#E7EEDC] bg-[#FAFDF8] text-xs text-[#2E3A28] focus:outline-none focus:border-[#A8D672]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-[#E7EEDC]">
-                  <button
-                    type="button"
-                    onClick={() => setAddStep('bulk_input')}
-                    className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                  >
-                    Quay lại nhập
-                  </button>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={handleCloseAddCardModal}
-                      className="px-4 py-2 rounded-xl border border-[#E7EEDC] text-xs font-semibold text-[#6B7665] hover:bg-[#F8FCF4] cursor-pointer"
-                    >
-                      Hủy
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSaveFlashcards}
-                      disabled={submittingCard || bulkPreviewList.length === 0}
-                      className="px-5 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] disabled:opacity-50 cursor-pointer shadow-2xs"
-                    >
-                      {submittingCard ? 'Đang lưu...' : `Lưu tất cả (${bulkPreviewList.length} thẻ)`}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E8EFE5]">
+              <Button type="default" onClick={handleCloseAddCardModal}>
+                Hủy
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleSaveFlashcards}
+                loading={submittingCard}
+                disabled={!singleCard.term.trim()}
+              >
+                Lưu Flashcard
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* STEP 2: BULK INPUT */}
+        {addStep === 'bulk_input' && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-[#1A2416]">
+                Nhập danh sách từ (Mỗi dòng một từ hoặc cụm từ)
+              </label>
+              <textarea
+                rows={8}
+                value={bulkText}
+                onChange={(e) => setBulkText(e.target.value)}
+                placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
+                className="w-full p-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm font-mono text-[#2E3A28]"
+              />
+              <p className="text-xs text-[#66705F]">
+                Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+              <Button type="default" onClick={() => setAddStep('manual')}>
+                Quay lại
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleGeneratePreview}
+                loading={generatingPreview}
+                disabled={!bulkText.trim()}
+              >
+                {generatingPreview ? 'Đang tạo gợi ý bằng AI...' : 'Xem trước'}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: BULK PREVIEW & EDIT */}
+        {addStep === 'bulk_preview' && (
+          <div className="space-y-4">
+            <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+              {bulkPreviewList.map((item, idx) => (
+                <div
+                  key={item.id || idx}
+                  className="bg-[#F9FCF8] border border-[#DCE5D8] p-3.5 rounded-lg space-y-2.5 relative"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#1A2416]">
+                      Từ #{idx + 1}
+                    </span>
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
+                      onClick={() => handleRemovePreviewItem(idx)}
+                    >
+                      Xóa
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
+                        Từ/Cụm từ <span className="text-[#CF1322]">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={item.term}
+                        onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
+                        Phiên âm
+                      </label>
+                      <input
+                        type="text"
+                        value={item.phonetic}
+                        onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
+                        Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={item.definition}
+                        onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
+                        placeholder="Nhập nghĩa..."
+                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+              <Button type="default" onClick={() => setAddStep('bulk_input')}>
+                Quay lại nhập
+              </Button>
+
+              <div className="flex items-center gap-2.5">
+                <Button type="default" onClick={handleCloseAddCardModal}>
+                  Hủy
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={handleSaveFlashcards}
+                  loading={submittingCard}
+                  disabled={bulkPreviewList.length === 0}
+                >
+                  Lưu tất cả ({bulkPreviewList.length} thẻ)
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

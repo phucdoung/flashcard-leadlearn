@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../../components/common';
 
 export default function Messages() {
   const { userId: targetUserId } = useParams();
@@ -291,25 +292,24 @@ export default function Messages() {
   }
 
   return (
-    <div className="py-2 px-4 max-w-4xl mx-auto w-full">
-      <div className="bg-white border border-[#E7EEDC] rounded-2xl sm:rounded-3xl shadow-2xs overflow-hidden flex flex-col md:flex-row min-h-[560px]">
+    <div className="py-4 px-4 max-w-4xl mx-auto w-full">
+      <div className="bg-white border border-[#DCE5D8] rounded-xl shadow-xs overflow-hidden flex flex-col md:flex-row min-h-[560px]">
         {/* 1. Left Column: Conversations List (~35% width) */}
-        <div className="w-full md:w-[35%] border-b md:border-b-0 md:border-r border-[#E7EEDC] bg-[#F8FCF4] flex flex-col justify-between">
-          <div className="p-4 border-b border-[#E7EEDC]">
-            <h2 className="text-lg font-bold text-[#2E3A28]">Tin nhắn</h2>
-            <p className="text-xs text-[#6B7665]">Trò chuyện 1-1 với người học khác</p>
+        <div className="w-full md:w-[35%] border-b md:border-b-0 md:border-r border-[#DCE5D8] bg-[#F8FCF4] flex flex-col justify-between">
+          <div className="p-4 border-b border-[#DCE5D8]">
+            <h2 className="text-base font-bold text-[#14261C]">Tin nhắn</h2>
+            <p className="text-xs text-[#556551]">Trò chuyện 1-1 với người học khác</p>
           </div>
 
           {/* Conversation List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[#E7EEDC]/60 p-2 space-y-1">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#E8EFE5] p-2 space-y-1">
             {conversations.length === 0 ? (
               <div className="p-6 text-center space-y-3">
-                <p className="text-xs text-[#6B7665]">Bạn chưa có cuộc trò chuyện nào.</p>
-                <Link
-                  to="/community"
-                  className="inline-block px-3.5 py-1.5 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-semibold text-[#2E3A28] shadow-2xs"
-                >
-                  Khám phá cộng đồng
+                <p className="text-xs text-[#556551]">Bạn chưa có cuộc trò chuyện nào.</p>
+                <Link to="/community" className="inline-block">
+                  <Button type="primary" size="small">
+                    Khám phá cộng đồng
+                  </Button>
                 </Link>
               </div>
             ) : (
@@ -324,20 +324,20 @@ export default function Messages() {
                       setActiveConversation(conv);
                       navigate(`/messages/${conv.peerId || ''}`);
                     }}
-                    className={`w-full p-3 rounded-xl text-left flex items-center gap-3 transition-colors cursor-pointer ${
+                    className={`w-full p-3 rounded-lg text-left flex items-center gap-3 transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-white border border-[#A8D672] shadow-2xs font-semibold'
+                        ? 'bg-white border border-[#24693D] shadow-xs font-semibold'
                         : 'hover:bg-white/80 border border-transparent'
                     }`}
                   >
-                    <span className="w-9 h-9 rounded-full bg-[#A8D672] text-[#2E3A28] font-bold text-xs flex items-center justify-center shrink-0">
+                    <span className="w-9 h-9 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center shrink-0">
                       U
                     </span>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs sm:text-sm font-bold text-[#2E3A28] block truncate">
+                      <span className="text-xs sm:text-sm font-bold text-[#14261C] block truncate">
                         Người học #{conv.peerId ? conv.peerId.substring(0, 6) : 'Partner'}
                       </span>
-                      <p className="text-[11px] text-[#6B7665] truncate mt-0.5">
+                      <p className="text-[11px] text-[#556551] truncate mt-0.5">
                         {conv.lastMessage || 'Bắt đầu cuộc trò chuyện...'}
                       </p>
                     </div>
@@ -353,19 +353,19 @@ export default function Messages() {
           {activeConversation ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-[#E7EEDC] flex items-center justify-between bg-white">
+              <div className="p-4 border-b border-[#DCE5D8] flex items-center justify-between bg-white">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#A8D672] text-[#2E3A28] font-bold text-xs flex items-center justify-center">
+                  <span className="w-8 h-8 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center">
                     U
                   </span>
                   <div>
-                    <h3 className="text-sm font-bold text-[#2E3A28]">
+                    <h3 className="text-sm font-bold text-[#14261C]">
                       Người học #{activeConversation.peerId ? activeConversation.peerId.substring(0, 6) : 'Partner'}
                     </h3>
                     {activeConversation.peerId && (
                       <Link
                         to={`/users/${activeConversation.peerId}`}
-                        className="text-[11px] text-[#5B9E60] hover:underline"
+                        className="text-[11px] text-[#24693D] hover:underline"
                       >
                         Xem hồ sơ public ➔
                       </Link>
@@ -377,7 +377,7 @@ export default function Messages() {
               {/* Chat History */}
               <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[420px] bg-[#F8FCF4]/40">
                 {messages.length === 0 ? (
-                  <div className="py-12 text-center text-xs text-[#6B7665]">
+                  <div className="py-12 text-center text-xs text-[#556551]">
                     Hãy gửi tin nhắn đầu tiên để chào hỏi! 👋
                   </div>
                 ) : (
@@ -390,14 +390,14 @@ export default function Messages() {
                         className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[78%] px-3.5 py-2 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
+                          className={`max-w-[78%] px-3.5 py-2 rounded-xl text-xs sm:text-sm leading-relaxed border ${
                             isMine
-                              ? 'bg-[#A8D672]/20 border-[#A8D672]/60 text-[#2E3A28] rounded-br-none'
-                              : 'bg-white border-[#E7EEDC] text-[#2E3A28] rounded-bl-none shadow-2xs'
+                              ? 'bg-[#F0F7EE] border-[#24693D]/30 text-[#14261C] rounded-br-none'
+                              : 'bg-white border-[#DCE5D8] text-[#14261C] rounded-bl-none shadow-2xs'
                           }`}
                         >
                           <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                          <span className="block text-[10px] text-[#6B7665]/70 text-right mt-1 font-mono">
+                          <span className="block text-[10px] text-[#8C9B86] text-right mt-1 font-mono">
                             {new Date(msg.created_at).toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -414,7 +414,7 @@ export default function Messages() {
               {/* Chat Input Bar */}
               <form
                 onSubmit={handleSendMessage}
-                className="p-3.5 border-t border-[#E7EEDC] bg-white flex items-center gap-2"
+                className="p-3.5 border-t border-[#DCE5D8] bg-white flex items-center gap-2"
               >
                 <textarea
                   rows={1}
@@ -422,27 +422,27 @@ export default function Messages() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Nhập tin nhắn... (Enter để gửi, Shift+Enter xuống dòng)"
-                  className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4] text-xs sm:text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672] focus:bg-white transition-all resize-none"
+                  className="flex-1 px-3.5 py-2.5 rounded-lg border border-[#DCE5D8] bg-[#F8FCF4] text-xs sm:text-sm text-[#14261C] focus:outline-none focus:border-[#24693D] focus:bg-white transition-all resize-none"
                 />
-                <button
-                  type="submit"
+                <Button
+                  htmlType="submit"
+                  type="primary"
                   disabled={!newMessage.trim() || sending}
-                  className="h-[40px] px-4 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] transition-all shadow-2xs cursor-pointer disabled:opacity-40 shrink-0"
+                  loading={sending}
                 >
-                  {sending ? 'Đang gửi...' : 'Gửi'}
-                </button>
+                  Gửi
+                </Button>
               </form>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
-              <p className="text-xs sm:text-sm font-semibold text-[#6B7665]">
+              <p className="text-xs sm:text-sm font-semibold text-[#556551]">
                 Chọn một cuộc trò chuyện từ danh sách hoặc nhắn tin từ trang Cộng đồng.
               </p>
-              <Link
-                to="/community"
-                className="px-4 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-xs font-bold text-[#2E3A28] shadow-2xs"
-              >
-                Đến trang Cộng đồng
+              <Link to="/community">
+                <Button type="primary" size="small">
+                  Đến trang Cộng đồng
+                </Button>
               </Link>
             </div>
           )}

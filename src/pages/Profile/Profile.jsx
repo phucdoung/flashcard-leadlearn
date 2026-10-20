@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Input, Modal } from '../../components/common';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -429,29 +430,29 @@ export default function Profile() {
     showPhone !== initialShowPhone;
 
   return (
-    <div className="py-2 px-4 max-w-2xl mx-auto space-y-6 w-full">
+    <div className="py-4 px-4 max-w-2xl mx-auto space-y-6 w-full">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#2E3A28]">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
           Thông tin cá nhân
         </h1>
-        <p className="text-xs sm:text-sm text-[#6B7665]">
+        <p className="text-xs sm:text-sm text-[#556551]">
           Quản lý thông tin tài khoản và bảo mật của bạn trên LeafLearn.
         </p>
       </div>
 
       {/* Main Form Container Card */}
-      <div className="bg-white border border-[#E7EEDC] rounded-2xl p-6 sm:p-8 space-y-8 shadow-2xs">
+      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-8 shadow-xs">
         {/* Section 0: Avatar Management */}
-        <div className="space-y-4 pb-6 border-b border-[#E7EEDC]">
-          <h3 className="text-base font-bold text-[#2E3A28]">Ảnh đại diện</h3>
+        <div className="space-y-4 pb-6 border-b border-[#DCE5D8]">
+          <h3 className="text-base font-bold text-[#14261C]">Ảnh đại diện</h3>
 
           {avatarMessage.text && (
             <div
-              className={`p-3 rounded-xl text-xs font-semibold ${
+              className={`p-3 rounded-lg text-xs font-semibold ${
                 avatarMessage.type === 'error'
-                  ? 'bg-[#E57373]/10 border border-[#E57373]/30 text-[#E57373]'
-                  : 'bg-[#5B9E60]/10 border border-[#5B9E60]/30 text-[#5B9E60]'
+                  ? 'bg-[#FFF2F0] border border-[#FFA39E] text-[#CF1322]'
+                  : 'bg-[#F6FFED] border border-[#B7EB8F] text-[#24693D]'
               }`}
             >
               {avatarMessage.type === 'error' ? '✕ ' : '✓ '}
@@ -466,16 +467,16 @@ export default function Profile() {
                 <img
                   src={avatarPreview}
                   alt="Avatar Preview"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-[#A8D672] shadow-2xs"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-[#24693D] shadow-xs"
                 />
               ) : savedAvatarUrl ? (
                 <img
                   src={savedAvatarUrl}
                   alt="Current Avatar"
-                  className="w-20 h-20 rounded-full object-cover border border-[#E7EEDC] shadow-2xs"
+                  className="w-20 h-20 rounded-full object-cover border border-[#DCE5D8] shadow-xs"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-[#A8D672] text-[#2E3A28] font-bold text-2xl flex items-center justify-center border border-[#97C95E]/50 shadow-2xs">
+                <div className="w-20 h-20 rounded-full bg-[#24693D] text-white font-bold text-2xl flex items-center justify-center border border-[#1D5732] shadow-xs">
                   {avatarLetter}
                 </div>
               )}
@@ -495,28 +496,28 @@ export default function Profile() {
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 {avatarPreview ? (
                   <>
-                    <button
-                      type="button"
+                    <Button
+                      type="primary"
+                      size="small"
                       onClick={handleSaveAvatar}
-                      disabled={avatarUploading}
-                      className="px-4 py-2 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] text-xs font-bold transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                      loading={avatarUploading}
                     >
-                      {avatarUploading ? 'Đang lưu...' : 'Lưu ảnh mới'}
-                    </button>
-                    <button
-                      type="button"
+                      Lưu ảnh mới
+                    </Button>
+                    <Button
+                      type="default"
+                      size="small"
                       onClick={handleCancelPreview}
                       disabled={avatarUploading}
-                      className="px-4 py-2 rounded-xl bg-white border border-[#E7EEDC] hover:bg-[#F8FCF4] text-xs font-semibold text-[#6B7665] transition-all cursor-pointer"
                     >
                       Hủy
-                    </button>
+                    </Button>
                   </>
                 ) : (
                   <>
                     <label
                       htmlFor="avatar-upload-input"
-                      className="px-4 py-2 rounded-xl bg-white border border-[#E7EEDC] hover:border-[#A8D672] hover:bg-[#F8FCF4] text-[#2E3A28] text-xs font-semibold transition-all cursor-pointer shadow-2xs inline-block"
+                      className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg border border-[#DCE5D8] bg-white text-xs font-semibold text-[#14261C] hover:border-[#24693D] hover:bg-[#F8FCF4] transition-all cursor-pointer shadow-2xs"
                     >
                       Tải ảnh lên
                     </label>
@@ -525,30 +526,31 @@ export default function Profile() {
                       <>
                         {showConfirmRemove ? (
                           <div className="inline-flex items-center gap-1.5">
-                            <button
-                              type="button"
+                            <Button
+                              type="danger"
+                              size="small"
                               onClick={handleRemoveAvatar}
-                              disabled={avatarUploading}
-                              className="px-3 py-1.5 rounded-xl bg-[#E57373] text-white text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                              loading={avatarUploading}
                             >
                               Xác nhận xóa
-                            </button>
-                            <button
-                              type="button"
+                            </Button>
+                            <Button
+                              type="default"
+                              size="small"
                               onClick={() => setShowConfirmRemove(false)}
-                              className="px-3 py-1.5 rounded-xl bg-white border border-[#E7EEDC] text-xs font-medium text-[#6B7665] transition-all cursor-pointer"
                             >
                               Hủy
-                            </button>
+                            </Button>
                           </div>
                         ) : (
-                          <button
-                            type="button"
+                          <Button
+                            type="text"
+                            size="small"
                             onClick={() => setShowConfirmRemove(true)}
-                            className="px-3.5 py-1.5 rounded-xl bg-transparent hover:bg-[#E57373]/10 text-xs font-medium text-[#E57373] transition-all cursor-pointer"
+                            className="text-[#CF1322] hover:bg-[#FFF2F0]"
                           >
                             Xóa ảnh
-                          </button>
+                          </Button>
                         )}
                       </>
                     )}
@@ -561,36 +563,31 @@ export default function Profile() {
 
         {/* Section 1: Account Information Form */}
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#2E3A28]">Thông tin tài khoản</h3>
+          <h3 className="text-base font-bold text-[#14261C]">Thông tin tài khoản</h3>
 
           {infoSuccess && (
-            <div className="p-3 bg-[#5B9E60]/10 border border-[#5B9E60]/30 rounded-xl text-xs font-semibold text-[#5B9E60]">
+            <div className="p-3 bg-[#F6FFED] border border-[#B7EB8F] rounded-lg text-xs font-semibold text-[#24693D]">
               ✓ {infoSuccess}
             </div>
           )}
 
           {infoError && (
-            <div className="p-3 bg-[#E57373]/10 border border-[#E57373]/30 rounded-xl text-xs font-semibold text-[#E57373]">
+            <div className="p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
               ✕ {infoError}
             </div>
           )}
 
           <form onSubmit={handleSaveInfo} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#2E3A28]">
-                Họ và tên
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Nhập họ và tên..."
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-white text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672] transition-colors"
-              />
-            </div>
+            <Input
+              label="Họ và tên"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Nhập họ và tên..."
+            />
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#2E3A28]">
+              <label className="block text-xs font-semibold text-[#14261C]">
                 Email
               </label>
               <input
@@ -598,35 +595,30 @@ export default function Profile() {
                 value={user?.email || ''}
                 disabled
                 readOnly
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4] text-sm text-[#6B7665] cursor-not-allowed font-mono select-none"
+                className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] bg-[#F8FCF4] text-sm text-[#556551] cursor-not-allowed font-mono select-none"
               />
-              <p className="text-[11px] text-[#6B7665]">
+              <p className="text-[11px] text-[#8C9B86]">
                 Email được dùng làm định danh đăng nhập và không thể thay đổi.
               </p>
             </div>
 
             {/* Phone Number Field */}
-            <div className="space-y-1.5 pt-1">
-              <label className="block text-xs font-medium text-[#2E3A28]">
-                Số điện thoại (tùy chọn)
-              </label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Nhập số điện thoại của bạn..."
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-white text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672] transition-colors"
-              />
-            </div>
+            <Input
+              label="Số điện thoại (tùy chọn)"
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Nhập số điện thoại của bạn..."
+            />
 
             {/* Public Phone Visibility Checkbox */}
             <div className="pt-1">
-              <label className="inline-flex items-center gap-2.5 text-xs font-medium text-[#2E3A28] cursor-pointer select-none">
+              <label className="inline-flex items-center gap-2.5 text-xs font-medium text-[#14261C] cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={showPhone}
                   onChange={(e) => setShowPhone(e.target.checked)}
-                  className="w-4 h-4 rounded border-[#E7EEDC] text-[#5B9E60] focus:ring-[#A8D672] accent-[#5B9E60] cursor-pointer"
+                  className="w-4 h-4 rounded border-[#DCE5D8] text-[#24693D] focus:ring-[#24693D] accent-[#24693D] cursor-pointer"
                 />
                 <span>Hiển thị số điện thoại trên hồ sơ cộng đồng</span>
               </label>
@@ -634,163 +626,140 @@ export default function Profile() {
 
             {isInfoChanged && (
               <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={infoSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-[0.99] disabled:opacity-50"
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={infoSubmitting}
                 >
                   {infoSubmitting ? 'Đang lưu...' : 'Lưu thông tin'}
-                </button>
+                </Button>
               </div>
             )}
           </form>
         </div>
 
         {/* Section 2: Password Change Form */}
-        <div className="space-y-4 pt-6 border-t border-[#E7EEDC]">
-          <h3 className="text-base font-bold text-[#2E3A28]">Đổi mật khẩu</h3>
+        <div className="space-y-4 pt-6 border-t border-[#DCE5D8]">
+          <h3 className="text-base font-bold text-[#14261C]">Đổi mật khẩu</h3>
 
           {passwordSuccess && (
-            <div className="p-3 bg-[#5B9E60]/10 border border-[#5B9E60]/30 rounded-xl text-xs font-semibold text-[#5B9E60]">
+            <div className="p-3 bg-[#F6FFED] border border-[#B7EB8F] rounded-lg text-xs font-semibold text-[#24693D]">
               ✓ {passwordSuccess}
             </div>
           )}
 
           {passwordError && (
-            <div className="p-3 bg-[#E57373]/10 border border-[#E57373]/30 rounded-xl text-xs font-semibold text-[#E57373]">
+            <div className="p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
               ✕ {passwordError}
             </div>
           )}
 
           <form onSubmit={handleSavePassword} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#2E3A28]">
-                Mật khẩu mới
-              </label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Tối thiểu 8 ký tự..."
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-white text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672] transition-colors"
-              />
-            </div>
+            <Input
+              label="Mật khẩu mới"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Tối thiểu 8 ký tự..."
+            />
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-[#2E3A28]">
-                Xác nhận mật khẩu mới
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Nhập lại mật khẩu mới..."
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-white text-sm text-[#2E3A28] focus:outline-none focus:border-[#A8D672] transition-colors"
-              />
-            </div>
+            <Input
+              label="Xác nhận mật khẩu mới"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Nhập lại mật khẩu mới..."
+            />
 
             {(newPassword || confirmPassword) && (
               <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={passwordSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-[0.99] disabled:opacity-50"
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={passwordSubmitting}
                 >
                   {passwordSubmitting ? 'Đang đổi mật khẩu...' : 'Cập nhật mật khẩu'}
-                </button>
+                </Button>
               </div>
             )}
           </form>
         </div>
 
         {/* Section 3: Danger Zone - Delete Account */}
-        <div className="space-y-4 pt-6 border-t border-[#E57373]/20">
+        <div className="space-y-3 pt-6 border-t border-[#FFA39E]/40">
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-[#E57373]">Khu vực nguy hiểm</h3>
-            <p className="text-xs text-[#6B7665] leading-relaxed">
+            <h3 className="text-base font-bold text-[#CF1322]">Khu vực nguy hiểm</h3>
+            <p className="text-xs text-[#556551] leading-relaxed">
               Xóa tài khoản sẽ xóa vĩnh viễn tài khoản và dữ liệu học tập của bạn. Hành động này không thể hoàn tác.
             </p>
           </div>
 
           <div>
-            <button
-              type="button"
+            <Button
+              type="danger"
               onClick={() => {
                 setShowDeleteModal(true);
                 setDeleteInput('');
                 setDeleteError('');
               }}
-              className="px-4 py-2 rounded-xl bg-white border border-[#E57373]/40 text-[#E57373] hover:bg-[#E57373]/10 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
             >
               Xóa tài khoản
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Section 4: Logout Action */}
-        <div className="pt-4 border-t border-[#E7EEDC] flex justify-end">
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="px-5 py-2.5 rounded-xl border border-[#E7EEDC] bg-white hover:bg-[#F8FCF4] text-[#2E3A28] text-xs font-semibold transition-all cursor-pointer shadow-2xs"
-          >
+        <div className="pt-4 border-t border-[#DCE5D8] flex justify-end">
+          <Button type="default" onClick={handleLogout}>
             Đăng xuất khỏi tài khoản
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Delete Account Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-[#2E3A28]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#E57373]/40 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-lg space-y-5">
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold text-[#E57373]">Xác nhận xóa tài khoản</h2>
-              <p className="text-xs text-[#6B7665] leading-relaxed">
-                Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu học tập và không thể hoàn tác. Để tiếp tục, vui lòng nhập chuỗi <strong className="text-[#2E3A28] font-mono">XÓA</strong> vào ô dưới đây.
-              </p>
-            </div>
-
-            {deleteError && (
-              <div className="p-3 bg-[#E57373]/10 border border-[#E57373]/30 rounded-xl text-xs font-semibold text-[#E57373]">
-                ✕ {deleteError}
-              </div>
-            )}
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-[#2E3A28]">
-                Nhập "XÓA" để xác nhận
-              </label>
-              <input
-                type="text"
-                value={deleteInput}
-                onChange={(e) => setDeleteInput(e.target.value)}
-                placeholder="XÓA"
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E7EEDC] bg-[#F8FCF4] text-sm text-[#2E3A28] font-mono focus:outline-none focus:border-[#E57373]"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleteSubmitting}
-                className="px-4 py-2 rounded-xl bg-white border border-[#E7EEDC] hover:bg-[#F8FCF4] text-xs font-semibold text-[#6B7665] transition-all cursor-pointer"
-              >
-                Hủy
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                disabled={deleteInput !== 'XÓA' || deleteSubmitting}
-                className="px-4 py-2 rounded-xl bg-[#E57373] hover:bg-[#d32f2f] text-white text-xs font-bold transition-all cursor-pointer shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {deleteSubmitting ? 'Đang xóa...' : 'Xóa tài khoản vĩnh viễn'}
-              </button>
-            </div>
+      {/* Delete Account Confirmation Modal using Ant Design Modal component */}
+      <Modal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Xác nhận xóa tài khoản"
+        width="max-w-md"
+        footer={
+          <div className="flex items-center justify-end gap-2.5">
+            <Button
+              type="default"
+              onClick={() => setShowDeleteModal(false)}
+              disabled={deleteSubmitting}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="danger"
+              onClick={handleDeleteAccount}
+              loading={deleteSubmitting}
+              disabled={deleteInput !== 'XÓA' || deleteSubmitting}
+            >
+              {deleteSubmitting ? 'Đang xóa...' : 'Xóa tài khoản vĩnh viễn'}
+            </Button>
           </div>
-        </div>
-      )}
+        }
+      >
+        <p className="text-xs text-[#556551] leading-relaxed mb-4">
+          Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu học tập và không thể hoàn tác. Để tiếp tục, vui lòng nhập chuỗi <strong className="text-[#14261C] font-mono">XÓA</strong> vào ô dưới đây.
+        </p>
+
+        {deleteError && (
+          <div className="mb-4 p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
+            ✕ {deleteError}
+          </div>
+        )}
+
+        <Input
+          label='Nhập "XÓA" để xác nhận'
+          type="text"
+          value={deleteInput}
+          onChange={(e) => setDeleteInput(e.target.value)}
+          placeholder="XÓA"
+        />
+      </Modal>
     </div>
   );
 }

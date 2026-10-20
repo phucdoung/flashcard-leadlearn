@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { Button, Tag, Empty } from '../../components/common';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -130,8 +131,11 @@ export default function PublicProfile() {
 
   if (loading) {
     return (
-      <div className="py-16 text-center text-sm font-medium text-[#6B7665] animate-pulse">
-        Đang tải hồ sơ người dùng thật...
+      <div className="py-24 text-center max-w-md mx-auto px-4">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
+        <p className="mt-4 text-sm font-medium text-[#556551]">
+          Đang tải hồ sơ người dùng...
+        </p>
       </div>
     );
   }
@@ -139,19 +143,19 @@ export default function PublicProfile() {
   const isSelf = currentUser && currentUser.id === id;
 
   return (
-    <div className="py-2 px-4 max-w-4xl mx-auto space-y-6 w-full">
+    <div className="py-4 px-4 max-w-4xl mx-auto space-y-6 w-full">
       {/* Profile Header Main Card */}
-      <div className="bg-white border border-[#E7EEDC] rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xs">
+      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Avatar */}
           {profileUser?.avatar ? (
             <img
               src={profileUser.avatar}
               alt={profileUser.name}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#97C95E]/50 shrink-0"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#24693D] shrink-0"
             />
           ) : (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A8D672] text-[#2E3A28] font-bold text-3xl flex items-center justify-center border-2 border-[#97C95E]/50 shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#24693D] text-white font-bold text-3xl flex items-center justify-center border-2 border-[#1D5732] shrink-0">
               {profileUser?.name ? profileUser.name.charAt(0).toUpperCase() : 'U'}
             </div>
           )}
@@ -159,10 +163,10 @@ export default function PublicProfile() {
           {/* User Info */}
           <div className="flex-1 text-center sm:text-left space-y-2">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#2E3A28] tracking-tight">
-                {profileUser?.name} {isSelf && <span className="text-xs text-[#5B9E60] font-normal">(Bạn)</span>}
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+                {profileUser?.name} {isSelf && <span className="text-xs text-[#24693D] font-normal">(Bạn)</span>}
               </h1>
-              <span className="text-xs text-[#6B7665] font-medium block mt-0.5">
+              <span className="text-xs text-[#556551] font-medium block mt-0.5">
                 Hồ sơ học tập công khai
               </span>
             </div>
@@ -170,16 +174,16 @@ export default function PublicProfile() {
             {/* Optional Public Phone Section */}
             {profileUser?.phone && (profileUser?.showPhone || isSelf) && (
               <div className="pt-1.5">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#F8FCF4] border border-[#E7EEDC] text-xs font-semibold text-[#2E3A28]">
-                  <span className="text-[#5B9E60]">Liên hệ:</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#F8FCF4] border border-[#DCE5D8] text-xs font-semibold text-[#14261C]">
+                  <span className="text-[#24693D]">Liên hệ:</span>
                   <a
                     href={`tel:${profileUser.phone}`}
-                    className="font-mono text-[#2E3A28] hover:text-[#5B9E60] hover:underline transition-colors"
+                    className="font-mono text-[#14261C] hover:text-[#24693D] hover:underline transition-colors"
                   >
                     {profileUser.phone}
                   </a>
                   {isSelf && !profileUser.showPhone && (
-                    <span className="text-[11px] text-[#6B7665] font-normal italic">
+                    <span className="text-[11px] text-[#8C9B86] font-normal italic">
                       (Chỉ bạn nhìn thấy)
                     </span>
                   )}
@@ -189,30 +193,30 @@ export default function PublicProfile() {
 
             {/* 4 Key Statistics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
-              <div className="bg-[#F8FCF4] border border-[#E7EEDC] rounded-xl p-3 text-center">
-                <span className="block text-[11px] text-[#6B7665]">Bộ thẻ công khai</span>
-                <span className="text-lg font-bold text-[#2E3A28] mt-0.5 block font-mono">
+              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
+                <span className="block text-[11px] text-[#556551]">Bộ thẻ công khai</span>
+                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
                   {publicSets.length}
                 </span>
               </div>
 
-              <div className="bg-[#F8FCF4] border border-[#E7EEDC] rounded-xl p-3 text-center">
-                <span className="block text-[11px] text-[#6B7665]">Từ đã thuộc</span>
-                <span className="text-lg font-bold text-[#2E3A28] mt-0.5 block font-mono">
+              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
+                <span className="block text-[11px] text-[#556551]">Từ đã thuộc</span>
+                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
                   {userStats.masteredCards}
                 </span>
               </div>
 
-              <div className="bg-[#F8FCF4] border border-[#E7EEDC] rounded-xl p-3 text-center">
-                <span className="block text-[11px] text-[#6B7665]">Quiz đã làm</span>
-                <span className="text-lg font-bold text-[#2E3A28] mt-0.5 block font-mono">
+              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
+                <span className="block text-[11px] text-[#556551]">Quiz đã làm</span>
+                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
                   {userStats.quizCount}
                 </span>
               </div>
 
-              <div className="bg-[#5B9E60]/15 border border-[#5B9E60]/30 rounded-xl p-3 text-center">
-                <span className="block text-[11px] text-[#6B7665]">Điểm học tập</span>
-                <span className="text-lg font-bold text-[#5B9E60] mt-0.5 block font-mono">
+              <div className="bg-[#F6FFED] border border-[#B7EB8F] rounded-lg p-3 text-center">
+                <span className="block text-[11px] text-[#24693D]">Điểm học tập</span>
+                <span className="text-lg font-bold text-[#24693D] mt-0.5 block font-mono">
                   {userStats.learningScore}
                 </span>
               </div>
@@ -222,43 +226,43 @@ export default function PublicProfile() {
       </div>
 
       {/* Public Flashcard Sets Section */}
-      <div className="bg-white border border-[#E7EEDC] rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xs">
-        <div className="border-b border-[#E7EEDC] pb-3 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-bold text-[#2E3A28]">
+      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-5 shadow-xs">
+        <div className="border-b border-[#DCE5D8] pb-3 flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-bold text-[#14261C]">
             Bộ thẻ Flashcard công khai ({publicSets.length})
           </h2>
         </div>
 
         {publicSets.length === 0 ? (
-          <div className="py-8 text-center text-xs sm:text-sm text-[#6B7665]">
-            Người dùng chưa tạo bộ thẻ Flashcard công khai nào.
+          <div className="py-8 text-center">
+            <Empty
+              title="Chưa có bộ thẻ công khai"
+              description="Người dùng chưa tạo bộ thẻ Flashcard công khai nào."
+            />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {publicSets.map((set) => (
               <div
                 key={set.id}
-                className="bg-[#F8FCF4] border border-[#E7EEDC] rounded-2xl p-5 hover:border-[#A8D672] transition-all space-y-3 flex flex-col justify-between"
+                className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-xl p-5 hover:border-[#24693D]/50 transition-colors space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-1.5">
-                  <h3 className="font-bold text-base text-[#2E3A28] truncate">
+                  <h3 className="font-bold text-base text-[#14261C] truncate">
                     {set.title}
                   </h3>
-                  <p className="text-xs text-[#6B7665] line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#556551] line-clamp-2 leading-relaxed">
                     {set.description || 'Chưa có mô tả cho bộ thẻ này.'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#E7EEDC] text-xs">
-                  <span className="font-semibold text-[#5B9E60]">
-                    {set.totalCards} thẻ Flashcard
-                  </span>
+                <div className="flex items-center justify-between pt-2 border-t border-[#DCE5D8] text-xs">
+                  <Tag color="green">{set.totalCards} thẻ Flashcard</Tag>
 
-                  <Link
-                    to={`/flashcard/${set.id}`}
-                    className="px-3 py-1.5 rounded-lg bg-white border border-[#E7EEDC] hover:border-[#A8D672] text-xs font-semibold text-[#2E3A28] transition-all"
-                  >
-                    Xem bộ thẻ ➔
+                  <Link to={`/flashcard/${set.id}`}>
+                    <Button size="small" type="default">
+                      Xem bộ thẻ ➔
+                    </Button>
                   </Link>
                 </div>
               </div>

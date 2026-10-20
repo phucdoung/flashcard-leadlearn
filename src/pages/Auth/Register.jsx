@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { Button, Input } from '../../components/common';
 
 export default function Register() {
   const [fullName, setFullName] = useState('');
@@ -126,125 +127,120 @@ export default function Register() {
   };
 
   return (
-    <div className="bg-white border border-[#E7EEDC] rounded-[22px] shadow-sm overflow-hidden flex flex-col md:flex-row w-full my-auto">
+    <div className="bg-white border border-[#DCE5D8] rounded-2xl shadow-xs overflow-hidden flex flex-col md:flex-row w-full my-auto">
       {/* 1. Left Branding Column (Desktop & Tablet: ~48% width) */}
-      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#E7EEDC] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#A8D672]/20 blur-2xl pointer-events-none" />
+      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#DCE5D8] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#24693D]/10 blur-2xl pointer-events-none" />
 
         {/* Logo Unit */}
         <div className="relative z-10">
-          <Link to="/" className="inline-flex items-center gap-3.5 group">
+          <Link to="/" className="inline-flex items-center group focus:outline-none" aria-label="LeafLearn">
             <img
               src="/logo.png"
               alt="LeafLearn Logo"
-              className="w-12 h-12 lg:w-14 lg:h-14 object-contain rounded-full mix-blend-multiply transition-transform group-hover:scale-105"
+              className="h-16 lg:h-20 w-auto object-contain transition-transform group-hover:scale-105"
             />
-            <span className="tracking-tight font-bold text-2xl lg:text-[30px] text-[#2E3A28]">
-              LeafLearn
-            </span>
+            <span className="sr-only">LeafLearn</span>
           </Link>
         </div>
 
         {/* Brand Value Proposition */}
         <div className="space-y-4 my-8 relative z-10">
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#2E3A28] leading-[1.25] tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#14261C] leading-[1.25] tracking-tight">
             Tạo tài khoản LeafLearn ngay hôm nay.
           </h1>
-          <p className="text-sm lg:text-base text-[#6B7665] leading-relaxed">
+          <p className="text-sm lg:text-base text-[#556551] leading-relaxed">
             Bắt đầu hành trình ghi nhớ từ vựng hiệu quả mỗi ngày cùng trí tuệ nhân tạo.
           </p>
 
-          <div className="space-y-2.5 pt-6 border-t border-[#E7EEDC]">
-            <div className="text-xs lg:text-sm font-semibold text-[#2E3A28] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A8D672] shrink-0" />
+          <div className="space-y-3 pt-6 border-t border-[#DCE5D8]">
+            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
               <span>Bắt buộc xác nhận Email trước khi đăng nhập</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#2E3A28] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A8D672] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
               <span>Gợi ý nghĩa từ vựng tự động bằng AI</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#2E3A28] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A8D672] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
               <span>Chia sẻ bộ thẻ với cộng đồng</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[11px] text-[#6B7665]/70 font-medium">
+        <div className="relative z-10 text-[11px] text-[#8C9B86] font-medium">
           © 2026 LeafLearn. Nền tảng học từ vựng tiếng Anh tối giản.
         </div>
       </div>
 
       {/* 2. Right Form Column (~52% width) */}
-      <div className="w-full md:w-[52%] bg-white p-6 sm:p-10 lg:p-[48px] flex flex-col justify-center">
+      <div className="w-full md:w-[52%] bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
         {/* Mobile Header Logo */}
         <div className="md:hidden text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-3">
+          <Link to="/" className="inline-flex items-center justify-center focus:outline-none" aria-label="LeafLearn">
             <img
               src="/logo.png"
               alt="LeafLearn Logo"
-              className="w-11 h-11 object-contain rounded-full mix-blend-multiply"
+              className="h-14 w-auto object-contain"
             />
-            <span className="tracking-tight font-bold text-2xl text-[#2E3A28]">
-              LeafLearn
-            </span>
+            <span className="sr-only">LeafLearn</span>
           </Link>
         </div>
 
         {registeredEmail ? (
           /* Mandatory Email Confirmation Panel */
           <div className="space-y-6 text-center py-2">
-            <div className="w-14 h-14 rounded-full bg-[#5B9E60]/15 border border-[#5B9E60]/30 flex items-center justify-center mx-auto text-[#5B9E60] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-[#F6FFED] border border-[#B7EB8F] flex items-center justify-center mx-auto text-[#24693D] font-bold text-2xl">
               ✓
             </div>
 
             <div className="space-y-2.5">
-              <h2 className="text-2xl font-bold text-[#2E3A28] tracking-tight">
+              <h2 className="text-2xl font-bold text-[#14261C] tracking-tight">
                 Đăng ký thành công!
               </h2>
-              <p className="text-xs sm:text-sm text-[#6B7665] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed">
                 Chúng tôi đã gửi một liên kết xác nhận đến email:
-                <span className="block font-semibold text-[#2E3A28] font-mono mt-1">
+                <span className="block font-semibold text-[#14261C] font-mono mt-1">
                   {registeredEmail}
                 </span>
               </p>
-              <div className="p-4 bg-[#F8FCF4] border border-[#E7EEDC] rounded-xl text-xs text-[#6B7665] text-left leading-relaxed mt-3">
-                <span className="font-semibold text-[#2E3A28] block mb-1">
+              <div className="p-4 bg-[#F8FCF4] border border-[#DCE5D8] rounded-xl text-xs text-[#556551] text-left leading-relaxed mt-3">
+                <span className="font-semibold text-[#14261C] block mb-1">
                   📌 Bước tiếp theo:
                 </span>
                 Mở hộp thư điện tử của bạn và nhấn vào nút <strong>"Xác nhận tài khoản"</strong> để có thể đăng nhập vào LeafLearn.
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#E7EEDC]">
-              <Link
-                to="/login"
-                className="w-full h-[48px] rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-sm transition-all cursor-pointer shadow-2xs flex items-center justify-center"
-              >
-                Đến trang Đăng nhập
+            <div className="pt-4 border-t border-[#DCE5D8]">
+              <Link to="/login" className="block w-full">
+                <Button type="primary" size="large" block>
+                  Đến trang Đăng nhập
+                </Button>
               </Link>
             </div>
           </div>
         ) : (
           /* Normal Registration Input Form State */
           <div>
-            <div className="space-y-1.5 mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#2E3A28] tracking-tight">
+            <div className="space-y-1 mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
                 Tạo tài khoản
               </h2>
-              <p className="text-xs sm:text-sm text-[#6B7665]">
+              <p className="text-xs sm:text-sm text-[#556551]">
                 Đăng ký để trải nghiệm công cụ học tập thông minh cùng LeafLearn.
               </p>
             </div>
 
             {authError && (
-              <div className="mb-5 bg-[#E57373]/15 border border-[#E57373]/30 p-3.5 rounded-xl text-xs text-[#E57373] font-medium text-center leading-relaxed space-y-2">
+              <div className="mb-5 bg-[#FFF2F0] border border-[#FFA39E] p-3.5 rounded-lg text-xs text-[#CF1322] font-medium text-center leading-relaxed space-y-2">
                 <p>{authError}</p>
                 {authError.includes('đã được sử dụng') && (
-                  <div className="pt-1 border-t border-[#E57373]/20">
+                  <div className="pt-1 border-t border-[#FFA39E]/40">
                     <Link
                       to="/login"
-                      className="text-xs font-semibold text-[#2E3A28] underline hover:text-[#5B9E60] transition-colors"
+                      className="text-xs font-semibold text-[#24693D] underline hover:text-[#1D5732] transition-colors"
                     >
                       Đến trang Đăng nhập ➔
                     </Link>
@@ -255,127 +251,83 @@ export default function Register() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Full Name Field */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">
-                  Họ và tên
-                </label>
-                <input
-                  type="text"
-                  value={fullName}
-                  disabled={submitting}
-                  onChange={(e) => {
-                    setFullName(e.target.value);
-                    if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }));
-                  }}
-                  placeholder="Nguyễn Văn A"
-                  className={`w-full h-[48px] px-4 rounded-xl border text-sm text-[#2E3A28] placeholder-[#6B7665]/60 transition-all focus:outline-none disabled:bg-[#F8FCF4] ${
-                    errors.fullName
-                      ? 'border-[#E57373] bg-[#E57373]/5'
-                      : 'border-[#E1E8D8] bg-white focus:border-[#A8D672]'
-                  }`}
-                />
-                {errors.fullName && (
-                  <span className="block text-xs text-[#E57373] font-medium">
-                    {errors.fullName}
-                  </span>
-                )}
-              </div>
+              <Input
+                label="Họ và tên"
+                type="text"
+                value={fullName}
+                disabled={submitting}
+                onChange={(e) => {
+                  setFullName(e.target.value);
+                  if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }));
+                }}
+                placeholder="Nguyễn Văn A"
+                status={errors.fullName ? 'error' : ''}
+                error={errors.fullName}
+              />
 
               {/* Email Field */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  disabled={submitting}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
-                  }}
-                  placeholder="name@example.com"
-                  className={`w-full h-[48px] px-4 rounded-xl border text-sm text-[#2E3A28] placeholder-[#6B7665]/60 transition-all focus:outline-none disabled:bg-[#F8FCF4] ${
-                    errors.email
-                      ? 'border-[#E57373] bg-[#E57373]/5'
-                      : 'border-[#E1E8D8] bg-white focus:border-[#A8D672]'
-                  }`}
-                />
-                {errors.email && (
-                  <span className="block text-xs text-[#E57373] font-medium">
-                    {errors.email}
-                  </span>
-                )}
-              </div>
+              <Input
+                label="Email"
+                type="email"
+                value={email}
+                disabled={submitting}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                }}
+                placeholder="name@example.com"
+                status={errors.email ? 'error' : ''}
+                error={errors.email}
+              />
 
               {/* Password Field */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">
-                  Mật khẩu
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  disabled={submitting}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
-                  }}
-                  placeholder="Tối thiểu 8 ký tự"
-                  className={`w-full h-[48px] px-4 rounded-xl border text-sm text-[#2E3A28] placeholder-[#6B7665]/60 transition-all focus:outline-none disabled:bg-[#F8FCF4] ${
-                    errors.password
-                      ? 'border-[#E57373] bg-[#E57373]/5'
-                      : 'border-[#E1E8D8] bg-white focus:border-[#A8D672]'
-                  }`}
-                />
-                {errors.password && (
-                  <span className="block text-xs text-[#E57373] font-medium">
-                    {errors.password}
-                  </span>
-                )}
-              </div>
+              <Input
+                label="Mật khẩu"
+                type="password"
+                value={password}
+                disabled={submitting}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+                }}
+                placeholder="Tối thiểu 8 ký tự"
+                status={errors.password ? 'error' : ''}
+                error={errors.password}
+              />
 
               {/* Confirm Password Field */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">
-                  Xác nhận mật khẩu
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  disabled={submitting}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
-                  }}
-                  placeholder="Nhập lại mật khẩu"
-                  className={`w-full h-[48px] px-4 rounded-xl border text-sm text-[#2E3A28] placeholder-[#6B7665]/60 transition-all focus:outline-none disabled:bg-[#F8FCF4] ${
-                    errors.confirmPassword
-                      ? 'border-[#E57373] bg-[#E57373]/5'
-                      : 'border-[#E1E8D8] bg-white focus:border-[#A8D672]'
-                  }`}
-                />
-                {errors.confirmPassword && (
-                  <span className="block text-xs text-[#E57373] font-medium">
-                    {errors.confirmPassword}
-                  </span>
-                )}
-              </div>
+              <Input
+                label="Xác nhận mật khẩu"
+                type="password"
+                value={confirmPassword}
+                disabled={submitting}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                }}
+                placeholder="Nhập lại mật khẩu"
+                status={errors.confirmPassword ? 'error' : ''}
+                error={errors.confirmPassword}
+              />
 
               {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full h-[48px] rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-sm transition-all cursor-pointer shadow-2xs active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-              >
-                {submitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}
-              </button>
+              <div className="pt-2">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="large"
+                  block
+                  loading={submitting}
+                >
+                  {submitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}
+                </Button>
+              </div>
             </form>
 
             {/* Footer Link */}
-            <div className="mt-6 text-center text-xs sm:text-sm text-[#6B7665]">
+            <div className="mt-6 text-center text-xs sm:text-sm text-[#556551]">
               Đã có tài khoản?{' '}
-              <Link to="/login" className="text-[#5B9E60] hover:underline font-semibold">
+              <Link to="/login" className="text-[#24693D] hover:underline font-semibold">
                 Đăng nhập
               </Link>
             </div>

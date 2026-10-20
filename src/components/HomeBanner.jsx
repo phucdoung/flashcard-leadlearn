@@ -53,7 +53,7 @@ export default function HomeBanner() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="relative w-full max-w-[1080px] mx-auto h-[220px] sm:h-[300px] md:h-[360px] lg:h-[390px] rounded-[20px] overflow-hidden shadow-2xs group bg-[#F8FCF4] border border-[#E7EEDC]"
+      className="relative w-full max-w-[1080px] mx-auto h-[220px] sm:h-[300px] md:h-[360px] lg:h-[390px] rounded-2xl overflow-hidden shadow-xs group bg-[#F8FCF4] border border-[#DCE5D8]"
     >
       {/* 2 Full Image Slides Container */}
       <div
@@ -99,7 +99,7 @@ export default function HomeBanner() {
             onClick={() => setCurrentSlide(idx)}
             className={`transition-all duration-300 cursor-pointer focus:outline-none ${
               currentSlide === idx
-                ? 'w-[26px] h-[7px] rounded-full bg-[#A8D672]'
+                ? 'w-[26px] h-[7px] rounded-full bg-[#24693D]'
                 : 'w-[7px] h-[7px] rounded-full bg-white/70 hover:bg-white'
             }`}
             title={`Banner ${idx + 1}`}

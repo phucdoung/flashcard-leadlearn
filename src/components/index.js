@@ -1,5 +1,8 @@
 export { default as Navbar } from './Navbar';
 export { default as Footer } from './Footer';
-export { default as Button } from './Button';
-export { default as Card } from './Card';
-export { default as Input } from './Input';
+export { default as Button } from './common/Button';
+export { default as Card } from './common/Card';
+export { default as Input } from './common/Input';
+export { default as Modal } from './common/Modal';
+export { default as Tag } from './common/Tag';
+export { default as Empty } from './common/Empty';

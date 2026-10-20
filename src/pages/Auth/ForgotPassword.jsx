@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import { Button, Input } from '../../components/common';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -94,174 +95,163 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="bg-white border border-[#E7EEDC] rounded-[22px] shadow-sm overflow-hidden flex flex-col md:flex-row w-full my-auto">
+    <div className="bg-white border border-[#DCE5D8] rounded-2xl shadow-xs overflow-hidden flex flex-col md:flex-row w-full my-auto">
       {/* 1. Left Branding Column (~48% width) */}
-      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#E7EEDC] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#A8D672]/20 blur-2xl pointer-events-none" />
+      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#DCE5D8] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#24693D]/10 blur-2xl pointer-events-none" />
 
         {/* Logo Unit */}
         <div className="relative z-10">
-          <Link to="/" className="inline-flex items-center gap-3.5 group">
+          <Link to="/" className="inline-flex items-center group focus:outline-none" aria-label="LeafLearn">
             <img
               src="/logo.png"
               alt="LeafLearn Logo"
-              className="w-12 h-12 lg:w-14 lg:h-14 object-contain rounded-full mix-blend-multiply transition-transform group-hover:scale-105"
+              className="h-16 lg:h-20 w-auto object-contain transition-transform group-hover:scale-105"
             />
-            <span className="tracking-tight font-bold text-2xl lg:text-[30px] text-[#2E3A28]">
-              LeafLearn
-            </span>
+            <span className="sr-only">LeafLearn</span>
           </Link>
         </div>
 
         {/* Value Prop */}
         <div className="space-y-4 my-8 relative z-10">
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#2E3A28] leading-[1.25] tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#14261C] leading-[1.25] tracking-tight">
             Khôi phục truy cập tài khoản.
           </h1>
-          <p className="text-sm lg:text-base text-[#6B7665] leading-relaxed">
+          <p className="text-sm lg:text-base text-[#556551] leading-relaxed">
             Chúng tôi sẽ gửi liên kết bảo mật giúp bạn thiết lập lại mật khẩu an toàn.
           </p>
 
-          <div className="space-y-2.5 pt-6 border-t border-[#E7EEDC]">
-            <div className="text-xs lg:text-sm font-semibold text-[#2E3A28] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A8D672] shrink-0" />
+          <div className="space-y-3 pt-6 border-t border-[#DCE5D8]">
+            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
               <span>Bảo mật chống dò quét Email</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#2E3A28] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A8D672] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
               <span>Liên kết xác nhận có thời hạn</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[11px] text-[#6B7665]/70 font-medium">
+        <div className="relative z-10 text-[11px] text-[#8C9B86] font-medium">
           © 2026 LeafLearn. Nền tảng học từ vựng tiếng Anh tối giản.
         </div>
       </div>
 
       {/* 2. Right Form Column (~52% width) */}
-      <div className="w-full md:w-[52%] bg-white p-6 sm:p-10 lg:p-[48px] flex flex-col justify-center">
+      <div className="w-full md:w-[52%] bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
         {/* Mobile Header Logo */}
         <div className="md:hidden text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-3">
+          <Link to="/" className="inline-flex items-center justify-center focus:outline-none" aria-label="LeafLearn">
             <img
               src="/logo.png"
               alt="LeafLearn Logo"
-              className="w-11 h-11 object-contain rounded-full mix-blend-multiply"
+              className="h-14 w-auto object-contain"
             />
-            <span className="tracking-tight font-bold text-2xl text-[#2E3A28]">
-              LeafLearn
-            </span>
+            <span className="sr-only">LeafLearn</span>
           </Link>
         </div>
 
         {isSubmitted ? (
           /* Neutral Anti-Account-Enumeration Success State */
           <div className="space-y-6 text-center py-2">
-            <div className="w-14 h-14 rounded-full bg-[#5B9E60]/15 border border-[#5B9E60]/30 flex items-center justify-center mx-auto text-[#5B9E60] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-[#F6FFED] border border-[#B7EB8F] flex items-center justify-center mx-auto text-[#24693D] font-bold text-2xl">
               ✓
             </div>
 
             <div className="space-y-2.5">
-              <h2 className="text-2xl font-bold text-[#2E3A28] tracking-tight">
+              <h2 className="text-2xl font-bold text-[#14261C] tracking-tight">
                 Kiểm tra email của bạn
               </h2>
-              <p className="text-xs sm:text-sm text-[#6B7665] leading-relaxed max-w-sm mx-auto">
-                Nếu tài khoản gắn với <strong className="text-[#2E3A28]">{submittedEmail}</strong> tồn tại, bạn sẽ nhận được liên kết đặt lại mật khẩu.
+              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed max-w-sm mx-auto">
+                Nếu tài khoản gắn với <strong className="text-[#14261C]">{submittedEmail}</strong> tồn tại, bạn sẽ nhận được liên kết đặt lại mật khẩu.
               </p>
-              <p className="text-xs text-[#6B7665]/80 italic">
+              <p className="text-xs text-[#8C9B86] italic">
                 (Vui lòng kiểm tra cả thư mục Spam hoặc Thư rác)
               </p>
             </div>
 
             {authError && (
-              <div className="bg-[#E57373]/15 border border-[#E57373]/30 p-3 rounded-xl text-xs text-[#E57373] font-medium text-center">
+              <div className="bg-[#FFF2F0] border border-[#FFA39E] p-3 rounded-lg text-xs text-[#CF1322] font-medium text-center">
                 {authError}
               </div>
             )}
 
             <div className="space-y-3 pt-2">
-              <button
-                type="button"
+              <Button
+                type="default"
+                size="large"
+                block
                 onClick={handleResend}
                 disabled={submitting || countdown > 0}
-                className="w-full h-[48px] rounded-xl bg-white border border-[#E7EEDC] hover:bg-[#F8FCF4] text-[#2E3A28] font-semibold text-sm transition-all shadow-2xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting
                   ? 'Đang gửi...'
                   : countdown > 0
                   ? `Gửi lại sau ${countdown}s`
                   : 'Gửi lại liên kết'}
-              </button>
+              </Button>
 
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center w-full h-[48px] rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-sm transition-all shadow-2xs cursor-pointer"
-              >
-                Quay lại đăng nhập
+              <Link to="/login" className="block w-full">
+                <Button type="primary" size="large" block>
+                  Quay lại đăng nhập
+                </Button>
               </Link>
             </div>
           </div>
         ) : (
           /* Normal Input Form State */
           <div>
-            <div className="space-y-1.5 mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#2E3A28] tracking-tight">
+            <div className="space-y-1 mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
                 Quên mật khẩu?
               </h2>
-              <p className="text-xs sm:text-sm text-[#6B7665] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed">
                 Nhập email đã đăng ký. LeafLearn sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
               </p>
             </div>
 
             {authError && (
-              <div className="mb-5 bg-[#E57373]/15 border border-[#E57373]/30 p-3.5 rounded-xl text-xs text-[#E57373] font-medium text-center leading-relaxed">
+              <div className="mb-5 bg-[#FFF2F0] border border-[#FFA39E] p-3.5 rounded-lg text-xs text-[#CF1322] font-medium text-center leading-relaxed">
                 {authError}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#2E3A28]">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  disabled={submitting}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (emailError) setEmailError('');
-                  }}
-                  placeholder="Nhập email của bạn"
-                  className={`w-full h-[50px] px-4 rounded-xl border text-sm text-[#2E3A28] placeholder-[#6B7665]/60 transition-all focus:outline-none disabled:bg-[#F8FCF4] ${
-                    emailError
-                      ? 'border-[#E57373] bg-[#E57373]/5'
-                      : 'border-[#E1E8D8] bg-white focus:border-[#A8D672]'
-                  }`}
-                />
-                {emailError && (
-                  <span className="block text-xs text-[#E57373] font-medium">
-                    {emailError}
-                  </span>
-                )}
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                label="Email"
+                type="email"
+                value={email}
+                disabled={submitting}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError('');
+                }}
+                placeholder="Nhập email của bạn"
+                status={emailError ? 'error' : ''}
+                error={emailError}
+              />
 
-              <button
-                type="submit"
-                disabled={submitting || countdown > 0 || !email.trim()}
-                className="w-full h-[50px] rounded-xl bg-[#A8D672] hover:bg-[#97C95E] text-[#2E3A28] font-semibold text-sm transition-all cursor-pointer shadow-2xs active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-              >
-                {submitting
-                  ? 'Đang gửi...'
-                  : countdown > 0
-                  ? `Gửi lại sau ${countdown}s`
-                  : 'Gửi liên kết đặt lại mật khẩu'}
-              </button>
+              <div className="pt-2">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="large"
+                  block
+                  loading={submitting}
+                  disabled={submitting || countdown > 0 || !email.trim()}
+                >
+                  {submitting
+                    ? 'Đang gửi...'
+                    : countdown > 0
+                    ? `Gửi lại sau ${countdown}s`
+                    : 'Gửi liên kết đặt lại mật khẩu'}
+                </Button>
+              </div>
             </form>
 
-            <div className="mt-8 text-center text-xs sm:text-sm text-[#6B7665]">
-              <Link to="/login" className="text-[#5B9E60] hover:underline font-semibold">
+            <div className="mt-8 text-center text-xs sm:text-sm text-[#556551]">
+              <Link to="/login" className="text-[#24693D] hover:underline font-semibold">
                 Quay lại đăng nhập
               </Link>
             </div>
