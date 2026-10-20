@@ -49,20 +49,20 @@ export default function Button({
   } else {
     switch (type) {
       case 'primary':
-        variantClass = 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-emerald-500/30';
+        variantClass = 'bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white font-medium shadow-xs hover:shadow-sm focus-visible:ring-2 focus-visible:ring-[#1f4e38]/30';
         break;
       case 'outlined':
-        variantClass = 'bg-transparent border border-emerald-600 text-emerald-600 font-medium hover:bg-emerald-50 active:bg-emerald-100 focus-visible:ring-2 focus-visible:ring-emerald-500/20';
+        variantClass = 'bg-transparent border border-[#1f4e38] text-[#1f4e38] font-medium hover:bg-[#1f4e38]/5 active:bg-[#1f4e38]/10 focus-visible:ring-2 focus-visible:ring-[#1f4e38]/20';
         break;
       case 'text':
         variantClass = 'bg-transparent border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200';
         break;
       case 'link':
-        variantClass = 'bg-transparent border-transparent text-emerald-600 hover:text-emerald-700 hover:underline p-0 h-auto shadow-none';
+        variantClass = 'bg-transparent border-transparent text-[#1f4e38] hover:text-[#173b2a] hover:underline p-0 h-auto shadow-none';
         break;
       case 'default':
       default:
-        variantClass = 'bg-white border border-slate-200 text-slate-700 font-medium hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50/80 active:bg-slate-100 shadow-xs focus-visible:ring-2 focus-visible:ring-slate-300/40';
+        variantClass = 'bg-white border border-slate-200 text-slate-700 font-medium hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50/80 active:bg-slate-100 shadow-2xs focus-visible:ring-2 focus-visible:ring-slate-300/40';
         break;
     }
   }

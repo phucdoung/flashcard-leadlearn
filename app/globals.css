@@ -1,20 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-poppins: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-poppins: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
-  /* LeafLearn Modern Emerald & Slate Design Tokens */
-  --color-primary: #059669;
-  --color-primary-hover: #047857;
-  --color-primary-active: #065f46;
-  --color-primary-light: #ecfdf5;
-  --color-primary-border: #a7f3d0;
-  --color-brand-dark: #064e3b;
-  --color-brand-accent: #34d399;
+  /* LeafLearn Forest Green & Deep Emerald */
+  --color-forest: #1f4e38;
+  --color-forest-hover: #173b2a;
+  --color-forest-light: #eef5f1;
+  --color-primary: #1f4e38;
+  --color-primary-hover: #173b2a;
+  --color-primary-active: #133022;
+  --color-primary-light: #eef5f1;
+  --color-primary-border: #a3c9b6;
+  --color-brand-dark: #193f2d;
+  --color-brand-accent: #2d6a4f;
 
-  --color-bg-main: #f8fafc;
+  --color-bg-main: #fbfbfa;
   --color-card: #ffffff;
   --color-border-custom: #e2e8f0;
   --color-text-title: #0f172a;
@@ -22,32 +26,40 @@
   --color-secondary-text: #64748b;
   --color-muted-text: #94a3b8;
 
-  --color-success: #10b981;
+  --color-success: #1f4e38;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
   --color-info: #0284c7;
 }
 
 :root {
-  --color-primary: #059669;
-  --color-primary-hover: #047857;
-  --color-primary-active: #065f46;
-  --color-primary-light: #ecfdf5;
-  --color-brand-dark: #064e3b;
-  --color-background: #f8fafc;
+  --color-primary: #1f4e38;
+  --color-primary-hover: #173b2a;
+  --color-primary-active: #133022;
+  --color-primary-light: #eef5f1;
+  --color-brand-dark: #193f2d;
+  --color-background: #fbfbfa;
   --color-card: #ffffff;
   --color-border: #e2e8f0;
   --color-text: #334155;
   --color-secondary-text: #64748b;
-  --color-success: #10b981;
+  --color-success: #1f4e38;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
   --color-info: #0284c7;
 
-  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+.font-serif {
+  font-family: 'Lora', Georgia, serif;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -56,112 +68,77 @@
 }
 
 body {
-  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: #fbfbfa;
   color: #334155;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
+  min-height: 100vh;
 }
 
-/* Subtle Botanical Accent Decorations */
-.leaf-decoration-top {
-  position: fixed;
-  top: -30px;
-  left: -30px;
-  width: 240px;
-  height: 190px;
-  background-image: url('/leaf-accent.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: left top;
-  mix-blend-mode: multiply;
-  opacity: 0.12;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  transform: rotate(180deg);
+/* Custom Scrollbar for Smooth UX */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.leaf-decoration-bottom {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: 520px;
-  height: 320px;
-  background-image: url('/leaf-accent.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right bottom;
-  mix-blend-mode: multiply;
-  opacity: 0.28;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-@media (max-width: 640px) {
-  .leaf-decoration-top {
-    width: 140px;
-    height: 110px;
-    opacity: 0.08;
-    top: -20px;
-    left: -20px;
-  }
-  .leaf-decoration-bottom {
-    width: 280px;
-    height: 180px;
-    opacity: 0.18;
-  }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
-/* Floating Leaves Animation Keyframes */
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Faint Floating Leaves Keyframes */
 @keyframes leafFloatLeft {
   0% {
-    transform: translateY(-20px) translateX(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(0.9);
     opacity: 0;
   }
   15% {
     opacity: var(--leaf-opacity, 0.12);
   }
   50% {
-    transform: translateY(45vh) translateX(22px) rotate(32deg);
+    transform: translateY(50vh) rotate(18deg) scale(1);
     opacity: var(--leaf-opacity, 0.12);
   }
   85% {
     opacity: var(--leaf-opacity, 0.12);
   }
   100% {
-    transform: translateY(104vh) translateX(-14px) rotate(64deg);
+    transform: translateY(105vh) rotate(35deg) scale(0.95);
     opacity: 0;
   }
 }
 
 @keyframes leafFloatRight {
   0% {
-    transform: translateY(-20px) translateX(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(0.95);
     opacity: 0;
   }
   15% {
-    opacity: var(--leaf-opacity, 0.10);
+    opacity: var(--leaf-opacity, 0.12);
   }
   50% {
-    transform: translateY(48vh) translateX(-24px) rotate(-35deg);
-    opacity: var(--leaf-opacity, 0.10);
+    transform: translateY(50vh) rotate(-22deg) scale(1);
+    opacity: var(--leaf-opacity, 0.12);
   }
   85% {
-    opacity: var(--leaf-opacity, 0.10);
+    opacity: var(--leaf-opacity, 0.12);
   }
   100% {
-    transform: translateY(106vh) translateX(16px) rotate(-70deg);
+    transform: translateY(105vh) rotate(-40deg) scale(0.9);
     opacity: 0;
   }
 }
 
-/* Accessibility: Disable floating leaf animation for prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .floating-leaf {
-    animation: none !important;
-    display: none !important;
-  }
+.floating-leaf {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
 }

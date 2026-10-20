@@ -2,11 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { Button, Input, Card, Modal, Tag, Empty } from '../../components';
+import { Button, Modal, Empty } from '../../components';
 import {
   generateBulkFlashcardDetails,
   generateSingleFlashcardDetails,
 } from '../../lib/geminiQuizService';
+import {
+  Layers,
+  CheckCircle2,
+  Award,
+  TrendingUp,
+  Search,
+  Plus,
+  MoreHorizontal,
+  ArrowRight,
+  Edit3,
+  Trash2,
+  Sparkles,
+  ChevronDown,
+  X,
+  BookOpen,
+} from 'lucide-react';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -500,49 +516,183 @@ export default function Home() {
       return new Date(b.raw.created_at) - new Date(a.raw.created_at);
     });
 
-  return (
-    <div className="max-w-4xl mx-auto w-full px-4">
-      {/* Section Heading & Compact Integrated Toolbar */}
-      <div id="sets-section" className="mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold leading-tight text-slate-900 tracking-tight mb-3.5">
-          Flashcard của bạn
-        </h2>
+  // Calculate Quick Stats
+  const totalDecks = sets.length;
+  const totalWords = sets.reduce((acc, s) => acc + (s.totalCards || 0), 0);
+  const totalLearned = sets.reduce((acc, s) => acc + (s.masteredCards || 0), 0);
+  const totalQuizzes = sets.reduce((acc, s) => acc + (s.quizCount || 0), 0);
+  const weeklyProgress = totalWords > 0 ? Math.min(100, Math.round((totalLearned / totalWords) * 100)) : 0;
 
-        {/* Ant Design Compact Toolbar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_150px_auto] gap-2.5 items-center">
-          {/* Search Input */}
-          <div className="w-full sm:col-span-2 md:col-span-1">
-            <Input
-              prefix={
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
-              allowClear
-              size="large"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm bộ thẻ..."
-            />
+  // Greeting logic
+  const getGreetingTime = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Chào buổi sáng';
+    if (hour < 18) return 'Chào buổi chiều';
+    return 'Chào buổi tối';
+  };
+
+  const userName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split('@')[0] ||
+    'bạn';
+
+  return (
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 font-sans">
+      {/* A. GREETING HERO SECTION */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-slate-200/60">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase text-[#1f4e38]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1f4e38]"></span>
+            <span>{getGreetingTime()}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 font-serif tracking-tight leading-tight">
+            Xin chào, {userName}
+          </h1>
+          <p className="text-sm text-slate-500 font-normal leading-relaxed">
+            Hôm nay bạn đã sẵn sàng học chưa? Tiếp tục duy trì phong độ nhé!
+          </p>
+        </div>
+
+        <div className="shrink-0">
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white text-sm font-semibold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tạo bộ thẻ mới</span>
+          </button>
+        </div>
+      </div>
+
+      {/* B. QUICK STATS GRID (4 COLUMNS) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+        {/* Stat 1: Bộ Flashcard */}
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              {totalDecks} <span className="text-xs font-normal text-slate-400">bộ</span>
+            </div>
+            <div className="text-xs font-medium text-slate-500 truncate">
+              Bộ Flashcard
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 2: Từ đã học */}
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              {totalLearned} <span className="text-xs font-normal text-slate-400">từ</span>
+            </div>
+            <div className="text-xs font-medium text-slate-500 truncate">
+              Từ đã học
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 3: Bài kiểm tra */}
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+            <Award className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              {totalQuizzes} <span className="text-xs font-normal text-slate-400">bài</span>
+            </div>
+            <div className="text-xs font-medium text-slate-500 truncate">
+              Bài kiểm tra
+            </div>
+          </div>
+        </div>
+
+        {/* Stat 4: Tiến độ tuần */}
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              {weeklyProgress}%
+            </div>
+            <div className="text-xs font-medium text-slate-500 truncate">
+              Tiến độ tuần
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* C. DECKS SECTION */}
+      <div id="sets-section" className="space-y-5">
+        {/* Section Header with "Xem tất cả →" */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Bộ Flashcard của bạn
+            </h2>
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200/60">
+              {processedSets.length}
+            </span>
           </div>
 
-          {/* Custom Sort Dropdown */}
-          <div className="relative w-full" ref={sortRef}>
+          <div className="flex items-center gap-4">
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="text-xs font-semibold text-[#1f4e38] hover:text-[#173b2a] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              >
+                <span>Xem tất cả</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Search & Sort Toolbar */}
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2.5 items-center">
+          <div className="relative w-full">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm kiếm bộ thẻ theo tên hoặc nội dung..."
+              className="w-full h-10 sm:h-11 pl-10 pr-9 bg-white border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all shadow-2xs"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="relative w-full sm:w-auto" ref={sortRef}>
             <button
               type="button"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="w-full h-10 sm:h-11 px-3.5 bg-white border border-slate-200/80 hover:border-emerald-600 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between shadow-xs transition-all cursor-pointer focus:outline-none"
+              className="w-full sm:w-auto min-w-[150px] h-10 sm:h-11 px-4 bg-white border border-slate-200/80 hover:border-slate-300 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between gap-2 shadow-2xs transition-all cursor-pointer focus:outline-none"
             >
               <span className="truncate">
                 {sortOptions.find((o) => o.value === sortBy)?.label || 'Mới nhất'}
               </span>
-              <span className={`transition-transform duration-200 text-slate-400 ml-1.5 text-xs ${isSortOpen ? 'rotate-180' : ''}`}>
-                ▾
-              </span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isSortOpen && (
-              <div className="absolute top-full left-0 mt-1 w-full sm:w-[160px] bg-white border border-slate-200/80 rounded-xl shadow-lg p-1 z-30 space-y-0.5">
+              <div className="absolute right-0 top-full mt-1.5 w-full sm:w-44 bg-white border border-slate-200/80 rounded-xl shadow-lg p-1 z-30 space-y-0.5 animate-fadeIn">
                 {sortOptions.map((opt) => (
                   <button
                     key={opt.value}
@@ -553,7 +703,7 @@ export default function Home() {
                     }}
                     className={`w-full h-8 px-3 rounded-lg text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
                       sortBy === opt.value
-                        ? 'bg-emerald-50 text-emerald-700 font-bold'
+                        ? 'bg-[#1f4e38]/10 text-[#1f4e38] font-bold'
                         : 'text-slate-700 hover:bg-slate-50 font-medium'
                     }`}
                   >
@@ -563,206 +713,194 @@ export default function Home() {
               </div>
             )}
           </div>
-
-          {/* Create Set Primary Button */}
-          <Button
-            type="primary"
-            size="large"
-            onClick={handleOpenCreate}
-            icon={
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
-              </svg>
-            }
-            className="w-full sm:col-span-2 md:col-span-1 shadow-xs"
-          >
-            Tạo bộ thẻ mới
-          </Button>
         </div>
-      </div>
 
-      {/* 3. Grid of Flashcard Sets */}
-      {loading ? (
-        <div className="py-16 text-center text-sm text-slate-500 font-medium animate-pulse flex items-center justify-center gap-2">
-          <svg className="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
-          Đang tải danh sách bộ thẻ...
-        </div>
-      ) : processedSets.length === 0 ? (
-        <Empty
-          title={searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Bạn chưa có bộ Flashcard nào'}
-          description={
-            searchQuery
-              ? 'Thử tìm kiếm với từ khóa khác.'
-              : 'Hãy bắt đầu tạo bộ thẻ đầu tiên để lưu trữ và học từ vựng hiệu quả cùng AI.'
-          }
-          action={
-            !searchQuery && (
-              <Button type="primary" onClick={handleOpenCreate}>
-                Tạo bộ thẻ mới
-              </Button>
-            )
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-          {processedSets.map((set) => {
-            const hasCards = set.totalCards > 0;
-            const progress = hasCards
-              ? Math.min(100, Math.round((set.masteredCards / set.totalCards) * 100))
-              : 0;
-            const isOwner = user && set.raw?.user_id === user.id;
+        {/* Decks Grid or Empty/Loading State */}
+        {loading ? (
+          <div className="py-20 text-center text-sm text-slate-500 font-medium animate-pulse flex items-center justify-center gap-2.5">
+            <svg className="animate-spin h-5 w-5 text-[#1f4e38]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            Đang tải danh sách bộ thẻ...
+          </div>
+        ) : processedSets.length === 0 ? (
+          <div className="bg-white border border-slate-200/70 rounded-2xl p-8 shadow-2xs">
+            <Empty
+              title={searchQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Bạn chưa có bộ Flashcard nào'}
+              description={
+                searchQuery
+                  ? 'Thử tìm kiếm với từ khóa khác hoặc bấm "Xem tất cả".'
+                  : 'Hãy bắt đầu tạo bộ thẻ đầu tiên để lưu trữ và học từ vựng hiệu quả cùng AI.'
+              }
+              action={
+                !searchQuery && (
+                  <Button type="primary" onClick={handleOpenCreate} icon={<Plus className="w-4 h-4" />}>
+                    Tạo bộ thẻ mới
+                  </Button>
+                )
+              }
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            {processedSets.map((set) => {
+              const hasCards = set.totalCards > 0;
+              const progress = hasCards
+                ? Math.min(100, Math.round((set.masteredCards / set.totalCards) * 100))
+                : 0;
+              const isOwner = user && set.raw?.user_id === user.id;
 
-            return (
-              <div
-                key={set.id}
-                onClick={() => handleCardClick(set.id)}
-                className="bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-md rounded-2xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 min-h-[210px] relative group shadow-xs"
-              >
-                {/* Header: Title + Visibility Badge + Menu */}
-                <div className="space-y-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 truncate flex-1">
-                      <h3 className="font-bold text-base text-slate-900 truncate">
-                        {set.title}
-                      </h3>
-                      <Tag color={set.visibility === 'public' ? 'leaf' : 'default'}>
+              return (
+                <div
+                  key={set.id}
+                  onClick={() => handleCardClick(set.id)}
+                  className="bg-white border border-slate-200/70 hover:border-slate-300 hover:shadow-xs rounded-2xl p-5 sm:p-6 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 group relative"
+                >
+                  {/* Top Row: Pill Badge + Word Count + 3-dots Menu */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200/60">
                         {set.visibility === 'public' ? 'Công khai' : 'Riêng tư'}
-                      </Tag>
+                      </span>
+
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <span className="text-xs text-slate-400 font-medium">
+                          {set.totalCards} từ
+                        </span>
+
+                        {/* 3 dots action menu */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => toggleMenu(set.id)}
+                            className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                            title="Tùy chọn"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+
+                          {openMenuId === set.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setOpenMenuId(null)}
+                              />
+                              <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1 z-20 animate-fadeIn">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEdit(set)}
+                                  className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>Đổi tên / Chỉnh sửa</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenDelete(set)}
+                                  className="w-full text-left px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer flex items-center gap-2"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                                  <span>Xóa bộ Flashcard</span>
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* 3-dots Dropdown Menu */}
-                    <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        onClick={() => toggleMenu(set.id)}
-                        className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer text-xs"
-                        title="Tùy chọn"
-                      >
-                        •••
-                      </button>
-
-                      {openMenuId === set.id && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-10"
-                            onClick={() => setOpenMenuId(null)}
-                          />
-                          <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1 z-20">
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(set)}
-                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2"
-                            >
-                              <span>✏️</span> Đổi tên / Chỉnh sửa
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleOpenDelete(set)}
-                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer flex items-center gap-2"
-                            >
-                              <span>🗑️</span> Xóa bộ Flashcard
-                            </button>
-                          </div>
-                        </>
+                    {/* Title & Description */}
+                    <div>
+                      <h3 className="font-semibold text-base sm:text-lg text-slate-900 group-hover:text-[#1f4e38] transition-colors line-clamp-1">
+                        {set.title}
+                      </h3>
+                      {set.description ? (
+                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                          {set.description}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-slate-400 italic mt-1">
+                          Chưa có mô tả cho bộ thẻ này
+                        </p>
                       )}
                     </div>
                   </div>
 
-                  {set.description && (
-                    <p className="text-xs text-slate-500 line-clamp-2">
-                      {set.description}
-                    </p>
-                  )}
+                  {/* Progress Bar & Actions */}
+                  <div className="space-y-3 pt-2 border-t border-slate-100">
+                    {hasCards ? (
+                      <>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-slate-500 font-medium">Tiến độ học</span>
+                            <span className="font-bold text-slate-800">{progress}%</span>
+                          </div>
+                          <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-[#1f4e38] transition-all duration-300"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-0.5">
+                            <span className="text-[#1f4e38] font-medium">{set.masteredCards} đã thuộc</span>
+                            <span>•</span>
+                            <span>{set.unmasteredCards} chưa thuộc</span>
+                            <span>•</span>
+                            <span>{set.quizCount} bài test</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                          <Link
+                            to={`/study/${set.id}`}
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-xl bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white text-xs font-semibold shadow-2xs transition-all"
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
+                            <span>Học ngay</span>
+                          </Link>
+                          {isOwner && (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenAddCardModal(set)}
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 text-xs font-medium shadow-2xs transition-all cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5 text-slate-500" />
+                              <span>Thêm thẻ</span>
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="py-3 px-3 rounded-xl bg-slate-50/80 border border-dashed border-slate-200 text-center space-y-2">
+                        <p className="text-xs text-slate-500">Chưa có Flashcard nào trong bộ này</p>
+                        {isOwner && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenAddCardModal(set);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-[#1f4e38] text-xs font-medium text-slate-700 hover:text-[#1f4e38] shadow-2xs transition-all cursor-pointer"
+                          >
+                            <Plus className="w-3 h-3" />
+                            <span>Thêm thẻ đầu tiên</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {/* Content: Clean Typography Stats & Progress OR Compact Empty State */}
-                {hasCards ? (
-                  <div className="space-y-3.5">
-                    {/* Clean Minimal Text Stats */}
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
-                      <span className="font-semibold text-slate-900">{set.totalCards} thẻ</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="font-medium text-emerald-600">{set.masteredCards} đã thuộc</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="font-medium text-rose-600">{set.unmasteredCards} chưa thuộc</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="font-medium text-slate-500">{set.quizCount} bài test</span>
-                    </div>
-
-                    {/* Tiến độ học Progress Bar */}
-                    <div className="space-y-1.5 pt-0.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-500">Tiến độ học</span>
-                        <span className="font-bold text-slate-900">{progress}%</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-emerald-600 transition-all duration-300"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="py-4 px-3.5 rounded-xl bg-slate-50 border border-slate-200/60 text-center space-y-2 my-auto">
-                    <p className="text-xs font-medium text-slate-500">
-                      Chưa có Flashcard trong bộ này.
-                    </p>
-                    {isOwner && (
-                      <Button
-                        type="outlined"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenAddCardModal(set);
-                        }}
-                      >
-                        + Thêm thẻ
-                      </Button>
-                    )}
-                  </div>
-                )}
-
-                {/* Footer Action Buttons */}
-                {hasCards && (
-                  <div className="flex items-center gap-2 pt-1">
-                    <Link
-                      to={`/study/${set.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex-1"
-                    >
-                      <Button type="primary" block>
-                        Học ngay
-                      </Button>
-                    </Link>
-
-                    {isOwner && (
-                      <Button
-                        type="default"
-                        className="flex-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenAddCardModal(set);
-                        }}
-                      >
-                        + Thêm thẻ
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Modal 1: Create Flashcard Set */}
       <Modal
         open={isCreateModalOpen}
-        title="Tạo bộ Flashcard"
+        title="Tạo bộ Flashcard mới"
         onCancel={() => setIsCreateModalOpen(false)}
         onOk={handleCreateSet}
         okText={submitting ? 'Đang tạo...' : 'Tạo mới'}
@@ -778,8 +916,8 @@ export default function Home() {
               required
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
-              placeholder="Ví dụ: Từ vựng IELTS Listening"
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+              placeholder="Ví dụ: Từ vựng IELTS Listening Band 7.0"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -788,15 +926,14 @@ export default function Home() {
               rows={3}
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
-              placeholder="Nhập mô tả ngắn cho bộ thẻ..."
-              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+              placeholder="Nhập mô tả ngắn gọn cho bộ thẻ..."
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
-          {/* Visibility Option */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-800">Quyền riêng tư</label>
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row gap-4 pt-1">
               <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
@@ -804,7 +941,7 @@ export default function Home() {
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-emerald-600"
+                  className="accent-[#1f4e38]"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
@@ -815,9 +952,9 @@ export default function Home() {
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-emerald-600"
+                  className="accent-[#1f4e38]"
                 />
-                Công khai (Cộng đồng)
+                Công khai (Chia sẻ cộng đồng)
               </label>
             </div>
           </div>
@@ -843,7 +980,7 @@ export default function Home() {
               required
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -852,13 +989,13 @@ export default function Home() {
               rows={3}
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
-              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-800">Quyền riêng tư</label>
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row gap-4 pt-1">
               <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
@@ -866,7 +1003,7 @@ export default function Home() {
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-emerald-600"
+                  className="accent-[#1f4e38]"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
@@ -877,9 +1014,9 @@ export default function Home() {
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-emerald-600"
+                  className="accent-[#1f4e38]"
                 />
-                Công khai (Cộng đồng)
+                Công khai (Chia sẻ cộng đồng)
               </label>
             </div>
           </div>
@@ -936,7 +1073,7 @@ export default function Home() {
                     onClick={handleFetchSingleAISuggestion}
                     disabled={!singleCard.term.trim() || fetchingSingleAI}
                     loading={fetchingSingleAI}
-                    icon={<span>✨</span>}
+                    icon={<Sparkles className="w-3.5 h-3.5 text-[#1f4e38]" />}
                   >
                     AI gợi ý
                   </Button>
@@ -947,7 +1084,7 @@ export default function Home() {
                   value={singleCard.term}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: take care of hoặc serendipity"
-                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
@@ -961,7 +1098,7 @@ export default function Home() {
                   value={singleCard.phonetic}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
-                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
@@ -974,13 +1111,13 @@ export default function Home() {
                   name="definition"
                   value={singleCard.definition}
                   onChange={handleSingleInputChange}
-                  placeholder="Ví dụ: Sự tình cờ may mắn tìm thấy điều gì đó..."
-                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
+                  placeholder="Ví dụ: Sự may mắn tình cờ tìm thấy điều quý giá..."
+                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="bg-slate-50 border border-slate-200/60 px-3.5 py-2.5 rounded-xl text-xs text-slate-600">
-                Trạng thái học mặc định: <strong className="text-emerald-700">Chưa thuộc</strong>
+                Trạng thái học mặc định: <strong className="text-[#1f4e38]">Chưa thuộc</strong>
               </div>
             </div>
 
@@ -990,7 +1127,7 @@ export default function Home() {
                 onClick={() => setAddStep('bulk_input')}
                 className="text-xs"
               >
-                Nhập nhiều từ cùng lúc
+                Nhập nhiều từ cùng lúc →
               </Button>
             </div>
 
@@ -1022,7 +1159,7 @@ export default function Home() {
                 value={bulkText}
                 onChange={(e) => setBulkText(e.target.value)}
                 placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
-                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-mono text-slate-800 transition-all"
+                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm font-mono text-slate-800 transition-all"
               />
               <p className="text-xs text-slate-500">
                 Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
@@ -1077,7 +1214,7 @@ export default function Home() {
                         type="text"
                         value={item.term}
                         onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
@@ -1089,7 +1226,7 @@ export default function Home() {
                         type="text"
                         value={item.phonetic}
                         onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
@@ -1102,7 +1239,7 @@ export default function Home() {
                         value={item.definition}
                         onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
                         placeholder="Nhập nghĩa..."
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
                   </div>
