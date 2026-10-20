@@ -636,18 +636,18 @@ export default function FlashcardSetDetail() {
       <div>
         <Link
           href="/"
-          className="inline-flex items-center text-xs font-medium text-[#66705F] hover:text-[#1A2416] bg-white border border-[#DCE5D8] px-3.5 py-1.5 rounded-lg transition-all hover:border-[#24693D] shadow-2xs gap-1.5"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-900 bg-white border border-slate-200/80 px-3.5 py-1.5 rounded-xl transition-all hover:border-emerald-600 shadow-2xs gap-1.5"
         >
           <span>←</span> Quay lại danh sách
         </Link>
       </div>
 
       {/* 2. Flashcard Set Header Card */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-7 space-y-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2416] leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
                 {setDetail?.title || 'Đang tải thông tin...'}
               </h1>
               <Tag color={setDetail?.visibility === 'public' ? 'leaf' : 'default'}>
@@ -655,12 +655,12 @@ export default function FlashcardSetDetail() {
               </Tag>
             </div>
 
-            <p className="text-xs text-[#66705F] font-medium">
-              Tác giả: <span className="text-[#2E3A28]">{isOwner ? 'Bạn' : 'Cộng đồng LeafLearn'}</span>
+            <p className="text-xs text-slate-500 font-medium">
+              Tác giả: <span className="text-slate-700">{isOwner ? 'Bạn' : 'Cộng đồng LeafLearn'}</span>
             </p>
 
             {setDetail?.description && (
-              <p className="text-sm text-[#66705F] leading-relaxed pt-0.5">
+              <p className="text-sm text-slate-500 leading-relaxed pt-0.5">
                 {setDetail.description}
               </p>
             )}
@@ -693,21 +693,21 @@ export default function FlashcardSetDetail() {
         </div>
 
         {/* Compact Horizontal Statistics */}
-        <div className="pt-4 border-t border-[#E8EFE5] flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#66705F]">
+        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
           <span>
-            Tổng số: <strong className="text-[#1A2416] font-bold">{totalCardsCount}</strong>
+            Tổng số: <strong className="text-slate-900 font-bold">{totalCardsCount}</strong>
           </span>
-          <span className="text-[#DCE5D8]">•</span>
+          <span className="text-slate-300">•</span>
           <span>
-            Đã thuộc: <strong className="text-[#389E0D] font-bold">{masteredCardsCount}</strong>
+            Đã thuộc: <strong className="text-emerald-600 font-bold">{masteredCardsCount}</strong>
           </span>
-          <span className="text-[#DCE5D8]">•</span>
+          <span className="text-slate-300">•</span>
           <span>
-            Chưa thuộc: <strong className="text-[#CF1322] font-bold">{unmasteredCardsCount}</strong>
+            Chưa thuộc: <strong className="text-rose-600 font-bold">{unmasteredCardsCount}</strong>
           </span>
-          <span className="text-[#DCE5D8]">•</span>
+          <span className="text-slate-300">•</span>
           <span>
-            Bài kiểm tra: <strong className="text-[#1A2416] font-bold">{quizzes.length}</strong>
+            Bài kiểm tra: <strong className="text-slate-900 font-bold">{quizzes.length}</strong>
           </span>
         </div>
       </div>
@@ -715,7 +715,7 @@ export default function FlashcardSetDetail() {
       {/* 3. Section: Saved Quizzes */}
       {quizzes.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-base sm:text-lg font-bold text-[#1A2416]">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900">
             Bài kiểm tra đã tạo ({quizzes.length})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -728,12 +728,12 @@ export default function FlashcardSetDetail() {
               return (
                 <div
                   key={quiz.id}
-                  className="bg-white border border-[#DCE5D8] rounded-xl p-4 sm:p-5 hover:border-[#24693D]/40 hover:shadow-sm transition-all space-y-3 flex flex-col justify-between"
+                  className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 hover:border-emerald-300 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between shadow-2xs"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-bold text-[#1A2416] text-sm sm:text-base">{quiz.title}</h3>
-                      <p className="text-xs text-[#66705F] mt-0.5">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base">{quiz.title}</h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
                         {qCount} câu hỏi
                       </p>
                     </div>
@@ -748,13 +748,13 @@ export default function FlashcardSetDetail() {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-[#E8EFE5] text-xs">
-                    <span className="text-[#66705F]">
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
+                    <span className="text-slate-500">
                       {!hasQuestions ? (
-                        <span className="text-[#CF1322] font-medium">Chưa có câu hỏi</span>
+                        <span className="text-rose-600 font-medium">Chưa có câu hỏi</span>
                       ) : latestResult ? (
                         <>
-                          Điểm: <strong className="text-[#389E0D] font-bold">{latestResult.score}/{latestResult.total_questions}</strong>
+                          Điểm: <strong className="text-emerald-600 font-bold">{latestResult.score}/{latestResult.total_questions}</strong>
                         </>
                       ) : (
                         'Chưa làm'
@@ -793,7 +793,7 @@ export default function FlashcardSetDetail() {
       {/* 4. Section: Flashcards List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-[#1A2416]">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900">
             Danh sách Flashcard ({flashcards.length})
           </h2>
           <Button
@@ -810,8 +810,8 @@ export default function FlashcardSetDetail() {
         </div>
 
         {loading ? (
-          <div className="py-12 text-center text-sm text-[#66705F] font-medium animate-pulse flex items-center justify-center gap-2">
-            <svg className="animate-spin h-4 w-4 text-[#24693D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <div className="py-12 text-center text-sm text-slate-500 font-medium animate-pulse flex items-center justify-center gap-2">
+            <svg className="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
@@ -833,16 +833,16 @@ export default function FlashcardSetDetail() {
             {flashcards.map((card) => (
               <div
                 key={card.id}
-                className="bg-white border border-[#DCE5D8] rounded-xl p-4 sm:p-5 hover:border-[#24693D]/40 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between"
+                className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 hover:border-emerald-300 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between shadow-2xs"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold text-[#1A2416]">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900">
                         {card.term}
                       </h3>
                       {card.phonetic && (
-                        <span className="text-xs font-mono text-[#66705F] block mt-0.5">
+                        <span className="text-xs font-mono text-slate-400 block mt-0.5">
                           {card.phonetic}
                         </span>
                       )}
@@ -860,12 +860,12 @@ export default function FlashcardSetDetail() {
                     </button>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-[#2E3A28] leading-relaxed border-t border-[#E8EFE5] pt-2">
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed border-t border-slate-100 pt-2">
                     {card.definition || 'Chưa có định nghĩa.'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E8EFE5]/60 text-xs">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
                   <Button
                     type="text"
                     size="small"
@@ -873,7 +873,7 @@ export default function FlashcardSetDetail() {
                   >
                     Chỉnh sửa
                   </Button>
-                  <span className="text-[#DCE5D8]">•</span>
+                  <span className="text-slate-300">•</span>
                   <Button
                     type="text"
                     danger
@@ -894,13 +894,13 @@ export default function FlashcardSetDetail() {
         open={isAddModalOpen}
         title={
           <div>
-            <div className="font-bold text-[#1A2416] text-base sm:text-lg">
+            <div className="font-bold text-slate-900 text-base sm:text-lg">
               {addStep === 'manual' && 'Thêm Flashcard mới'}
               {addStep === 'bulk_input' && 'Nhập nhiều Flashcard cùng lúc'}
               {addStep === 'bulk_preview' && 'Xem trước danh sách Flashcard'}
             </div>
-            <p className="text-xs text-[#66705F] font-normal mt-0.5">
-              Bộ thẻ: <strong className="text-[#2E3A28]">{setDetail?.title}</strong>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">
+              Bộ thẻ: <strong className="text-slate-800">{setDetail?.title}</strong>
             </p>
           </div>
         }
@@ -914,8 +914,8 @@ export default function FlashcardSetDetail() {
             <div className="space-y-3.5">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-[#1A2416]">
-                    Từ hoặc cụm từ <span className="text-[#CF1322]">*</span>
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Từ hoặc cụm từ <span className="text-rose-500">*</span>
                   </label>
                   <Button
                     type="default"
@@ -934,12 +934,12 @@ export default function FlashcardSetDetail() {
                   value={singleCard.term}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: take care of hoặc serendipity"
-                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#1A2416]">
+                <label className="block text-xs font-semibold text-slate-800">
                   Phiên âm
                 </label>
                 <input
@@ -948,13 +948,13 @@ export default function FlashcardSetDetail() {
                   value={singleCard.phonetic}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
-                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#1A2416]">
-                  Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                <label className="block text-xs font-semibold text-slate-800">
+                  Nghĩa tiếng Việt <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   rows={3}
@@ -962,12 +962,12 @@ export default function FlashcardSetDetail() {
                   value={singleCard.definition}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: Sự tình cờ may mắn tìm thấy điều gì đó..."
-                  className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
-              <div className="bg-[#F9FCF8] border border-[#E8EFE5] px-3.5 py-2 rounded-lg text-xs text-[#66705F]">
-                Trạng thái học mặc định: <strong className="text-[#24693D]">Chưa thuộc</strong>
+              <div className="bg-slate-50 border border-slate-200/60 px-3.5 py-2.5 rounded-xl text-xs text-slate-600">
+                Trạng thái học mặc định: <strong className="text-emerald-700">Chưa thuộc</strong>
               </div>
             </div>
 
@@ -981,7 +981,7 @@ export default function FlashcardSetDetail() {
               </Button>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
               <Button type="default" onClick={handleCloseAddModal}>
                 Hủy
               </Button>
@@ -1001,7 +1001,7 @@ export default function FlashcardSetDetail() {
         {addStep === 'bulk_input' && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#1A2416]">
+              <label className="block text-xs font-semibold text-slate-800">
                 Nhập danh sách từ (Mỗi dòng một từ hoặc cụm từ)
               </label>
               <textarea
@@ -1009,14 +1009,14 @@ export default function FlashcardSetDetail() {
                 value={bulkText}
                 onChange={(e) => setBulkText(e.target.value)}
                 placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
-                className="w-full p-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm font-mono text-[#2E3A28]"
+                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-mono text-slate-800 transition-all"
               />
-              <p className="text-xs text-[#66705F]">
+              <p className="text-xs text-slate-500">
                 Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
               <Button type="default" onClick={() => setAddStep('manual')}>
                 Quay lại
               </Button>
@@ -1039,10 +1039,10 @@ export default function FlashcardSetDetail() {
               {bulkPreviewList.map((item, idx) => (
                 <div
                   key={item.id || idx}
-                  className="bg-[#F9FCF8] border border-[#DCE5D8] p-3.5 rounded-lg space-y-2.5 relative"
+                  className="bg-slate-50/80 border border-slate-200/80 p-3.5 rounded-xl space-y-2.5 relative shadow-2xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#1A2416]">
+                    <span className="text-xs font-bold text-slate-900">
                       Từ #{idx + 1}
                     </span>
                     <Button
@@ -1057,39 +1057,39 @@ export default function FlashcardSetDetail() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
-                        Từ/Cụm từ <span className="text-[#CF1322]">*</span>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Từ/Cụm từ <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={item.term}
                         onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                         Phiên âm
                       </label>
                       <input
                         type="text"
                         value={item.phonetic}
                         onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
-                        Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Nghĩa tiếng Việt <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={item.definition}
                         onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
                         placeholder="Nhập nghĩa..."
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
                   </div>
@@ -1097,7 +1097,7 @@ export default function FlashcardSetDetail() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
               <Button type="default" onClick={() => setAddStep('bulk_input')}>
                 Quay lại nhập
               </Button>
@@ -1131,8 +1131,8 @@ export default function FlashcardSetDetail() {
       >
         <form onSubmit={handleEditSave} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">
-              Từ hoặc cụm từ <span className="text-[#CF1322]">*</span>
+            <label className="block text-xs font-semibold text-slate-800">
+              Từ hoặc cụm từ <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -1140,29 +1140,29 @@ export default function FlashcardSetDetail() {
               value={editFormData.term}
               onChange={handleEditInputChange}
               required
-              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Phiên âm</label>
+            <label className="block text-xs font-semibold text-slate-800">Phiên âm</label>
             <input
               type="text"
               name="phonetic"
               value={editFormData.phonetic}
               onChange={handleEditInputChange}
-              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Nghĩa tiếng Việt</label>
+            <label className="block text-xs font-semibold text-slate-800">Nghĩa tiếng Việt</label>
             <textarea
               rows={3}
               name="definition"
               value={editFormData.definition}
               onChange={handleEditInputChange}
-              className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
@@ -1174,9 +1174,9 @@ export default function FlashcardSetDetail() {
               onChange={(e) =>
                 setEditFormData((prev) => ({ ...prev, isMastered: e.target.checked }))
               }
-              className="rounded border-[#DCE5D8] text-[#24693D] focus:ring-[#24693D]"
+              className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
             />
-            <label htmlFor="editIsMastered" className="text-xs font-medium text-[#2E3A28] cursor-pointer">
+            <label htmlFor="editIsMastered" className="text-xs font-medium text-slate-700 cursor-pointer">
               Đã thuộc thẻ này
             </label>
           </div>
@@ -1193,9 +1193,9 @@ export default function FlashcardSetDetail() {
         okText={submitting ? 'Đang xóa...' : 'Đồng ý xóa'}
         confirmLoading={submitting}
       >
-        <p className="text-sm text-[#5A6553] leading-relaxed">
+        <p className="text-sm text-slate-600 leading-relaxed">
           Bạn có chắc chắn muốn xóa thẻ từ vựng{' '}
-          <strong className="text-[#1A2416]">"{deletingCard?.term}"</strong> khỏi bộ thẻ? Hành động này không thể hoàn tác.
+          <strong className="text-slate-900">"{deletingCard?.term}"</strong> khỏi bộ thẻ? Hành động này không thể hoàn tác.
         </p>
       </Modal>
 
@@ -1209,9 +1209,9 @@ export default function FlashcardSetDetail() {
         okText={submitting ? 'Đang xóa...' : 'Đồng ý xóa'}
         confirmLoading={submitting}
       >
-        <p className="text-sm text-[#5A6553] leading-relaxed">
+        <p className="text-sm text-slate-600 leading-relaxed">
           Bạn có chắc chắn muốn xóa bài kiểm tra{' '}
-          <strong className="text-[#1A2416]">"{deletingQuiz?.title}"</strong>?
+          <strong className="text-slate-900">"{deletingQuiz?.title}"</strong>?
         </p>
       </Modal>
     </div>

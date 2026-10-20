@@ -53,7 +53,7 @@ export default function HomeBanner() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="relative w-full max-w-[1080px] mx-auto h-[220px] sm:h-[300px] md:h-[360px] lg:h-[390px] rounded-2xl overflow-hidden shadow-xs group bg-[#F8FCF4] border border-[#DCE5D8]"
+      className="relative w-full max-w-[1080px] mx-auto h-[220px] sm:h-[300px] md:h-[360px] lg:h-[390px] rounded-2xl overflow-hidden shadow-xs group bg-slate-50 border border-slate-200/80"
     >
       {/* 2 Full Image Slides Container */}
       <div
@@ -61,7 +61,7 @@ export default function HomeBanner() {
         style={{ transform: `translateX(-${currentSlide * 50}%)` }}
       >
         {slides.map((slide) => (
-          <div key={slide.id} className="w-1/2 h-full shrink-0 relative bg-[#F8FCF4]">
+          <div key={slide.id} className="w-1/2 h-full shrink-0 relative bg-slate-50">
             <img
               src={slide.image}
               alt={slide.alt}
@@ -75,7 +75,7 @@ export default function HomeBanner() {
       <button
         type="button"
         onClick={() => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-[#2E3A28] border border-[#E7EEDC] shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 cursor-pointer focus:outline-none"
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/85 hover:bg-white text-slate-800 border border-slate-200 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 cursor-pointer focus:outline-none"
         title="Banner trước"
       >
         ‹
@@ -84,7 +84,7 @@ export default function HomeBanner() {
       <button
         type="button"
         onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-[#2E3A28] border border-[#E7EEDC] shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 cursor-pointer focus:outline-none"
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/85 hover:bg-white text-slate-800 border border-slate-200 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 cursor-pointer focus:outline-none"
         title="Banner tiếp"
       >
         ›
@@ -99,7 +99,7 @@ export default function HomeBanner() {
             onClick={() => setCurrentSlide(idx)}
             className={`transition-all duration-300 cursor-pointer focus:outline-none ${
               currentSlide === idx
-                ? 'w-[26px] h-[7px] rounded-full bg-[#24693D]'
+                ? 'w-[26px] h-[7px] rounded-full bg-emerald-600'
                 : 'w-[7px] h-[7px] rounded-full bg-white/70 hover:bg-white'
             }`}
             title={`Banner ${idx + 1}`}

@@ -68,7 +68,7 @@ export default function Profile() {
             setInitialShowPhone(userShowPhone);
           }
         } catch (err) {
-          console.warn('[Profile] Fetch profile phone warning:', err);
+          console.error('Fetch profile data error:', err);
         }
       }
 
@@ -76,136 +76,140 @@ export default function Profile() {
     }
   }, [user]);
 
-  // Current active avatar URL from metadata
+  // Derived user display info
+  const displayName =
+    fullName.trim() ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split('@')[0] ||
+    'Người học';
+
+  const avatarLetter = displayName.charAt(0).toUpperCase();
   const savedAvatarUrl = user?.user_metadata?.avatar_url || null;
 
-  // Initial letter for fallback avatar
-  const avatarLetter = (
-    fullName.trim().length > 0
-      ? fullName.trim().charAt(0)
-      : user?.email?.charAt(0) || 'U'
-  ).toUpperCase();
-
-  // Handle File Selection
+  // Avatar Selection & Preview (Max 2MB, JPEG/PNG/WebP)
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setAvatarMessage({ type: '', text: '' });
-    setShowConfirmRemove(false);
 
-    // Validate type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
       setAvatarMessage({
         type: 'error',
-        text: 'Vui lòng chọn ảnh JPG, PNG hoặc WEBP.',
+        text: 'Định dạng ảnh không hợp lệ. Vui lòng chọn ảnh JPEG, PNG hoặc WebP.',
       });
-      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
-    // Validate size (2MB)
     if (file.size > 2 * 1024 * 1024) {
       setAvatarMessage({
         type: 'error',
-        text: 'Ảnh đại diện không được vượt quá 2MB.',
+        text: 'Kích thước ảnh vượt quá giới hạn 2MB. Vui lòng chọn ảnh nhỏ hơn.',
       });
-      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
-    // Local preview
     setSelectedFile(file);
     const objectUrl = URL.createObjectURL(file);
     setAvatarPreview(objectUrl);
   };
 
-  // Cancel Preview
   const handleCancelPreview = () => {
     if (avatarPreview) {
       URL.revokeObjectURL(avatarPreview);
     }
     setAvatarPreview(null);
     setSelectedFile(null);
-    setAvatarMessage({ type: '', text: '' });
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
-  // Upload Avatar
+  // Upload Avatar to Supabase Storage Bucket 'avatars'
   const handleSaveAvatar = async () => {
     if (!selectedFile || !user) return;
+
     setAvatarUploading(true);
     setAvatarMessage({ type: '', text: '' });
 
     try {
       const fileExt = selectedFile.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
+      const filePath = `${user.id}/avatar_${Date.now()}.${fileExt}`;
 
+      // 1. Upload to Supabase Storage 'avatars' bucket
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, selectedFile, {
+          cacheControl: '3600',
           upsert: true,
-          contentType: selectedFile.type,
         });
 
       if (uploadError) {
         console.error('Upload avatar storage error:', uploadError);
         setAvatarMessage({
           type: 'error',
-          text: 'Không thể tải ảnh lên. Vui lòng thử lại.',
+          text: `Tải ảnh lên thất bại: ${uploadError.message}`,
         });
         setAvatarUploading(false);
         return;
       }
 
+      // 2. Get Public URL
       const { data: publicUrlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      const newAvatarUrl = `${publicUrlData.publicUrl}?t=${Date.now()}`;
-
-      // Save avatar_url to auth user_metadata
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          avatar_url: newAvatarUrl,
-        },
-      });
-
-      if (updateError) {
-        console.error('Save avatar metadata error:', updateError);
+      const publicUrl = publicUrlData?.publicUrl;
+      if (!publicUrl) {
         setAvatarMessage({
           type: 'error',
-          text: 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại.',
+          text: 'Không thể lấy đường dẫn ảnh đại diện.',
         });
-      } else {
-        // Sync to public.profiles table ensuring full_name is preserved
-        try {
-          const preservedName = user.user_metadata?.full_name || fullName.trim() || user.email?.split('@')[0] || 'Người học LeafLearn';
-          await supabase.from('profiles').upsert({
-            id: user.id,
-            full_name: preservedName,
-            avatar_url: newAvatarUrl,
-            phone: phone.trim() || null,
-            show_phone: showPhone,
-            updated_at: new Date().toISOString(),
-          });
-        } catch (syncErr) {
-          console.error('Profiles sync error:', syncErr);
-        }
-
-        setAvatarMessage({
-          type: 'success',
-          text: 'Đã cập nhật ảnh đại diện.',
-        });
-        handleCancelPreview();
-        setTimeout(() => setAvatarMessage({ type: '', text: '' }), 4000);
+        setAvatarUploading(false);
+        return;
       }
+
+      // 3. Update Supabase Auth user metadata
+      const { error: updateAuthError } = await supabase.auth.updateUser({
+        data: { avatar_url: publicUrl },
+      });
+
+      if (updateAuthError) {
+        console.error('Update auth user metadata error:', updateAuthError);
+        setAvatarMessage({
+          type: 'error',
+          text: 'Cập nhật thông tin tài khoản thất bại.',
+        });
+        setAvatarUploading(false);
+        return;
+      }
+
+      // 4. Update public.profiles table
+      try {
+        await supabase.from('profiles').upsert({
+          id: user.id,
+          avatar_url: publicUrl,
+          full_name: fullName.trim() || user.user_metadata?.full_name || 'Người học',
+          phone: phone.trim() || null,
+          show_phone: showPhone,
+          updated_at: new Date().toISOString(),
+        });
+      } catch (profileErr) {
+        console.error('Update profiles table error:', profileErr);
+      }
+
+      setAvatarMessage({
+        type: 'success',
+        text: 'Cập nhật ảnh đại diện thành công.',
+      });
+      handleCancelPreview();
     } catch (err) {
       console.error('Save avatar exception:', err);
       setAvatarMessage({
         type: 'error',
-        text: 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại.',
+        text: 'Đã xảy ra lỗi khi lưu ảnh đại diện.',
       });
     } finally {
       setAvatarUploading(false);
@@ -215,58 +219,57 @@ export default function Profile() {
   // Remove Avatar
   const handleRemoveAvatar = async () => {
     if (!user) return;
+
     setAvatarUploading(true);
     setAvatarMessage({ type: '', text: '' });
 
     try {
-      // Clear avatar_url from user metadata
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          avatar_url: null,
-        },
+      // 1. Clear user_metadata.avatar_url
+      const { error: updateAuthError } = await supabase.auth.updateUser({
+        data: { avatar_url: null },
       });
 
-      if (updateError) {
-        console.error('Remove avatar error:', updateError);
+      if (updateAuthError) {
+        console.error('Remove avatar error:', updateAuthError);
         setAvatarMessage({
           type: 'error',
-          text: 'Không thể xóa ảnh đại diện. Vui lòng thử lại.',
+          text: 'Xóa ảnh đại diện thất bại.',
         });
-      } else {
-        // Sync to public.profiles table preserving full_name
-        try {
-          const preservedName = user.user_metadata?.full_name || fullName.trim() || user.email?.split('@')[0] || 'Người học LeafLearn';
-          await supabase.from('profiles').upsert({
-            id: user.id,
-            full_name: preservedName,
-            avatar_url: null,
-            phone: phone.trim() || null,
-            show_phone: showPhone,
-            updated_at: new Date().toISOString(),
-          });
-        } catch (syncErr) {
-          console.error('Profiles sync error:', syncErr);
-        }
-
-        setAvatarMessage({
-          type: 'success',
-          text: 'Đã xóa ảnh đại diện.',
-        });
-        setShowConfirmRemove(false);
-        setTimeout(() => setAvatarMessage({ type: '', text: '' }), 4000);
+        setAvatarUploading(false);
+        return;
       }
+
+      // 2. Clear public.profiles avatar_url
+      try {
+        await supabase.from('profiles').upsert({
+          id: user.id,
+          avatar_url: null,
+          full_name: fullName.trim() || user.user_metadata?.full_name || 'Người học',
+          phone: phone.trim() || null,
+          show_phone: showPhone,
+          updated_at: new Date().toISOString(),
+        });
+      } catch (profileErr) {
+        console.error('Clear profile avatar error:', profileErr);
+      }
+
+      setAvatarMessage({
+        type: 'success',
+        text: 'Đã xóa ảnh đại diện.',
+      });
+      setShowConfirmRemove(false);
     } catch (err) {
       console.error('Remove avatar exception:', err);
       setAvatarMessage({
         type: 'error',
-        text: 'Không thể xóa ảnh đại diện. Vui lòng thử lại.',
+        text: 'Đã xảy ra lỗi khi xóa ảnh đại diện.',
       });
     } finally {
       setAvatarUploading(false);
     }
   };
 
-  // Save Name & Phone Info Change
+  // Save Account Information (Full Name + Phone + Show Phone)
   const handleSaveInfo = async (e) => {
     e.preventDefault();
     setInfoError('');
@@ -277,10 +280,13 @@ export default function Profile() {
       setInfoError('Họ và tên không được để trống.');
       return;
     }
+    if (trimmedName.length < 2) {
+      setInfoError('Họ và tên phải có tối thiểu 2 ký tự.');
+      return;
+    }
 
     const sanitizedPhone = phone.trim();
     if (sanitizedPhone) {
-      // Lightweight validation: 9-15 chars, numbers, spaces, plus, hyphens, parentheses
       const phoneRegex = /^[0-9+\-\s()]{9,15}$/;
       if (!phoneRegex.test(sanitizedPhone)) {
         setInfoError('Số điện thoại không hợp lệ.');
@@ -359,16 +365,16 @@ export default function Profile() {
 
       if (error) {
         console.error('Update password error:', error);
-        setPasswordError('Không thể cập nhật mật khẩu. Vui lòng thử lại.');
+        setPasswordError('Đổi mật khẩu thất bại. Vui lòng thử lại.');
       } else {
-        setPasswordSuccess('Đã cập nhật mật khẩu thành công.');
+        setPasswordSuccess('Mật khẩu đã được cập nhật thành công.');
         setNewPassword('');
         setConfirmPassword('');
         setTimeout(() => setPasswordSuccess(''), 4000);
       }
     } catch (err) {
       console.error('Update password exception:', err);
-      setPasswordError('Không thể cập nhật mật khẩu. Vui lòng thử lại sau.');
+      setPasswordError('Đổi mật khẩu thất bại. Vui lòng thử lại.');
     } finally {
       setPasswordSubmitting(false);
     }
@@ -433,26 +439,26 @@ export default function Profile() {
     <div className="py-4 px-4 max-w-2xl mx-auto space-y-6 w-full">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           Thông tin cá nhân
         </h1>
-        <p className="text-xs sm:text-sm text-[#556551]">
+        <p className="text-xs sm:text-sm text-slate-500">
           Quản lý thông tin tài khoản và bảo mật của bạn trên LeafLearn.
         </p>
       </div>
 
       {/* Main Form Container Card */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-8 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 space-y-8 shadow-xs">
         {/* Section 0: Avatar Management */}
-        <div className="space-y-4 pb-6 border-b border-[#DCE5D8]">
-          <h3 className="text-base font-bold text-[#14261C]">Ảnh đại diện</h3>
+        <div className="space-y-4 pb-6 border-b border-slate-200">
+          <h3 className="text-base font-bold text-slate-900">Ảnh đại diện</h3>
 
           {avatarMessage.text && (
             <div
-              className={`p-3 rounded-lg text-xs font-semibold ${
+              className={`p-3 rounded-xl text-xs font-semibold ${
                 avatarMessage.type === 'error'
-                  ? 'bg-[#FFF2F0] border border-[#FFA39E] text-[#CF1322]'
-                  : 'bg-[#F6FFED] border border-[#B7EB8F] text-[#24693D]'
+                  ? 'bg-rose-50 border border-rose-200 text-rose-800'
+                  : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
               }`}
             >
               {avatarMessage.type === 'error' ? '✕ ' : '✓ '}
@@ -467,16 +473,16 @@ export default function Profile() {
                 <img
                   src={avatarPreview}
                   alt="Avatar Preview"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-[#24693D] shadow-xs"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-emerald-500 shadow-sm"
                 />
               ) : savedAvatarUrl ? (
                 <img
                   src={savedAvatarUrl}
                   alt="Current Avatar"
-                  className="w-20 h-20 rounded-full object-cover border border-[#DCE5D8] shadow-xs"
+                  className="w-20 h-20 rounded-full object-cover border border-slate-200 shadow-sm"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-[#24693D] text-white font-bold text-2xl flex items-center justify-center border border-[#1D5732] shadow-xs">
+                <div className="w-20 h-20 rounded-full bg-emerald-600 text-white font-bold text-2xl flex items-center justify-center border border-emerald-700 shadow-sm">
                   {avatarLetter}
                 </div>
               )}
@@ -517,7 +523,7 @@ export default function Profile() {
                   <>
                     <label
                       htmlFor="avatar-upload-input"
-                      className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg border border-[#DCE5D8] bg-white text-xs font-semibold text-[#14261C] hover:border-[#24693D] hover:bg-[#F8FCF4] transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800 hover:border-emerald-500 hover:bg-slate-50 transition-all cursor-pointer shadow-2xs"
                     >
                       Tải ảnh lên
                     </label>
@@ -527,7 +533,7 @@ export default function Profile() {
                         {showConfirmRemove ? (
                           <div className="inline-flex items-center gap-1.5">
                             <Button
-                              type="danger"
+                              danger
                               size="small"
                               onClick={handleRemoveAvatar}
                               loading={avatarUploading}
@@ -547,7 +553,7 @@ export default function Profile() {
                             type="text"
                             size="small"
                             onClick={() => setShowConfirmRemove(true)}
-                            className="text-[#CF1322] hover:bg-[#FFF2F0]"
+                            className="text-rose-600 hover:bg-rose-50"
                           >
                             Xóa ảnh
                           </Button>
@@ -563,16 +569,16 @@ export default function Profile() {
 
         {/* Section 1: Account Information Form */}
         <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#14261C]">Thông tin tài khoản</h3>
+          <h3 className="text-base font-bold text-slate-900">Thông tin tài khoản</h3>
 
           {infoSuccess && (
-            <div className="p-3 bg-[#F6FFED] border border-[#B7EB8F] rounded-lg text-xs font-semibold text-[#24693D]">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-800">
               ✓ {infoSuccess}
             </div>
           )}
 
           {infoError && (
-            <div className="p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-800">
               ✕ {infoError}
             </div>
           )}
@@ -587,7 +593,7 @@ export default function Profile() {
             />
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-[#14261C]">
+              <label className="block text-xs font-semibold text-slate-800">
                 Email
               </label>
               <input
@@ -595,9 +601,9 @@ export default function Profile() {
                 value={user?.email || ''}
                 disabled
                 readOnly
-                className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] bg-[#F8FCF4] text-sm text-[#556551] cursor-not-allowed font-mono select-none"
+                className="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-600 cursor-not-allowed font-mono select-none"
               />
-              <p className="text-[11px] text-[#8C9B86]">
+              <p className="text-[11px] text-slate-400">
                 Email được dùng làm định danh đăng nhập và không thể thay đổi.
               </p>
             </div>
@@ -613,12 +619,12 @@ export default function Profile() {
 
             {/* Public Phone Visibility Checkbox */}
             <div className="pt-1">
-              <label className="inline-flex items-center gap-2.5 text-xs font-medium text-[#14261C] cursor-pointer select-none">
+              <label className="inline-flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={showPhone}
                   onChange={(e) => setShowPhone(e.target.checked)}
-                  className="w-4 h-4 rounded border-[#DCE5D8] text-[#24693D] focus:ring-[#24693D] accent-[#24693D] cursor-pointer"
+                  className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
                 />
                 <span>Hiển thị số điện thoại trên hồ sơ cộng đồng</span>
               </label>
@@ -639,17 +645,17 @@ export default function Profile() {
         </div>
 
         {/* Section 2: Password Change Form */}
-        <div className="space-y-4 pt-6 border-t border-[#DCE5D8]">
-          <h3 className="text-base font-bold text-[#14261C]">Đổi mật khẩu</h3>
+        <div className="space-y-4 pt-6 border-t border-slate-200">
+          <h3 className="text-base font-bold text-slate-900">Đổi mật khẩu</h3>
 
           {passwordSuccess && (
-            <div className="p-3 bg-[#F6FFED] border border-[#B7EB8F] rounded-lg text-xs font-semibold text-[#24693D]">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-800">
               ✓ {passwordSuccess}
             </div>
           )}
 
           {passwordError && (
-            <div className="p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-800">
               ✕ {passwordError}
             </div>
           )}
@@ -686,17 +692,17 @@ export default function Profile() {
         </div>
 
         {/* Section 3: Danger Zone - Delete Account */}
-        <div className="space-y-3 pt-6 border-t border-[#FFA39E]/40">
+        <div className="space-y-3 pt-6 border-t border-rose-200/60">
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-[#CF1322]">Khu vực nguy hiểm</h3>
-            <p className="text-xs text-[#556551] leading-relaxed">
+            <h3 className="text-base font-bold text-rose-600">Khu vực nguy hiểm</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
               Xóa tài khoản sẽ xóa vĩnh viễn tài khoản và dữ liệu học tập của bạn. Hành động này không thể hoàn tác.
             </p>
           </div>
 
           <div>
             <Button
-              type="danger"
+              danger
               onClick={() => {
                 setShowDeleteModal(true);
                 setDeleteInput('');
@@ -709,7 +715,7 @@ export default function Profile() {
         </div>
 
         {/* Section 4: Logout Action */}
-        <div className="pt-4 border-t border-[#DCE5D8] flex justify-end">
+        <div className="pt-4 border-t border-slate-200 flex justify-end">
           <Button type="default" onClick={handleLogout}>
             Đăng xuất khỏi tài khoản
           </Button>
@@ -732,7 +738,7 @@ export default function Profile() {
               Hủy
             </Button>
             <Button
-              type="danger"
+              danger
               onClick={handleDeleteAccount}
               loading={deleteSubmitting}
               disabled={deleteInput !== 'XÓA' || deleteSubmitting}
@@ -742,12 +748,12 @@ export default function Profile() {
           </div>
         }
       >
-        <p className="text-xs text-[#556551] leading-relaxed mb-4">
-          Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu học tập và không thể hoàn tác. Để tiếp tục, vui lòng nhập chuỗi <strong className="text-[#14261C] font-mono">XÓA</strong> vào ô dưới đây.
+        <p className="text-xs text-slate-600 leading-relaxed mb-4">
+          Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu học tập và không thể hoàn tác. Để tiếp tục, vui lòng nhập chuỗi <strong className="text-slate-900 font-mono">XÓA</strong> vào ô dưới đây.
         </p>
 
         {deleteError && (
-          <div className="mb-4 p-3 bg-[#FFF2F0] border border-[#FFA39E] rounded-lg text-xs font-semibold text-[#CF1322]">
+          <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-800">
             ✕ {deleteError}
           </div>
         )}

@@ -12,12 +12,12 @@ export default function Empty({
 }) {
   return (
     <div
-      className={`bg-white border border-[#DCE5D8] rounded-xl p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)] ${className}`}
+      className={`bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-3 shadow-xs ${className}`}
     >
-      <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-[#8C9785] bg-[#F7FAF5] rounded-full border border-[#E8EFE5] mb-1">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-200/80 mb-1">
         {icon || (
           <svg
-            className="w-8 h-8 sm:w-10 sm:h-10 text-[#24693D]/40"
+            className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-600/40"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -33,11 +33,11 @@ export default function Empty({
       </div>
 
       <div className="space-y-1 max-w-sm">
-        <h3 className="text-base font-semibold text-[#1A2416]">
+        <h3 className="text-base font-bold text-slate-900 tracking-tight">
           {title}
         </h3>
         {description && (
-          <p className="text-xs sm:text-sm text-[#66705F] leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
             {description}
           </p>
         )}

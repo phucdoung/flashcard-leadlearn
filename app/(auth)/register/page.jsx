@@ -136,10 +136,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="bg-white border border-[#DCE5D8] rounded-2xl shadow-xs overflow-hidden flex flex-col md:flex-row w-full my-auto">
+    <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row w-full my-auto">
       {/* 1. Left Branding Column (Desktop & Tablet: ~48% width) */}
-      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#DCE5D8] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#24693D]/10 blur-2xl pointer-events-none" />
+      <div className="hidden md:flex md:w-[48%] bg-slate-50/80 border-r border-slate-200/80 p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
 
         {/* Logo Unit */}
         <div className="relative z-10">
@@ -155,30 +155,30 @@ export default function RegisterPage() {
 
         {/* Brand Value Proposition */}
         <div className="space-y-4 my-8 relative z-10">
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#14261C] leading-[1.25] tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-[1.25] tracking-tight">
             Tạo tài khoản LeafLearn ngay hôm nay.
           </h1>
-          <p className="text-sm lg:text-base text-[#556551] leading-relaxed">
+          <p className="text-sm lg:text-base text-slate-600 leading-relaxed">
             Bắt đầu hành trình ghi nhớ từ vựng hiệu quả mỗi ngày cùng trí tuệ nhân tạo.
           </p>
 
-          <div className="space-y-3 pt-6 border-t border-[#DCE5D8]">
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+          <div className="space-y-3 pt-6 border-t border-slate-200">
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Bắt buộc xác nhận Email trước khi đăng nhập</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Gợi ý nghĩa từ vựng tự động bằng AI</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Chia sẻ bộ thẻ với cộng đồng</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[11px] text-[#8C9B86] font-medium">
+        <div className="relative z-10 text-[11px] text-slate-400 font-medium">
           © 2026 LeafLearn. Nền tảng học từ vựng tiếng Anh tối giản.
         </div>
       </div>
@@ -200,29 +200,29 @@ export default function RegisterPage() {
         {registeredEmail ? (
           /* Mandatory Email Confirmation Panel */
           <div className="space-y-6 text-center py-2">
-            <div className="w-14 h-14 rounded-full bg-[#F6FFED] border border-[#B7EB8F] flex items-center justify-center mx-auto text-[#24693D] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-600 font-bold text-2xl shadow-xs">
               ✓
             </div>
 
             <div className="space-y-2.5">
-              <h2 className="text-2xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 Đăng ký thành công!
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Chúng tôi đã gửi một liên kết xác nhận đến email:
-                <span className="block font-semibold text-[#14261C] font-mono mt-1">
+                <span className="block font-semibold text-slate-900 font-mono mt-1">
                   {registeredEmail}
                 </span>
               </p>
-              <div className="p-4 bg-[#F8FCF4] border border-[#DCE5D8] rounded-xl text-xs text-[#556551] text-left leading-relaxed mt-3">
-                <span className="font-semibold text-[#14261C] block mb-1">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 text-left leading-relaxed mt-3">
+                <span className="font-semibold text-slate-900 block mb-1">
                   📌 Bước tiếp theo:
                 </span>
                 Mở hộp thư điện tử của bạn và nhấn vào nút <strong>&quot;Xác nhận tài khoản&quot;</strong> để có thể đăng nhập vào LeafLearn.
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#DCE5D8]">
+            <div className="pt-4 border-t border-slate-200">
               <Link href="/login" className="block w-full">
                 <Button type="primary" size="large" block>
                   Đến trang Đăng nhập
@@ -234,22 +234,22 @@ export default function RegisterPage() {
           /* Normal Registration Input Form State */
           <div>
             <div className="space-y-1 mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                 Tạo tài khoản
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551]">
+              <p className="text-xs sm:text-sm text-slate-500">
                 Đăng ký để trải nghiệm công cụ học tập thông minh cùng LeafLearn.
               </p>
             </div>
 
             {authError && (
-              <div className="mb-5 bg-[#FFF2F0] border border-[#FFA39E] p-3.5 rounded-lg text-xs text-[#CF1322] font-medium text-center leading-relaxed space-y-2">
+              <div className="mb-5 bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-xs text-rose-800 font-medium text-center leading-relaxed space-y-2">
                 <p>{authError}</p>
                 {authError.includes('đã được sử dụng') && (
-                  <div className="pt-1 border-t border-[#FFA39E]/40">
+                  <div className="pt-1 border-t border-rose-200/60">
                     <Link
                       href="/login"
-                      className="text-xs font-semibold text-[#24693D] underline hover:text-[#1D5732] transition-colors"
+                      className="text-xs font-semibold text-emerald-700 underline hover:text-emerald-800 transition-colors"
                     >
                       Đến trang Đăng nhập ➔
                     </Link>
@@ -334,9 +334,9 @@ export default function RegisterPage() {
             </form>
 
             {/* Footer Link */}
-            <div className="mt-6 text-center text-xs sm:text-sm text-[#556551]">
+            <div className="mt-6 text-center text-xs sm:text-sm text-slate-500">
               Đã có tài khoản?{' '}
-              <Link href="/login" className="text-[#24693D] hover:underline font-semibold">
+              <Link href="/login" className="text-emerald-600 hover:underline font-semibold">
                 Đăng nhập
               </Link>
             </div>

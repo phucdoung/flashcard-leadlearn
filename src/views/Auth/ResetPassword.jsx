@@ -94,10 +94,10 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="bg-white border border-[#DCE5D8] rounded-2xl shadow-xs overflow-hidden flex flex-col md:flex-row w-full my-auto">
+    <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row w-full my-auto">
       {/* 1. Left Branding Column (~48% width) */}
-      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#DCE5D8] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#24693D]/10 blur-2xl pointer-events-none" />
+      <div className="hidden md:flex md:w-[48%] bg-slate-50/80 border-r border-slate-200/80 p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
 
         {/* Logo Unit */}
         <div className="relative z-10">
@@ -113,26 +113,26 @@ export default function ResetPassword() {
 
         {/* Value Prop */}
         <div className="space-y-4 my-8 relative z-10">
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#14261C] leading-[1.25] tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-[1.25] tracking-tight">
             Đặt lại mật khẩu an toàn.
           </h1>
-          <p className="text-sm lg:text-base text-[#556551] leading-relaxed">
+          <p className="text-sm lg:text-base text-slate-600 leading-relaxed">
             Tạo mật khẩu mới và sẵn sàng tiếp tục lộ trình học từ vựng của bạn.
           </p>
 
-          <div className="space-y-3 pt-6 border-t border-[#DCE5D8]">
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+          <div className="space-y-3 pt-6 border-t border-slate-200">
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Cập nhật mật khẩu trực tiếp</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Đăng nhập ngay sau khi hoàn tất</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[11px] text-[#8C9B86] font-medium">
+        <div className="relative z-10 text-[11px] text-slate-400 font-medium">
           © 2026 LeafLearn. Nền tảng học từ vựng tiếng Anh tối giản.
         </div>
       </div>
@@ -153,21 +153,21 @@ export default function ResetPassword() {
 
         {checkingSession ? (
           /* Loading session check state */
-          <div className="py-12 text-center text-sm font-medium text-[#556551] animate-pulse">
+          <div className="py-12 text-center text-sm font-medium text-slate-500 animate-pulse">
             Đang xác thực liên kết khôi phục mật khẩu...
           </div>
         ) : !isValidSession ? (
           /* Invalid / Expired Reset Link Error Panel */
           <div className="space-y-6 text-center py-4">
-            <div className="w-14 h-14 rounded-full bg-[#FFF2F0] border border-[#FFA39E] flex items-center justify-center mx-auto text-[#CF1322] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600 font-bold text-2xl shadow-xs">
               !
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                 Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
                 Liên kết này có thể đã được sử dụng hoặc quá thời hạn cho phép. Vui lòng gửi lại yêu cầu để nhận liên kết mới.
               </p>
             </div>
@@ -183,15 +183,15 @@ export default function ResetPassword() {
         ) : isSuccess ? (
           /* Success State Panel */
           <div className="space-y-6 text-center py-4">
-            <div className="w-14 h-14 rounded-full bg-[#F6FFED] border border-[#B7EB8F] flex items-center justify-center mx-auto text-[#24693D] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-600 font-bold text-2xl shadow-xs">
               ✓
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 Đặt lại mật khẩu thành công
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
                 Bạn có thể sử dụng mật khẩu mới để đăng nhập LeafLearn.
               </p>
             </div>
@@ -208,16 +208,16 @@ export default function ResetPassword() {
           /* Normal Password Input Form State */
           <div>
             <div className="space-y-1 mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                 Đặt mật khẩu mới
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551]">
+              <p className="text-xs sm:text-sm text-slate-500">
                 Tạo mật khẩu mới cho tài khoản LeafLearn của bạn.
               </p>
             </div>
 
             {authError && (
-              <div className="mb-5 bg-[#FFF2F0] border border-[#FFA39E] p-3.5 rounded-lg text-xs text-[#CF1322] font-medium text-center leading-relaxed">
+              <div className="mb-5 bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-xs text-rose-800 font-medium text-center leading-relaxed">
                 {authError}
               </div>
             )}
@@ -267,8 +267,8 @@ export default function ResetPassword() {
               </div>
             </form>
 
-            <div className="mt-8 text-center text-xs sm:text-sm text-[#556551]">
-              <Link to="/login" className="text-[#24693D] hover:underline font-semibold">
+            <div className="mt-8 text-center text-xs sm:text-sm text-slate-500">
+              <Link to="/login" className="text-emerald-600 hover:underline font-semibold">
                 Quay lại đăng nhập
               </Link>
             </div>

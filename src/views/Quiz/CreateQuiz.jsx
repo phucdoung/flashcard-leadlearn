@@ -304,21 +304,21 @@ export default function CreateQuiz() {
   };
 
   return (
-    <div className="py-4 max-w-4xl mx-auto space-y-6 px-4 sm:px-6 w-full">
+    <div className="py-6 max-w-4xl mx-auto space-y-6 px-4 sm:px-6 w-full">
       {/* Header Section */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <Link
               to={`/flashcard/${id}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#556551] hover:text-[#24693D] transition-colors mb-2"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-emerald-700 transition-colors mb-2"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Quay lại bộ Flashcard
             </Link>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               Tạo bài kiểm tra
             </h1>
           </div>
@@ -329,13 +329,13 @@ export default function CreateQuiz() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-3 border-t border-[#E8EFE5] text-xs text-[#556551]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-3 border-t border-slate-100 text-xs text-slate-500">
           <span>
-            Bộ thẻ: <strong className="text-[#14261C] font-semibold">{setDetail?.title || 'Đang tải...'}</strong>
+            Bộ thẻ: <strong className="text-slate-900 font-semibold">{setDetail?.title || 'Đang tải...'}</strong>
           </span>
           <span>
             Trạng thái:{' '}
-            <strong className={availableCardsCount < 10 ? 'text-[#CF1322]' : 'text-[#24693D]'}>
+            <strong className={availableCardsCount < 10 ? 'text-rose-600' : 'text-emerald-700'}>
               {availableCardsCount < 10 ? 'Cần tối thiểu 10 từ' : 'Đủ điều kiện tạo bài'}
             </strong>
           </span>
@@ -343,7 +343,7 @@ export default function CreateQuiz() {
       </div>
 
       {/* Quiz Settings Form */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Quiz Title Input */}
           <Input
@@ -357,12 +357,12 @@ export default function CreateQuiz() {
           {/* Flashcard Scope Selection */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold text-[#14261C]">
+              <label className="block text-xs font-semibold text-slate-800">
                 Phạm vi câu hỏi
               </label>
-              <span className="text-xs text-[#556551]">
+              <span className="text-xs text-slate-500">
                 Từ hợp lệ:{' '}
-                <strong className={scopedValidCount >= 10 ? 'text-[#24693D]' : 'text-[#CF1322]'}>
+                <strong className={scopedValidCount >= 10 ? 'text-emerald-700' : 'text-rose-600'}>
                   {scopedValidCount} từ
                 </strong>
               </span>
@@ -375,21 +375,21 @@ export default function CreateQuiz() {
                 onClick={() => setScope('all')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'all'
-                    ? 'border-[#24693D] bg-[#F0F7EE] ring-1 ring-[#24693D]'
-                    : 'border-[#DCE5D8] bg-white hover:border-[#24693D]/40'
+                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
+                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-[#14261C]">Tất cả</span>
+                  <span className="text-xs font-bold text-slate-900">Tất cả</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'all' ? 'border-[#24693D] bg-[#24693D]' : 'border-[#DCE5D8]'
+                      scope === 'all' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'all' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </span>
                 </div>
-                <span className="text-[11px] text-[#556551]">
+                <span className="text-[11px] text-slate-500">
                   Toàn bộ {availableCardsCount} từ trong bộ thẻ
                 </span>
               </button>
@@ -400,21 +400,21 @@ export default function CreateQuiz() {
                 onClick={() => setScope('unlearned')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'unlearned'
-                    ? 'border-[#24693D] bg-[#F0F7EE] ring-1 ring-[#24693D]'
-                    : 'border-[#DCE5D8] bg-white hover:border-[#24693D]/40'
+                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
+                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-[#14261C]">Từ chưa thuộc</span>
+                  <span className="text-xs font-bold text-slate-900">Từ chưa thuộc</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'unlearned' ? 'border-[#24693D] bg-[#24693D]' : 'border-[#DCE5D8]'
+                      scope === 'unlearned' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'unlearned' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </span>
                 </div>
-                <span className="text-[11px] text-[#556551]">
+                <span className="text-[11px] text-slate-500">
                   {unlearnedCardsCount} từ được đánh dấu chưa thuộc
                 </span>
               </button>
@@ -425,21 +425,21 @@ export default function CreateQuiz() {
                 onClick={() => setScope('custom')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'custom'
-                    ? 'border-[#24693D] bg-[#F0F7EE] ring-1 ring-[#24693D]'
-                    : 'border-[#DCE5D8] bg-white hover:border-[#24693D]/40'
+                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
+                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-[#14261C]">Chọn chi tiết</span>
+                  <span className="text-xs font-bold text-slate-900">Chọn chi tiết</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'custom' ? 'border-[#24693D] bg-[#24693D]' : 'border-[#DCE5D8]'
+                      scope === 'custom' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'custom' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </span>
                 </div>
-                <span className="text-[11px] text-[#556551]">
+                <span className="text-[11px] text-slate-500">
                   Đã chọn {selectedCardIds.size} / {availableCardsCount} từ
                 </span>
               </button>
@@ -447,24 +447,24 @@ export default function CreateQuiz() {
 
             {/* Custom Flashcard Checklist */}
             {scope === 'custom' && (
-              <div className="rounded-xl border border-[#DCE5D8] bg-[#F8FCF4] p-4 space-y-3">
-                <div className="flex items-center justify-between text-xs pb-2 border-b border-[#DCE5D8]">
-                  <span className="font-semibold text-[#14261C]">
+              <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4 space-y-3">
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-200/60">
+                  <span className="font-semibold text-slate-900">
                     Danh sách từ trong bộ ({selectedCardIds.size}/{availableCardsCount} đã chọn)
                   </span>
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="text-xs font-medium text-[#24693D] hover:underline cursor-pointer"
+                      className="text-xs font-medium text-emerald-700 hover:underline cursor-pointer"
                     >
                       Chọn tất cả
                     </button>
-                    <span className="text-[#DCE5D8]">|</span>
+                    <span className="text-slate-300">|</span>
                     <button
                       type="button"
                       onClick={handleDeselectAll}
-                      className="text-xs font-medium text-[#556551] hover:underline cursor-pointer"
+                      className="text-xs font-medium text-slate-500 hover:underline cursor-pointer"
                     >
                       Bỏ chọn tất cả
                     </button>
@@ -484,8 +484,8 @@ export default function CreateQuiz() {
                         key={card.id}
                         className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
                           isChecked
-                            ? 'bg-white border-[#24693D]/50 shadow-2xs'
-                            : 'bg-white/60 border-[#DCE5D8] text-[#556551]'
+                            ? 'bg-white border-emerald-500/50 shadow-2xs'
+                            : 'bg-white/60 border-slate-200 text-slate-500'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 truncate flex-1 pr-2">
@@ -493,10 +493,10 @@ export default function CreateQuiz() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleToggleCard(card.id)}
-                            className="w-4 h-4 rounded border-[#DCE5D8] text-[#24693D] focus:ring-[#24693D] cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                           />
-                          <span className="font-semibold text-[#14261C] truncate">{word}</span>
-                          <span className="text-[#556551] truncate">- {meaning}</span>
+                          <span className="font-semibold text-slate-900 truncate">{word}</span>
+                          <span className="text-slate-500 truncate">- {meaning}</span>
                         </div>
 
                         <Tag color={isMastered ? 'green' : 'default'} size="small">
@@ -511,27 +511,27 @@ export default function CreateQuiz() {
           </div>
 
           {/* Dynamic AI Question Count Guidance Box */}
-          <div className="rounded-xl border border-[#DCE5D8] bg-[#F8FCF4] p-4 sm:p-5 space-y-2">
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#24693D] text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-600 text-[10px] font-bold text-white shadow-2xs">
                 AI
               </span>
-              <h4 className="text-xs font-bold text-[#14261C]">
+              <h4 className="text-xs font-bold text-slate-900">
                 Quy trình sinh đề thông minh
               </h4>
             </div>
 
-            <p className="text-xs text-[#556551] leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               Bài kiểm tra sẽ được AI tạo tự động từ các từ vựng thuộc phạm vi đã chọn (yêu cầu tối thiểu 10 từ/cụm từ hợp lệ).
             </p>
 
-            <p className="text-[11px] text-[#8C9B86] italic">
+            <p className="text-[11px] text-slate-400 italic">
               * Số lượng câu hỏi thực tế phụ thuộc vào số từ vựng hợp lệ trong phạm vi.
             </p>
 
             {/* Condition Warning If < 10 Cards */}
             {!loading && !hasMinimumCards && (
-              <div className="p-3 rounded-lg bg-[#FFF2F0] border border-[#FFA39E] text-xs text-[#CF1322] font-medium space-y-1 mt-2">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-600 font-medium space-y-1 mt-2">
                 {scope === 'unlearned' && (
                   <p>
                     Phạm vi <strong>"Từ chưa thuộc"</strong> chỉ có {scopedValidCount} từ hợp lệ (yêu cầu tối thiểu 10 từ để tạo đề thi). Vui lòng chọn phạm vi <strong>"Tất cả"</strong> hoặc thêm từ chưa thuộc.
@@ -559,6 +559,7 @@ export default function CreateQuiz() {
             block
             loading={generating}
             disabled={loading || !hasMinimumCards || generating}
+            className="rounded-xl shadow-xs"
             icon={
               !generating ? (
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -580,9 +581,9 @@ export default function CreateQuiz() {
         width="max-w-2xl"
         footer={
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
-            <div className="text-xs text-[#556551]">
+            <div className="text-xs text-slate-500">
               Flashcard hợp lệ sẵn sàng:{' '}
-              <strong className={validCardsPool.length < 10 ? 'text-[#CF1322]' : 'text-[#24693D]'}>
+              <strong className={validCardsPool.length < 10 ? 'text-rose-600' : 'text-emerald-700'}>
                 {validCardsPool.length} / 10 thẻ tối thiểu
               </strong>
             </div>
@@ -602,8 +603,8 @@ export default function CreateQuiz() {
           </div>
         }
       >
-        <p className="text-xs text-[#556551] mb-4">
-          Phát hiện <strong className="text-[#14261C]">{auditIssues.length} thẻ</strong> có thể gặp vấn đề về mặt từ vựng hoặc ý nghĩa. Vui lòng xem xét trước khi tiến hành sinh bài kiểm tra.
+        <p className="text-xs text-slate-500 mb-4">
+          Phát hiện <strong className="text-slate-900">{auditIssues.length} thẻ</strong> có thể gặp vấn đề về mặt từ vựng hoặc ý nghĩa. Vui lòng xem xét trước khi tiến hành sinh bài kiểm tra.
         </p>
 
         {/* Audit Issues List */}
@@ -620,7 +621,7 @@ export default function CreateQuiz() {
               <div
                 key={item.flashcardId}
                 className={`p-4 rounded-xl border transition-all ${
-                  isError ? 'border-[#FFA39E] bg-[#FFF2F0]' : 'border-[#FFE58F] bg-[#FFFBE6]'
+                  isError ? 'border-rose-200 bg-rose-50/70' : 'border-amber-200 bg-amber-50/70'
                 }`}
               >
                 {/* Header Badge */}
@@ -629,45 +630,45 @@ export default function CreateQuiz() {
                     {isError ? 'Lỗi nghiêm trọng' : 'Cảnh báo'}
                   </Tag>
 
-                  {isApplied && <span className="text-xs font-semibold text-[#24693D]">✓ Đã áp dụng gợi ý</span>}
-                  {isIgnored && <span className="text-xs font-semibold text-[#D46B08]">✓ Giữ nguyên (Cảnh báo)</span>}
-                  {isExcluded && <span className="text-xs font-semibold text-[#CF1322]">✕ Đã loại bỏ khỏi bài</span>}
+                  {isApplied && <span className="text-xs font-semibold text-emerald-700">✓ Đã áp dụng gợi ý</span>}
+                  {isIgnored && <span className="text-xs font-semibold text-amber-700">✓ Giữ nguyên (Cảnh báo)</span>}
+                  {isExcluded && <span className="text-xs font-semibold text-rose-600">✕ Đã loại bỏ khỏi bài</span>}
                 </div>
 
                 {/* Issue Description */}
-                <p className="text-xs font-semibold text-[#14261C] mb-2">
-                  Nguyên nhân: <span className="font-normal text-[#556551]">{item.issue}</span>
+                <p className="text-xs font-semibold text-slate-900 mb-2">
+                  Nguyên nhân: <span className="font-normal text-slate-600">{item.issue}</span>
                 </p>
 
                 {/* Current vs Suggested Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-white/90 p-3 rounded-lg border border-[#DCE5D8] mb-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-white/90 p-3 rounded-xl border border-slate-200/80 mb-3">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#8C9B86] block mb-0.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
                       Từ vựng hiện tại:
                     </span>
-                    <p className="font-semibold text-[#14261C]">{item.word}</p>
-                    <p className="text-[#556551]">{item.currentMeaning}</p>
+                    <p className="font-semibold text-slate-900">{item.word}</p>
+                    <p className="text-slate-600">{item.currentMeaning}</p>
                   </div>
 
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#1890FF] block mb-0.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-sky-600 block mb-0.5">
                       Gợi ý từ AI:
                     </span>
-                    <p className="font-semibold text-[#1890FF]">
+                    <p className="font-semibold text-sky-700">
                       {item.suggestedWord}{' '}
                       {item.suggestedPronunciation && (
-                        <span className="font-normal text-[11px] text-[#556551]">
+                        <span className="font-normal text-[11px] text-slate-500">
                           ({item.suggestedPronunciation})
                         </span>
                       )}
                     </p>
-                    <p className="text-[#096DD9]">{item.suggestedMeaning}</p>
+                    <p className="text-sky-800">{item.suggestedMeaning}</p>
                   </div>
                 </div>
 
                 {/* Editing Form */}
                 {isEditing ? (
-                  <div className="space-y-3 bg-white p-3.5 rounded-lg border border-[#DCE5D8] mb-2">
+                  <div className="space-y-3 bg-white p-3.5 rounded-xl border border-slate-200/80 mb-2">
                     <Input
                       label="Từ/Cụm từ tiếng Anh"
                       value={editFormData.word}
@@ -723,7 +724,7 @@ export default function CreateQuiz() {
         </div>
 
         {!canProceedWithQuiz && (
-          <p className="mt-3 text-center text-[11px] font-semibold text-[#CF1322]">
+          <p className="mt-3 text-center text-[11px] font-semibold text-rose-600">
             {unhandledErrorIds.size > 0
               ? 'Vui lòng xử lý tất cả các thẻ có lỗi nghiêm trọng (dùng gợi ý, chỉnh sửa hoặc loại bỏ) trước khi tạo bài.'
               : 'Bộ Flashcard chưa có đủ 10 từ/cụm từ hợp lệ để tạo bài kiểm tra.'}

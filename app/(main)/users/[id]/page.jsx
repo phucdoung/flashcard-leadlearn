@@ -37,8 +37,8 @@ export default function PublicProfile() {
           console.error('[PublicProfile] Error fetching profile for userId:', id, profileErr);
         }
 
-        // Development diagnostic logging (NO email, token, or key logged)
-        if (import.meta.env.DEV) {
+        // Development diagnostic logging
+        if (process.env.NODE_ENV !== 'production') {
           console.log('[PublicProfile] userId:', id);
           console.log('[PublicProfile] profile:', dbProfile);
         }
@@ -135,8 +135,8 @@ export default function PublicProfile() {
   if (loading) {
     return (
       <div className="py-24 text-center max-w-md mx-auto px-4">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
-        <p className="mt-4 text-sm font-medium text-[#556551]">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+        <p className="mt-4 text-sm font-medium text-slate-500">
           Đang tải hồ sơ người dùng...
         </p>
       </div>
@@ -148,17 +148,17 @@ export default function PublicProfile() {
   return (
     <div className="py-4 px-4 max-w-4xl mx-auto space-y-6 w-full">
       {/* Profile Header Main Card */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Avatar */}
           {profileUser?.avatar ? (
             <img
               src={profileUser.avatar}
               alt={profileUser.name}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[#24693D] shrink-0"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-emerald-500 shrink-0 shadow-sm"
             />
           ) : (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#24693D] text-white font-bold text-3xl flex items-center justify-center border-2 border-[#1D5732] shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-600 text-white font-bold text-3xl flex items-center justify-center border-2 border-emerald-700 shrink-0 shadow-sm">
               {profileUser?.name ? profileUser.name.charAt(0).toUpperCase() : 'U'}
             </div>
           )}
@@ -166,10 +166,10 @@ export default function PublicProfile() {
           {/* User Info */}
           <div className="flex-1 text-center sm:text-left space-y-2">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
-                {profileUser?.name} {isSelf && <span className="text-xs text-[#24693D] font-normal">(Bạn)</span>}
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                {profileUser?.name} {isSelf && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
               </h1>
-              <span className="text-xs text-[#556551] font-medium block mt-0.5">
+              <span className="text-xs text-slate-500 font-medium block mt-0.5">
                 Hồ sơ học tập công khai
               </span>
             </div>
@@ -177,16 +177,16 @@ export default function PublicProfile() {
             {/* Optional Public Phone Section */}
             {profileUser?.phone && (profileUser?.showPhone || isSelf) && (
               <div className="pt-1.5">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#F8FCF4] border border-[#DCE5D8] text-xs font-semibold text-[#14261C]">
-                  <span className="text-[#24693D]">Liên hệ:</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800">
+                  <span className="text-emerald-700">Liên hệ:</span>
                   <a
                     href={`tel:${profileUser.phone}`}
-                    className="font-mono text-[#14261C] hover:text-[#24693D] hover:underline transition-colors"
+                    className="font-mono text-slate-900 hover:text-emerald-700 hover:underline transition-colors"
                   >
                     {profileUser.phone}
                   </a>
                   {isSelf && !profileUser.showPhone && (
-                    <span className="text-[11px] text-[#8C9B86] font-normal italic">
+                    <span className="text-[11px] text-slate-400 font-normal italic">
                       (Chỉ bạn nhìn thấy)
                     </span>
                   )}
@@ -196,30 +196,30 @@ export default function PublicProfile() {
 
             {/* 4 Key Statistics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
-              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
-                <span className="block text-[11px] text-[#556551]">Bộ thẻ công khai</span>
-                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
+              <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3 text-center">
+                <span className="block text-[11px] text-slate-500 font-medium">Bộ thẻ công khai</span>
+                <span className="text-lg font-bold text-slate-900 mt-0.5 block font-mono">
                   {publicSets.length}
                 </span>
               </div>
 
-              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
-                <span className="block text-[11px] text-[#556551]">Từ đã thuộc</span>
-                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
+              <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3 text-center">
+                <span className="block text-[11px] text-slate-500 font-medium">Từ đã thuộc</span>
+                <span className="text-lg font-bold text-slate-900 mt-0.5 block font-mono">
                   {userStats.masteredCards}
                 </span>
               </div>
 
-              <div className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-lg p-3 text-center">
-                <span className="block text-[11px] text-[#556551]">Quiz đã làm</span>
-                <span className="text-lg font-bold text-[#14261C] mt-0.5 block font-mono">
+              <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3 text-center">
+                <span className="block text-[11px] text-slate-500 font-medium">Quiz đã làm</span>
+                <span className="text-lg font-bold text-slate-900 mt-0.5 block font-mono">
                   {userStats.quizCount}
                 </span>
               </div>
 
-              <div className="bg-[#F6FFED] border border-[#B7EB8F] rounded-lg p-3 text-center">
-                <span className="block text-[11px] text-[#24693D]">Điểm học tập</span>
-                <span className="text-lg font-bold text-[#24693D] mt-0.5 block font-mono">
+              <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-3 text-center">
+                <span className="block text-[11px] text-emerald-800 font-medium">Điểm học tập</span>
+                <span className="text-lg font-bold text-emerald-700 mt-0.5 block font-mono">
                   {userStats.learningScore}
                 </span>
               </div>
@@ -229,9 +229,9 @@ export default function PublicProfile() {
       </div>
 
       {/* Public Flashcard Sets Section */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 space-y-5 shadow-xs">
-        <div className="border-b border-[#DCE5D8] pb-3 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-bold text-[#14261C]">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 space-y-5 shadow-xs">
+        <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
             Bộ thẻ Flashcard công khai ({publicSets.length})
           </h2>
         </div>
@@ -248,19 +248,21 @@ export default function PublicProfile() {
             {publicSets.map((set) => (
               <div
                 key={set.id}
-                className="bg-[#F8FCF4] border border-[#DCE5D8] rounded-xl p-5 hover:border-[#24693D]/50 transition-colors space-y-3 flex flex-col justify-between"
+                className="bg-white border border-slate-200/80 rounded-2xl p-5 hover:border-emerald-500/50 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-1.5">
-                  <h3 className="font-bold text-base text-[#14261C] truncate">
+                  <h3 className="font-bold text-base text-slate-900 truncate">
                     {set.title}
                   </h3>
-                  <p className="text-xs text-[#556551] line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                     {set.description || 'Chưa có mô tả cho bộ thẻ này.'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#DCE5D8] text-xs">
-                  <Tag color="green">{set.totalCards} thẻ Flashcard</Tag>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                  <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                    {set.totalCards} thẻ Flashcard
+                  </span>
 
                   <Link href={`/flashcard/${set.id}`}>
                     <Button size="small" type="default">

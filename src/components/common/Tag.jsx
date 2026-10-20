@@ -14,12 +14,12 @@ export default function Tag({
   ...props
 }) {
   const colorMap = {
-    leaf: 'bg-[#F0F7EE] border-[#C8DEC2] text-[#24693D]',
-    green: 'bg-[#F6FFED] border-[#B7EB8F] text-[#389E0D]',
-    blue: 'bg-[#E6F4FF] border-[#91CAFF] text-[#0958D9]',
-    gold: 'bg-[#FFFBE6] border-[#FFE58F] text-[#D48806]',
-    red: 'bg-[#FFF1F0] border-[#FFA39E] text-[#CF1322]',
-    default: 'bg-[#F5F7F4] border-[#DCE5D8] text-[#5A6553]',
+    leaf: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    green: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    blue: 'bg-sky-50 border-sky-200 text-sky-700',
+    gold: 'bg-amber-50 border-amber-200 text-amber-700',
+    red: 'bg-rose-50 border-rose-200 text-rose-700',
+    default: 'bg-slate-100 border-slate-200 text-slate-600',
   };
 
   const borderClass = bordered ? 'border' : 'border-0';
@@ -27,7 +27,7 @@ export default function Tag({
 
   return (
     <span
-      className={`inline-flex items-center text-xs px-2 py-0.5 rounded-md font-medium leading-normal gap-1 select-none shrink-0 ${borderClass} ${selectedColor} ${className}`}
+      className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-lg font-medium leading-normal gap-1 select-none shrink-0 ${borderClass} ${selectedColor} ${className}`}
       {...props}
     >
       {icon && <span className="shrink-0 flex items-center justify-center">{icon}</span>}

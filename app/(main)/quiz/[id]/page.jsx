@@ -273,8 +273,8 @@ export default function Quiz() {
   if (loading) {
     return (
       <div className="py-24 text-center max-w-md mx-auto px-4">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
-        <p className="mt-4 text-sm font-medium text-[#556551]">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+        <p className="mt-4 text-sm font-medium text-slate-500">
           Đang chuẩn bị đề thi bài kiểm tra từ AI...
         </p>
       </div>
@@ -297,17 +297,17 @@ export default function Quiz() {
   const answeredPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-4 space-y-5">
+    <div className="mx-auto max-w-4xl px-4 py-6 space-y-6">
       {/* Quiz Progress & Timer Header */}
-      <div className="rounded-xl bg-white p-4 sm:p-5 border border-[#DCE5D8] shadow-xs space-y-4">
+      <div className="rounded-2xl bg-white p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#14261C] tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               {quizTitle}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs sm:text-sm text-[#556551]">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs sm:text-sm text-slate-500">
               <span>
-                Đã trả lời: <strong className="text-[#14261C]">{answeredCount}</strong> / {totalQuestions} câu hỏi
+                Đã trả lời: <strong className="text-slate-900">{answeredCount}</strong> / {totalQuestions} câu hỏi
               </span>
               {remainingSeconds !== null && (
                 <div className="flex items-center gap-1.5">
@@ -318,7 +318,7 @@ export default function Quiz() {
                         ? 'red'
                         : remainingSeconds <= 120
                         ? 'gold'
-                        : 'leaf'
+                        : 'green'
                     }
                   >
                     <span className="font-mono font-bold">{formatTimeMMSS(remainingSeconds)}</span>
@@ -330,6 +330,7 @@ export default function Quiz() {
 
           <Button
             type="primary"
+            size="large"
             onClick={() => setShowConfirmModal(true)}
             icon={
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -342,27 +343,27 @@ export default function Quiz() {
         </div>
 
         {/* Linear Progress Bar */}
-        <div className="w-full bg-[#E8EFE5] h-1.5 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div
-            className="bg-[#24693D] h-full transition-all duration-300 rounded-full"
+            className="bg-emerald-600 h-full transition-all duration-300 rounded-full"
             style={{ width: `${answeredPercent}%` }}
           />
         </div>
       </div>
 
       {/* Questions List */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {questions.map((q, qIdx) => {
           const isAnswered = selectedAnswers[qIdx] !== undefined;
 
           return (
             <div
               key={q.id || qIdx}
-              className="rounded-xl border border-[#DCE5D8] bg-white p-4 sm:p-6 shadow-xs transition-colors hover:border-[#24693D]/40"
+              className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs transition-colors hover:border-slate-300"
             >
               {/* Question Header */}
-              <div className="mb-3.5 flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#556551]">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-xs sm:text-[13px] font-semibold text-slate-500">
                   Câu hỏi {qIdx + 1} / {totalQuestions}
                 </span>
 
@@ -377,9 +378,9 @@ export default function Quiz() {
               {q.dialogue && (Array.isArray(q.dialogue) || typeof q.dialogue === 'string') ? (() => {
                 const normalizedDiag = normalizeDialogue(q.dialogue, qIdx);
                 return (
-                  <div className="mb-4 rounded-xl bg-[#F8FCF4] p-4 border border-[#E8EFE5] space-y-3">
-                    <div className="flex items-center justify-between pb-2 border-b border-[#DCE5D8]">
-                      <span className="text-[11px] font-semibold text-[#8C9B86] uppercase tracking-wider">
+                  <div className="mb-4 rounded-xl bg-slate-50/80 p-4 border border-slate-200/60 space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                         Đoạn hội thoại
                       </span>
                       <Button
@@ -405,8 +406,8 @@ export default function Quiz() {
 
                     <div className="space-y-2">
                       {normalizedDiag.map((line, lIdx) => (
-                        <div key={lIdx} className="text-sm sm:text-base text-[#14261C] leading-relaxed">
-                          {line.speaker && <strong className="text-[#14261C]">{line.speaker}: </strong>}
+                        <div key={lIdx} className="text-sm sm:text-base text-slate-800 leading-relaxed">
+                          {line.speaker && <strong className="text-slate-900">{line.speaker}: </strong>}
                           {line.text}
                         </div>
                       ))}
@@ -414,9 +415,9 @@ export default function Quiz() {
                   </div>
                 );
               })() : (
-                <div className="mb-4 rounded-xl bg-[#F8FCF4] p-4 border border-[#E8EFE5] space-y-2.5">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#DCE5D8]">
-                    <span className="text-[11px] font-semibold text-[#8C9B86] uppercase tracking-wider">
+                <div className="mb-4 rounded-xl bg-slate-50/80 p-4 border border-slate-200/60 space-y-2.5">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                       Câu hỏi
                     </span>
                     <Button
@@ -439,7 +440,7 @@ export default function Quiz() {
                       {activeAudioIndex === qIdx ? 'Dừng phát' : 'Nghe câu hỏi'}
                     </Button>
                   </div>
-                  <p className="text-base font-medium text-[#14261C] leading-relaxed pt-0.5">
+                  <p className="text-base font-medium text-slate-900 leading-relaxed pt-0.5">
                     {q.sentence}
                   </p>
                 </div>
@@ -457,24 +458,24 @@ export default function Quiz() {
                         key={optIdx}
                         type="button"
                         onClick={() => handleSelectOption(qIdx, optIdx)}
-                        className={`w-full flex items-center gap-3 rounded-lg border p-3 text-left transition-all cursor-pointer ${
+                        className={`w-full flex items-center gap-3 rounded-xl border p-3 text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'border-[#24693D] bg-[#F0F7EE] text-[#14261C] ring-1 ring-[#24693D]'
-                            : 'border-[#DCE5D8] bg-white text-[#14261C] hover:border-[#24693D]/50 hover:bg-[#F8FCF4]'
+                            ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-xs ring-1 ring-emerald-500/30'
+                            : 'border-slate-200/80 bg-white text-slate-800 hover:border-emerald-400 hover:bg-slate-50'
                         }`}
                       >
                         <span
-                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-bold ${
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-colors ${
                             isSelected
-                              ? 'bg-[#24693D] text-white'
-                              : 'bg-[#F8FCF4] text-[#556551] border border-[#DCE5D8]'
+                              ? 'bg-emerald-600 text-white'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200/80'
                           }`}
                         >
                           {optionLabel}
                         </span>
                         <span
                           className={`text-sm truncate ${
-                            isSelected ? 'font-semibold text-[#14261C]' : 'font-normal text-[#14261C]'
+                            isSelected ? 'font-semibold text-emerald-950' : 'font-normal text-slate-800'
                           }`}
                         >
                           {optText}
@@ -529,11 +530,11 @@ export default function Quiz() {
           </div>
         }
       >
-        <p className="text-sm text-[#556551]">
-          Bạn đã hoàn thành <strong className="text-[#14261C]">{answeredCount}</strong> / {totalQuestions} câu hỏi.
+        <p className="text-sm text-slate-600">
+          Bạn đã hoàn thành <strong className="text-slate-900">{answeredCount}</strong> / {totalQuestions} câu hỏi.
         </p>
         {unansweredCount > 0 && (
-          <div className="mt-3 p-3 rounded-lg bg-[#FFF2F0] border border-[#FFA39E] text-xs font-medium text-[#CF1322]">
+          <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-medium text-rose-600">
             Còn <strong>{unansweredCount} câu hỏi</strong> chưa chọn đáp án. Bạn có chắc chắn muốn nộp bài?
           </div>
         )}
@@ -541,8 +542,9 @@ export default function Quiz() {
 
       {/* Speech Notice Toast */}
       {speechNotice && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#14261C]/95 text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#DCE5D8]/20">
-          {speechNotice}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-xs font-medium px-4 py-2.5 rounded-xl shadow-lg z-50 transition-all pointer-events-none border border-slate-700/50 backdrop-blur-xs flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>{speechNotice}</span>
         </div>
       )}
     </div>

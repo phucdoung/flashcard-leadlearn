@@ -504,7 +504,7 @@ export default function Home() {
     <div className="max-w-4xl mx-auto w-full px-4">
       {/* Section Heading & Compact Integrated Toolbar */}
       <div id="sets-section" className="mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold leading-tight text-[#1A2416] tracking-tight mb-3.5">
+        <h2 className="text-xl sm:text-2xl font-bold leading-tight text-slate-900 tracking-tight mb-3.5">
           Flashcard của bạn
         </h2>
 
@@ -514,7 +514,7 @@ export default function Home() {
           <div className="w-full sm:col-span-2 md:col-span-1">
             <Input
               prefix={
-                <svg className="w-4 h-4 text-[#8C9785]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               }
@@ -531,18 +531,18 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="w-full h-10 sm:h-11 px-3.5 bg-white border border-[#DCE5D8] hover:border-[#24693D] rounded-lg text-sm font-medium text-[#2E3A28] flex items-center justify-between shadow-2xs transition-all cursor-pointer focus:outline-none"
+              className="w-full h-10 sm:h-11 px-3.5 bg-white border border-slate-200/80 hover:border-emerald-600 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between shadow-xs transition-all cursor-pointer focus:outline-none"
             >
               <span className="truncate">
                 {sortOptions.find((o) => o.value === sortBy)?.label || 'Mới nhất'}
               </span>
-              <span className={`transition-transform duration-200 text-[#66705F] ml-1.5 text-xs ${isSortOpen ? 'rotate-180' : ''}`}>
+              <span className={`transition-transform duration-200 text-slate-400 ml-1.5 text-xs ${isSortOpen ? 'rotate-180' : ''}`}>
                 ▾
               </span>
             </button>
 
             {isSortOpen && (
-              <div className="absolute top-full left-0 mt-1 w-full sm:w-[160px] bg-white border border-[#DCE5D8] rounded-lg shadow-lg p-1 z-30 space-y-0.5">
+              <div className="absolute top-full left-0 mt-1 w-full sm:w-[160px] bg-white border border-slate-200/80 rounded-xl shadow-lg p-1 z-30 space-y-0.5">
                 {sortOptions.map((opt) => (
                   <button
                     key={opt.value}
@@ -551,10 +551,10 @@ export default function Home() {
                       setSortBy(opt.value);
                       setIsSortOpen(false);
                     }}
-                    className={`w-full h-8 px-3 rounded-md text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
+                    className={`w-full h-8 px-3 rounded-lg text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
                       sortBy === opt.value
-                        ? 'bg-[#F0F7EE] text-[#24693D] font-bold'
-                        : 'text-[#2E3A28] hover:bg-[#F9FCF8] font-medium'
+                        ? 'bg-emerald-50 text-emerald-700 font-bold'
+                        : 'text-slate-700 hover:bg-slate-50 font-medium'
                     }`}
                   >
                     {opt.label}
@@ -583,8 +583,8 @@ export default function Home() {
 
       {/* 3. Grid of Flashcard Sets */}
       {loading ? (
-        <div className="py-16 text-center text-sm text-[#66705F] font-medium animate-pulse flex items-center justify-center gap-2">
-          <svg className="animate-spin h-4 w-4 text-[#24693D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div className="py-16 text-center text-sm text-slate-500 font-medium animate-pulse flex items-center justify-center gap-2">
+          <svg className="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
@@ -619,13 +619,13 @@ export default function Home() {
               <div
                 key={set.id}
                 onClick={() => handleCardClick(set.id)}
-                className="bg-white border border-[#DCE5D8] hover:border-[#24693D]/40 hover:shadow-[0_4px_16px_rgba(36,105,61,0.08)] rounded-xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 min-h-[210px] relative group"
+                className="bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-md rounded-2xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 min-h-[210px] relative group shadow-xs"
               >
                 {/* Header: Title + Visibility Badge + Menu */}
                 <div className="space-y-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 truncate flex-1">
-                      <h3 className="font-bold text-base text-[#1A2416] truncate">
+                      <h3 className="font-bold text-base text-slate-900 truncate">
                         {set.title}
                       </h3>
                       <Tag color={set.visibility === 'public' ? 'leaf' : 'default'}>
@@ -638,7 +638,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => toggleMenu(set.id)}
-                        className="p-1 rounded-md hover:bg-[#F0F4EE] text-[#66705F] hover:text-[#1A2416] transition-colors cursor-pointer text-xs"
+                        className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer text-xs"
                         title="Tùy chọn"
                       >
                         •••
@@ -650,18 +650,18 @@ export default function Home() {
                             className="fixed inset-0 z-10"
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="absolute right-0 mt-1 w-44 bg-white border border-[#DCE5D8] rounded-lg shadow-lg py-1 z-20">
+                          <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1 z-20">
                             <button
                               type="button"
                               onClick={() => handleOpenEdit(set)}
-                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-[#2E3A28] hover:bg-[#F9FCF8] transition-colors cursor-pointer flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2"
                             >
                               <span>✏️</span> Đổi tên / Chỉnh sửa
                             </button>
                             <button
                               type="button"
                               onClick={() => handleOpenDelete(set)}
-                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-[#CF1322] hover:bg-[#FFF1F0] transition-colors cursor-pointer flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer flex items-center gap-2"
                             >
                               <span>🗑️</span> Xóa bộ Flashcard
                             </button>
@@ -672,7 +672,7 @@ export default function Home() {
                   </div>
 
                   {set.description && (
-                    <p className="text-xs text-[#66705F] line-clamp-2">
+                    <p className="text-xs text-slate-500 line-clamp-2">
                       {set.description}
                     </p>
                   )}
@@ -682,33 +682,33 @@ export default function Home() {
                 {hasCards ? (
                   <div className="space-y-3.5">
                     {/* Clean Minimal Text Stats */}
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#66705F]">
-                      <span className="font-semibold text-[#1A2416]">{set.totalCards} thẻ</span>
-                      <span className="text-[#DCE5D8]">•</span>
-                      <span className="font-medium text-[#389E0D]">{set.masteredCards} đã thuộc</span>
-                      <span className="text-[#DCE5D8]">•</span>
-                      <span className="font-medium text-[#CF1322]">{set.unmasteredCards} chưa thuộc</span>
-                      <span className="text-[#DCE5D8]">•</span>
-                      <span className="font-medium text-[#66705F]">{set.quizCount} bài test</span>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                      <span className="font-semibold text-slate-900">{set.totalCards} thẻ</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="font-medium text-emerald-600">{set.masteredCards} đã thuộc</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="font-medium text-rose-600">{set.unmasteredCards} chưa thuộc</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="font-medium text-slate-500">{set.quizCount} bài test</span>
                     </div>
 
                     {/* Tiến độ học Progress Bar */}
                     <div className="space-y-1.5 pt-0.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#66705F]">Tiến độ học</span>
-                        <span className="font-bold text-[#1A2416]">{progress}%</span>
+                        <span className="text-slate-500">Tiến độ học</span>
+                        <span className="font-bold text-slate-900">{progress}%</span>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-[#E8EFE5] overflow-hidden">
+                      <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#24693D] transition-all duration-300"
+                          className="h-full rounded-full bg-emerald-600 transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="py-4 px-3.5 rounded-lg bg-[#F9FCF8] border border-[#E8EFE5] text-center space-y-2 my-auto">
-                    <p className="text-xs font-medium text-[#66705F]">
+                  <div className="py-4 px-3.5 rounded-xl bg-slate-50 border border-slate-200/60 text-center space-y-2 my-auto">
+                    <p className="text-xs font-medium text-slate-500">
                       Chưa có Flashcard trong bộ này.
                     </p>
                     {isOwner && (
@@ -770,8 +770,8 @@ export default function Home() {
       >
         <form onSubmit={handleCreateSet} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">
-              Tên bộ Flashcard <span className="text-[#CF1322]">*</span>
+            <label className="block text-xs font-semibold text-slate-800">
+              Tên bộ Flashcard <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -779,43 +779,43 @@ export default function Home() {
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
               placeholder="Ví dụ: Từ vựng IELTS Listening"
-              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Mô tả (không bắt buộc)</label>
+            <label className="block text-xs font-semibold text-slate-800">Mô tả (không bắt buộc)</label>
             <textarea
               rows={3}
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
               placeholder="Nhập mô tả ngắn cho bộ thẻ..."
-              className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
           {/* Visibility Option */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Quyền riêng tư</label>
+            <label className="block text-xs font-semibold text-slate-800">Quyền riêng tư</label>
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
                   name="create-visibility"
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-[#24693D]"
+                  className="accent-emerald-600"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
-              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
                   name="create-visibility"
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-[#24693D]"
+                  className="accent-emerald-600"
                 />
                 Công khai (Cộng đồng)
               </label>
@@ -835,49 +835,49 @@ export default function Home() {
       >
         <form onSubmit={handleUpdateSet} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">
-              Tên bộ Flashcard <span className="text-[#CF1322]">*</span>
+            <label className="block text-xs font-semibold text-slate-800">
+              Tên bộ Flashcard <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               required
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Mô tả</label>
+            <label className="block text-xs font-semibold text-slate-800">Mô tả</label>
             <textarea
               rows={3}
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
-              className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-[#1A2416]">Quyền riêng tư</label>
+            <label className="block text-xs font-semibold text-slate-800">Quyền riêng tư</label>
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
                   name="edit-visibility"
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-[#24693D]"
+                  className="accent-emerald-600"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
-              <label className="inline-flex items-center gap-2 text-xs font-medium text-[#2E3A28] cursor-pointer">
+              <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
                 <input
                   type="radio"
                   name="edit-visibility"
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-[#24693D]"
+                  className="accent-emerald-600"
                 />
                 Công khai (Cộng đồng)
               </label>
@@ -896,9 +896,9 @@ export default function Home() {
         okText={submitting ? 'Đang xóa...' : 'Đồng ý xóa'}
         confirmLoading={submitting}
       >
-        <p className="text-sm text-[#5A6553] leading-relaxed">
+        <p className="text-sm text-slate-600 leading-relaxed">
           Bạn có chắc chắn muốn xóa bộ thẻ{' '}
-          <strong className="text-[#1A2416]">"{selectedSet?.title}"</strong>? Tất cả thẻ từ vựng và bài kiểm tra thuộc bộ thẻ này cũng sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+          <strong className="text-slate-900">"{selectedSet?.title}"</strong>? Tất cả thẻ từ vựng và bài kiểm tra thuộc bộ thẻ này cũng sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
         </p>
       </Modal>
 
@@ -907,13 +907,13 @@ export default function Home() {
         open={isAddCardModalOpen && !!selectedSetForAdd}
         title={
           <div>
-            <div className="font-bold text-[#1A2416] text-base sm:text-lg">
+            <div className="font-bold text-slate-900 text-base sm:text-lg">
               {addStep === 'manual' && 'Thêm Flashcard mới'}
               {addStep === 'bulk_input' && 'Nhập nhiều Flashcard cùng lúc'}
               {addStep === 'bulk_preview' && 'Xem trước danh sách Flashcard'}
             </div>
-            <p className="text-xs text-[#66705F] font-normal mt-0.5">
-              Bộ thẻ: <strong className="text-[#2E3A28]">{selectedSetForAdd?.title}</strong>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">
+              Bộ thẻ: <strong className="text-slate-800">{selectedSetForAdd?.title}</strong>
             </p>
           </div>
         }
@@ -927,8 +927,8 @@ export default function Home() {
             <div className="space-y-3.5">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-[#1A2416]">
-                    Từ hoặc cụm từ <span className="text-[#CF1322]">*</span>
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Từ hoặc cụm từ <span className="text-rose-500">*</span>
                   </label>
                   <Button
                     type="default"
@@ -947,12 +947,12 @@ export default function Home() {
                   value={singleCard.term}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: take care of hoặc serendipity"
-                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#1A2416]">
+                <label className="block text-xs font-semibold text-slate-800">
                   Phiên âm
                 </label>
                 <input
@@ -961,13 +961,13 @@ export default function Home() {
                   value={singleCard.phonetic}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
-                  className="w-full h-10 px-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-[#1A2416]">
-                  Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                <label className="block text-xs font-semibold text-slate-800">
+                  Nghĩa tiếng Việt <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   rows={3}
@@ -975,12 +975,12 @@ export default function Home() {
                   value={singleCard.definition}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: Sự tình cờ may mắn tìm thấy điều gì đó..."
-                  className="w-full p-3 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm text-[#2E3A28]"
+                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
-              <div className="bg-[#F9FCF8] border border-[#E8EFE5] px-3.5 py-2 rounded-lg text-xs text-[#66705F]">
-                Trạng thái học mặc định: <strong className="text-[#24693D]">Chưa thuộc</strong>
+              <div className="bg-slate-50 border border-slate-200/60 px-3.5 py-2.5 rounded-xl text-xs text-slate-600">
+                Trạng thái học mặc định: <strong className="text-emerald-700">Chưa thuộc</strong>
               </div>
             </div>
 
@@ -994,7 +994,7 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
               <Button type="default" onClick={handleCloseAddCardModal}>
                 Hủy
               </Button>
@@ -1014,7 +1014,7 @@ export default function Home() {
         {addStep === 'bulk_input' && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-[#1A2416]">
+              <label className="block text-xs font-semibold text-slate-800">
                 Nhập danh sách từ (Mỗi dòng một từ hoặc cụm từ)
               </label>
               <textarea
@@ -1022,14 +1022,14 @@ export default function Home() {
                 value={bulkText}
                 onChange={(e) => setBulkText(e.target.value)}
                 placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
-                className="w-full p-3.5 rounded-lg border border-[#DCE5D8] focus:border-[#24693D] focus:ring-2 focus:ring-[#24693D]/20 outline-none text-sm font-mono text-[#2E3A28]"
+                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-mono text-slate-800 transition-all"
               />
-              <p className="text-xs text-[#66705F]">
+              <p className="text-xs text-slate-500">
                 Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
               <Button type="default" onClick={() => setAddStep('manual')}>
                 Quay lại
               </Button>
@@ -1052,10 +1052,10 @@ export default function Home() {
               {bulkPreviewList.map((item, idx) => (
                 <div
                   key={item.id || idx}
-                  className="bg-[#F9FCF8] border border-[#DCE5D8] p-3.5 rounded-lg space-y-2.5 relative"
+                  className="bg-slate-50/80 border border-slate-200/80 p-3.5 rounded-xl space-y-2.5 relative shadow-2xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#1A2416]">
+                    <span className="text-xs font-bold text-slate-900">
                       Từ #{idx + 1}
                     </span>
                     <Button
@@ -1070,39 +1070,39 @@ export default function Home() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
-                        Từ/Cụm từ <span className="text-[#CF1322]">*</span>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Từ/Cụm từ <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={item.term}
                         onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                         Phiên âm
                       </label>
                       <input
                         type="text"
                         value={item.phonetic}
                         onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#66705F] mb-1">
-                        Nghĩa tiếng Việt <span className="text-[#CF1322]">*</span>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Nghĩa tiếng Việt <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={item.definition}
                         onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
                         placeholder="Nhập nghĩa..."
-                        className="w-full px-2.5 py-1.5 rounded-md border border-[#DCE5D8] focus:border-[#24693D] outline-none bg-white text-xs text-[#2E3A28]"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-emerald-600 outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
                   </div>
@@ -1110,7 +1110,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#E8EFE5]">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
               <Button type="default" onClick={() => setAddStep('bulk_input')}>
                 Quay lại nhập
               </Button>

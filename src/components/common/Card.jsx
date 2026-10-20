@@ -19,29 +19,29 @@ export default function Card({
   const paddingClass = size === 'small' ? 'p-3.5 sm:p-4' : 'p-5 sm:p-6';
 
   const borderClass = bordered
-    ? 'border border-[#DCE5D8]'
+    ? 'border border-slate-200/80'
     : 'border-0';
 
   const hoverClass = hoverable
-    ? 'hover:shadow-[0_4px_16px_rgba(36,105,61,0.08)] hover:border-[#C8DEC2] transition-all duration-200 cursor-pointer'
-    : 'shadow-[0_1px_3px_rgba(0,0,0,0.03)]';
+    ? 'hover:shadow-md hover:border-emerald-200 transition-all duration-200 cursor-pointer'
+    : 'shadow-xs';
 
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl ${borderClass} ${hoverClass} flex flex-col relative overflow-hidden ${className}`}
+      className={`bg-white rounded-2xl ${borderClass} ${hoverClass} flex flex-col relative overflow-hidden ${className}`}
       {...props}
     >
       {/* Card Header (if title or extra present) */}
       {(title || extra) && (
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E8EFE5] min-h-[48px]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 min-h-[48px]">
           {title && (
-            <div className="font-semibold text-[#1A2416] text-sm sm:text-base tracking-tight truncate">
+            <div className="font-semibold text-slate-800 text-sm sm:text-base tracking-tight truncate">
               {title}
             </div>
           )}
           {extra && (
-            <div className="text-xs sm:text-sm text-[#66705F] ml-auto shrink-0 flex items-center gap-2">
+            <div className="text-xs sm:text-sm text-slate-500 ml-auto shrink-0 flex items-center gap-2">
               {extra}
             </div>
           )}
@@ -55,7 +55,7 @@ export default function Card({
 
       {/* Card Bottom Actions (if any) */}
       {actions && (
-        <div className="border-t border-[#E8EFE5] bg-[#FAFDF9] px-4 py-2.5 flex items-center justify-end gap-2">
+        <div className="border-t border-slate-100 bg-slate-50/60 px-4 py-2.5 flex items-center justify-end gap-2">
           {actions}
         </div>
       )}

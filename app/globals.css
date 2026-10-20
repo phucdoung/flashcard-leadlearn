@@ -1,49 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-poppins: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-poppins: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* LeafLearn Brand & Ant Design Tokens */
-  --color-primary: #24693D;
-  --color-primary-hover: #1D5732;
-  --color-primary-active: #154225;
-  --color-primary-light: #F0F7EE;
-  --color-primary-border: #C8DEC2;
-  --color-brand-dark: #10473E;
-  --color-brand-accent: #A8D672;
+  /* LeafLearn Modern Emerald & Slate Design Tokens */
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-primary-active: #065f46;
+  --color-primary-light: #ecfdf5;
+  --color-primary-border: #a7f3d0;
+  --color-brand-dark: #064e3b;
+  --color-brand-accent: #34d399;
 
-  --color-bg-main: #F8FCF4;
-  --color-card: #FFFFFF;
-  --color-border-custom: #DCE5D8;
-  --color-text-title: #1A2416;
-  --color-text-main: #2E3A28;
-  --color-secondary-text: #66705F;
-  --color-muted-text: #8C9785;
+  --color-bg-main: #f8fafc;
+  --color-card: #ffffff;
+  --color-border-custom: #e2e8f0;
+  --color-text-title: #0f172a;
+  --color-text-main: #334155;
+  --color-secondary-text: #64748b;
+  --color-muted-text: #94a3b8;
 
-  --color-success: #389E0D;
-  --color-warning: #D48806;
-  --color-danger: #CF1322;
-  --color-info: #0958D9;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #0284c7;
 }
 
 :root {
-  --color-primary: #24693D;
-  --color-primary-hover: #1D5732;
-  --color-primary-active: #154225;
-  --color-primary-light: #F0F7EE;
-  --color-brand-dark: #10473E;
-  --color-background: #F8FCF4;
-  --color-card: #FFFFFF;
-  --color-border: #DCE5D8;
-  --color-text: #2E3A28;
-  --color-secondary-text: #66705F;
-  --color-success: #389E0D;
-  --color-warning: #D48806;
-  --color-danger: #CF1322;
-  --color-info: #0958D9;
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-primary-active: #065f46;
+  --color-primary-light: #ecfdf5;
+  --color-brand-dark: #064e3b;
+  --color-background: #f8fafc;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #334155;
+  --color-secondary-text: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #0284c7;
 
-  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -51,14 +52,16 @@
 
 * {
   font-family: inherit;
+  word-break: break-word;
 }
 
 body {
-  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #F8FCF4;
-  color: #2E3A28;
+  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #334155;
   margin: 0;
   padding: 0;
+  line-height: 1.6;
 }
 
 /* Subtle Botanical Accent Decorations */
@@ -73,7 +76,7 @@ body {
   background-size: contain;
   background-position: left top;
   mix-blend-mode: multiply;
-  opacity: 0.16;
+  opacity: 0.12;
   pointer-events: none;
   user-select: none;
   z-index: 0;
@@ -91,7 +94,7 @@ body {
   background-size: contain;
   background-position: right bottom;
   mix-blend-mode: multiply;
-  opacity: 0.38;
+  opacity: 0.28;
   pointer-events: none;
   user-select: none;
   z-index: 0;
@@ -101,14 +104,14 @@ body {
   .leaf-decoration-top {
     width: 140px;
     height: 110px;
-    opacity: 0.10;
+    opacity: 0.08;
     top: -20px;
     left: -20px;
   }
   .leaf-decoration-bottom {
     width: 280px;
     height: 180px;
-    opacity: 0.22;
+    opacity: 0.18;
   }
 }
 
@@ -119,14 +122,14 @@ body {
     opacity: 0;
   }
   15% {
-    opacity: var(--leaf-opacity, 0.14);
+    opacity: var(--leaf-opacity, 0.12);
   }
   50% {
     transform: translateY(45vh) translateX(22px) rotate(32deg);
-    opacity: var(--leaf-opacity, 0.14);
+    opacity: var(--leaf-opacity, 0.12);
   }
   85% {
-    opacity: var(--leaf-opacity, 0.14);
+    opacity: var(--leaf-opacity, 0.12);
   }
   100% {
     transform: translateY(104vh) translateX(-14px) rotate(64deg);
@@ -140,14 +143,14 @@ body {
     opacity: 0;
   }
   15% {
-    opacity: var(--leaf-opacity, 0.12);
+    opacity: var(--leaf-opacity, 0.10);
   }
   50% {
     transform: translateY(48vh) translateX(-24px) rotate(-35deg);
-    opacity: var(--leaf-opacity, 0.12);
+    opacity: var(--leaf-opacity, 0.10);
   }
   85% {
-    opacity: var(--leaf-opacity, 0.12);
+    opacity: var(--leaf-opacity, 0.10);
   }
   100% {
     transform: translateY(106vh) translateX(16px) rotate(-70deg);

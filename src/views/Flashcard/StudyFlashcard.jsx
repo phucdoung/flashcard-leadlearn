@@ -190,35 +190,39 @@ export default function StudyFlashcard() {
   }, [currentIndex, totalCards, isCompleted]);
 
   return (
-    <div className="py-2 px-4 max-w-4xl mx-auto space-y-4">
+    <div className="py-4 px-4 max-w-4xl mx-auto space-y-5">
       {/* Header Container */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <Link
               to={`/flashcard/${id}`}
-              className="inline-flex items-center text-xs font-medium text-[#66705F] hover:text-[#1A2416] bg-white border border-[#DCE5D8] px-3 py-1.5 rounded-lg transition-all hover:border-[#24693D] mb-1.5 shadow-2xs gap-1.5"
+              className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl transition-all mb-2 shadow-2xs gap-1.5"
             >
-              <span>←</span> Quay lại bộ Flashcard
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Quay lại bộ Flashcard
             </Link>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1A2416]">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               {setDetail?.title || 'Bộ thẻ'}
             </h1>
           </div>
 
           {!isCompleted && totalCards > 0 && (
             <div className="shrink-0">
-              <Tag color="leaf">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Thẻ {currentIndex + 1} / {totalCards}
-              </Tag>
+              </span>
             </div>
           )}
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-[#E8EFE5] h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div
-            className="bg-[#24693D] h-full transition-all duration-300 rounded-full"
+            className="bg-emerald-600 h-full transition-all duration-300 rounded-full"
             style={{
               width:
                 totalCards === 0
@@ -233,8 +237,8 @@ export default function StudyFlashcard() {
 
       {/* Loading State */}
       {loading ? (
-        <div className="py-16 text-center text-sm text-[#66705F] font-medium animate-pulse flex items-center justify-center gap-2">
-          <svg className="animate-spin h-4 w-4 text-[#24693D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div className="py-20 text-center text-sm text-slate-500 font-medium flex items-center justify-center gap-2.5">
+          <svg className="animate-spin h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
@@ -254,29 +258,33 @@ export default function StudyFlashcard() {
         />
       ) : isCompleted ? (
         /* Completion Panel */
-        <div className="bg-white border border-[#DCE5D8] rounded-xl p-8 sm:p-10 text-center space-y-6 max-w-lg mx-auto shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-10 text-center space-y-6 max-w-lg mx-auto shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">
+            ✓
+          </div>
+
           <div className="space-y-2">
-            <Tag color="green">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
               HOÀN THÀNH
-            </Tag>
-            <h2 className="text-2xl font-bold text-[#1A2416]">
-              Bạn đã hoàn thành bộ Flashcard
+            </span>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Bạn đã hoàn thành bộ Flashcard!
             </h2>
-            <p className="text-xs sm:text-sm text-[#66705F]">
-              Tuyệt vời! Bạn đã xem qua toàn bộ {totalCards} thẻ ghi nhớ.
+            <p className="text-xs sm:text-sm text-slate-600">
+              Tuyệt vời! Bạn đã hoàn thành lượt học cho {totalCards} thẻ ghi nhớ.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3.5 py-1">
-            <div className="bg-[#F6FFED] border border-[#B7EB8F] rounded-xl p-4">
-              <span className="block text-xs font-medium text-[#389E0D]">Đã thuộc</span>
-              <span className="text-2xl sm:text-3xl font-bold text-[#389E0D] mt-1 block">
+            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-4">
+              <span className="block text-xs font-semibold text-emerald-800">Đã thuộc</span>
+              <span className="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1 block">
                 {masteredCount}
               </span>
             </div>
-            <div className="bg-[#FFF1F0] border border-[#FFA39E] rounded-xl p-4">
-              <span className="block text-xs font-medium text-[#CF1322]">Chưa thuộc</span>
-              <span className="text-2xl sm:text-3xl font-bold text-[#CF1322] mt-1 block">
+            <div className="bg-rose-50/70 border border-rose-200/80 rounded-xl p-4">
+              <span className="block text-xs font-semibold text-rose-800">Chưa thuộc</span>
+              <span className="text-2xl sm:text-3xl font-bold text-rose-700 mt-1 block">
                 {unmasteredCount}
               </span>
             </div>
@@ -302,11 +310,11 @@ export default function StudyFlashcard() {
       ) : (
         /* Active Study Flashcard Layout */
         <div className="space-y-4">
-          {/* Flashcard Card: Compact 320px–360px height */}
+          {/* Flashcard Card: Height 330px–370px */}
           <div className="w-full max-w-2xl mx-auto" style={{ perspective: '1000px' }}>
             <div
               onClick={() => setIsFlipped(!isFlipped)}
-              className="relative w-full h-[320px] sm:h-[350px] cursor-pointer rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+              className="relative w-full h-[330px] sm:h-[370px] cursor-pointer rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 transformStyle: 'preserve-3d',
                 transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -315,25 +323,31 @@ export default function StudyFlashcard() {
             >
               {/* FRONT SIDE */}
               <div
-                className="absolute inset-0 w-full h-full bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xs hover:shadow-sm transition-shadow select-none"
+                className="absolute inset-0 w-full h-full bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xs hover:shadow-md transition-shadow select-none"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                 }}
               >
-                <div className="w-full flex items-center justify-between text-xs text-[#66705F]">
-                  <Tag color="default">
+                <div className="w-full flex items-center justify-between text-xs">
+                  <span className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
                     MẶT TRƯỚC
-                  </Tag>
-                  <Tag color={currentCard?.isMastered ? 'green' : 'red'}>
+                  </span>
+                  <span
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
+                      currentCard?.isMastered
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-rose-50 text-rose-700 border-rose-200'
+                    }`}
+                  >
                     {currentCard?.isMastered ? 'Đã thuộc' : 'Chưa thuộc'}
-                  </Tag>
+                  </span>
                 </div>
 
                 {/* Vocabulary word + pronunciation directly underneath */}
-                <div className="my-auto flex flex-col items-center justify-center px-4 space-y-1">
-                  <div className="flex items-center justify-center gap-2 max-w-full">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#1A2416] tracking-tight break-words">
+                <div className="my-auto flex flex-col items-center justify-center px-4 space-y-2">
+                  <div className="flex items-center justify-center gap-2.5 max-w-full">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight break-words">
                       {currentCard?.term}
                     </h2>
                     {currentCard?.term && (
@@ -342,10 +356,10 @@ export default function StudyFlashcard() {
                         onClick={(e) => handleSpeak(e, currentCard.term)}
                         aria-label="Phát âm từ vựng"
                         title="Nghe phát âm"
-                        className={`shrink-0 p-1.5 rounded-full transition-all active:scale-95 cursor-pointer border ${
+                        className={`shrink-0 p-2 rounded-xl transition-all active:scale-95 cursor-pointer border ${
                           isSpeaking
-                            ? 'text-[#24693D] bg-[#F0F7EE] border-[#C8DEC2]'
-                            : 'text-[#66705F] hover:text-[#24693D] hover:bg-[#F0F7EE] border-transparent hover:border-[#DCE5D8]'
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/20'
+                            : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/70 border-slate-200 hover:border-emerald-200'
                         }`}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -355,15 +369,18 @@ export default function StudyFlashcard() {
                     )}
                   </div>
                   {currentCard?.phonetic && (
-                    <p className="text-sm font-mono text-[#66705F] mt-1">
+                    <p className="text-sm font-mono text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-200/80">
                       {currentCard.phonetic}
                     </p>
                   )}
                 </div>
 
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className="w-8 h-0.5 bg-[#DCE5D8] rounded-full" />
-                  <div className="text-xs text-[#8C9785]">
+                  <div className="w-8 h-1 bg-slate-200 rounded-full" />
+                  <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
                     Nhấn để lật xem nghĩa
                   </div>
                 </div>
@@ -371,29 +388,35 @@ export default function StudyFlashcard() {
 
               {/* BACK SIDE */}
               <div
-                className="absolute inset-0 w-full h-full bg-white border border-[#DCE5D8] rounded-xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xs hover:shadow-sm transition-shadow select-none"
+                className="absolute inset-0 w-full h-full bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-xs hover:shadow-md transition-shadow select-none"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                 }}
               >
-                <div className="w-full flex items-center justify-between text-xs text-[#66705F]">
-                  <Tag color="default">
+                <div className="w-full flex items-center justify-between text-xs">
+                  <span className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
                     MẶT SAU
-                  </Tag>
-                  <Tag color={currentCard?.isMastered ? 'green' : 'red'}>
+                  </span>
+                  <span
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
+                      currentCard?.isMastered
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-rose-50 text-rose-700 border-rose-200'
+                    }`}
+                  >
                     {currentCard?.isMastered ? 'Đã thuộc' : 'Chưa thuộc'}
-                  </Tag>
+                  </span>
                 </div>
 
                 {/* Vietnamese Meaning main text + word & IPA in smaller muted text underneath */}
-                <div className="my-auto flex flex-col items-center justify-center space-y-2 px-4">
-                  <p className="text-2xl sm:text-3xl font-bold text-[#1A2416] leading-snug">
+                <div className="my-auto flex flex-col items-center justify-center space-y-2.5 px-4">
+                  <p className="text-2xl sm:text-3xl font-bold text-slate-900 leading-snug">
                     {currentCard?.definition}
                   </p>
-                  <div className="flex items-center justify-center gap-1.5 pt-1">
-                    <p className="text-xs sm:text-sm text-[#66705F] font-medium">
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium">
                       {currentCard?.term}{' '}
                       {currentCard?.phonetic ? `· ${currentCard.phonetic}` : ''}
                     </p>
@@ -403,10 +426,10 @@ export default function StudyFlashcard() {
                         onClick={(e) => handleSpeak(e, currentCard.term)}
                         aria-label="Phát âm từ vựng"
                         title="Nghe phát âm"
-                        className={`shrink-0 p-1 rounded-full transition-all active:scale-95 cursor-pointer border ${
+                        className={`shrink-0 p-1.5 rounded-lg transition-all active:scale-95 cursor-pointer border ${
                           isSpeaking
-                            ? 'text-[#24693D] bg-[#F0F7EE] border-[#C8DEC2]'
-                            : 'text-[#66705F] hover:text-[#24693D] hover:bg-[#F0F7EE] border-transparent hover:border-[#DCE5D8]'
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-300'
+                            : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/70 border-slate-200'
                         }`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -418,8 +441,11 @@ export default function StudyFlashcard() {
                 </div>
 
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className="w-8 h-0.5 bg-[#DCE5D8] rounded-full" />
-                  <div className="text-xs text-[#8C9785]">
+                  <div className="w-8 h-1 bg-slate-200 rounded-full" />
+                  <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
                     Nhấn để quay lại mặt trước
                   </div>
                 </div>
@@ -428,56 +454,54 @@ export default function StudyFlashcard() {
           </div>
 
           {/* Bottom Action Buttons */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-2.5 w-full max-w-2xl mx-auto pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-2xl mx-auto pt-2">
             <Button
               type="default"
               size="large"
               onClick={handlePrevious}
               disabled={currentIndex === 0}
-              className="flex-1"
+              className="w-full"
             >
-              Trước
+              ← Trước
             </Button>
 
-            <Button
-              danger
-              size="large"
+            <button
+              type="button"
               onClick={() => handleMarkStatus(false)}
-              className="flex-1"
+              className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/80 active:scale-[0.98] shadow-2xs"
             >
               Chưa thuộc
-            </Button>
+            </button>
 
-            <Button
-              type="primary"
-              size="large"
+            <button
+              type="button"
               onClick={() => handleMarkStatus(true)}
-              className="flex-1"
+              className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600 active:scale-[0.98] shadow-xs"
             >
               Đã thuộc
-            </Button>
+            </button>
 
             <Button
               type="default"
               size="large"
               onClick={handleNext}
-              className="flex-1"
+              className="w-full"
             >
-              Tiếp theo
+              Tiếp theo →
             </Button>
           </div>
 
           {/* Keyboard Shortcuts Helper */}
-          <div className="text-center text-xs text-[#8C9785] pt-1">
-            <kbd className="bg-white border border-[#DCE5D8] px-1.5 py-0.5 rounded text-[11px] font-mono mr-1 shadow-2xs">
+          <div className="text-center text-xs text-slate-400 pt-2 font-medium">
+            <kbd className="bg-slate-100 border border-slate-300 text-slate-700 px-2 py-0.5 rounded-md text-[11px] font-mono mr-1 shadow-2xs">
               Space
             </kbd>{' '}
             Lật thẻ •{' '}
-            <kbd className="bg-white border border-[#DCE5D8] px-1.5 py-0.5 rounded text-[11px] font-mono mx-1 shadow-2xs">
+            <kbd className="bg-slate-100 border border-slate-300 text-slate-700 px-2 py-0.5 rounded-md text-[11px] font-mono mx-1 shadow-2xs">
               ←
             </kbd>{' '}
             Thẻ trước •{' '}
-            <kbd className="bg-white border border-[#DCE5D8] px-1.5 py-0.5 rounded text-[11px] font-mono mx-1 shadow-2xs">
+            <kbd className="bg-slate-100 border border-slate-300 text-slate-700 px-2 py-0.5 rounded-md text-[11px] font-mono mx-1 shadow-2xs">
               →
             </kbd>{' '}
             Thẻ tiếp theo
@@ -487,7 +511,7 @@ export default function StudyFlashcard() {
 
       {/* Speech Notification Toast */}
       {speechNotice && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#1A2416]/95 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-[#DCE5D8]/20">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg z-50 transition-all pointer-events-none border border-slate-700/50">
           {speechNotice}
         </div>
       )}

@@ -28,41 +28,41 @@ export default function Button({
 }) {
   const isDisabled = disabled || loading;
 
-  // Base sizing and typography
+  // Base sizing and typography (modern rounded corners)
   const sizeClasses = {
-    small: 'h-7 px-2.5 text-xs rounded-md gap-1.5',
-    middle: 'h-9 px-3.5 text-sm rounded-lg gap-2',
-    large: 'h-10 sm:h-11 px-4 sm:px-5 text-sm sm:text-base rounded-lg gap-2.5',
+    small: 'h-8 px-3 text-xs rounded-lg gap-1.5',
+    middle: 'h-10 px-4 text-sm rounded-xl gap-2',
+    large: 'h-11 sm:h-12 px-5 sm:px-6 text-sm sm:text-base rounded-xl gap-2.5',
   };
 
-  // Variant styling matching Ant Design principles
+  // Variant styling matching Modern Emerald Design
   let variantClass = '';
 
   if (danger) {
     if (type === 'primary') {
-      variantClass = 'bg-[#CF1322] hover:bg-[#A8071A] active:bg-[#820014] text-white shadow-xs focus-visible:ring-2 focus-visible:ring-[#FFA39E]';
+      variantClass = 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-rose-400';
     } else if (type === 'outlined' || type === 'default') {
-      variantClass = 'bg-white border border-[#FFA39E] text-[#CF1322] hover:bg-[#FFF1F0] hover:border-[#CF1322] focus-visible:ring-2 focus-visible:ring-[#FFA39E]';
+      variantClass = 'bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 focus-visible:ring-2 focus-visible:ring-rose-300';
     } else {
-      variantClass = 'bg-transparent text-[#CF1322] hover:bg-[#FFF1F0]';
+      variantClass = 'bg-transparent text-rose-600 hover:bg-rose-50';
     }
   } else {
     switch (type) {
       case 'primary':
-        variantClass = 'bg-[#24693D] hover:bg-[#1D5732] active:bg-[#154225] text-white font-medium shadow-xs focus-visible:ring-2 focus-visible:ring-[#24693D]/30';
+        variantClass = 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-emerald-500/30';
         break;
       case 'outlined':
-        variantClass = 'bg-transparent border border-[#24693D] text-[#24693D] font-medium hover:bg-[#F0F7EE] active:bg-[#E2F0DE] focus-visible:ring-2 focus-visible:ring-[#24693D]/20';
+        variantClass = 'bg-transparent border border-emerald-600 text-emerald-600 font-medium hover:bg-emerald-50 active:bg-emerald-100 focus-visible:ring-2 focus-visible:ring-emerald-500/20';
         break;
       case 'text':
-        variantClass = 'bg-transparent border-transparent text-[#5A6553] hover:text-[#1F291E] hover:bg-[#F0F4EE] active:bg-[#E5ECE2]';
+        variantClass = 'bg-transparent border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200';
         break;
       case 'link':
-        variantClass = 'bg-transparent border-transparent text-[#24693D] hover:text-[#1D5732] hover:underline p-0 h-auto shadow-none';
+        variantClass = 'bg-transparent border-transparent text-emerald-600 hover:text-emerald-700 hover:underline p-0 h-auto shadow-none';
         break;
       case 'default':
       default:
-        variantClass = 'bg-white border border-[#DCE5D8] text-[#2E3A28] font-medium hover:border-[#24693D] hover:text-[#24693D] hover:bg-[#F9FCF8] active:bg-[#F0F7EE] shadow-2xs focus-visible:ring-2 focus-visible:ring-[#24693D]/20';
+        variantClass = 'bg-white border border-slate-200 text-slate-700 font-medium hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50/80 active:bg-slate-100 shadow-xs focus-visible:ring-2 focus-visible:ring-slate-300/40';
         break;
     }
   }

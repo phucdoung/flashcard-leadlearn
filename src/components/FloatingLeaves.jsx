@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Clean minimalist SVG leaf shape matching LeafLearn branding
-const LeafIcon = ({ size = 26, color = '#5B9E60' }) => (
+const LeafIcon = ({ size = 26, color = '#059669' }) => (
   <svg
     width={size}
     height={size}
@@ -16,7 +16,7 @@ const LeafIcon = ({ size = 26, color = '#5B9E60' }) => (
     />
     <path
       d="M6 26C12 20 18 14 28 4"
-      stroke="#2E3A28"
+      stroke="#064e3b"
       strokeWidth="1.5"
       strokeLinecap="round"
       opacity="0.2"
@@ -30,61 +30,61 @@ export default function FloatingLeaves({ variant = 'main' }) {
     {
       id: 'leaf-l1',
       side: 'left',
-      style: { left: '3%', top: '-5%', '--leaf-opacity': '0.14' },
+      style: { left: '3%', top: '-5%', '--leaf-opacity': '0.12' },
       size: 28,
       duration: '19s',
       delay: '0s',
-      color: '#5B9E60',
+      color: '#059669',
       mobileHide: false,
     },
     {
       id: 'leaf-r1',
       side: 'right',
-      style: { right: '4%', top: '-8%', '--leaf-opacity': '0.15' },
+      style: { right: '4%', top: '-8%', '--leaf-opacity': '0.13' },
       size: 32,
       duration: '22s',
       delay: '3.5s',
-      color: '#A8D672',
+      color: '#10b981',
       mobileHide: false,
     },
     {
       id: 'leaf-l2',
       side: 'left',
-      style: { left: '8%', top: '-12%', '--leaf-opacity': '0.11' },
+      style: { left: '8%', top: '-12%', '--leaf-opacity': '0.09' },
       size: 22,
       duration: '16s',
       delay: '7s',
-      color: '#5B9E60',
+      color: '#059669',
       mobileHide: true,
     },
     {
       id: 'leaf-r2',
       side: 'right',
-      style: { right: '7%', top: '-4%', '--leaf-opacity': '0.13' },
+      style: { right: '7%', top: '-4%', '--leaf-opacity': '0.11' },
       size: 26,
       duration: '24s',
       delay: '11s',
-      color: '#5B9E60',
+      color: '#059669',
       mobileHide: true,
     },
     {
       id: 'leaf-l3',
       side: 'left',
-      style: { left: '12%', top: '-10%', '--leaf-opacity': '0.09' },
+      style: { left: '12%', top: '-10%', '--leaf-opacity': '0.08' },
       size: 20,
       duration: '20s',
       delay: '5.2s',
-      color: '#A8D672',
+      color: '#10b981',
       mobileHide: true,
     },
     {
       id: 'leaf-r3',
       side: 'right',
-      style: { right: '11%', top: '-14%', '--leaf-opacity': '0.10' },
+      style: { right: '11%', top: '-14%', '--leaf-opacity': '0.09' },
       size: 24,
       duration: '21s',
       delay: '13.5s',
-      color: '#5B9E60',
+      color: '#059669',
       mobileHide: true,
     },
   ];
@@ -94,21 +94,21 @@ export default function FloatingLeaves({ variant = 'main' }) {
     {
       id: 'leaf-auth-l',
       side: 'left',
-      style: { left: '4%', top: '-6%', '--leaf-opacity': '0.07' },
+      style: { left: '4%', top: '-6%', '--leaf-opacity': '0.06' },
       size: 24,
       duration: '22s',
       delay: '1s',
-      color: '#5B9E60',
+      color: '#059669',
       mobileHide: false,
     },
     {
       id: 'leaf-auth-r',
       side: 'right',
-      style: { right: '5%', top: '-10%', '--leaf-opacity': '0.08' },
+      style: { right: '5%', top: '-10%', '--leaf-opacity': '0.07' },
       size: 28,
       duration: '25s',
       delay: '6s',
-      color: '#A8D672',
+      color: '#10b981',
       mobileHide: false,
     },
   ];

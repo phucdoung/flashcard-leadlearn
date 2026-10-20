@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common';
@@ -42,7 +42,6 @@ export default function Messages() {
 
         if (!userMemberships || userMemberships.length === 0) {
           if (targetUserId) {
-            // Initiate new conversation with targetUserId
             await startConversationWith(targetUserId);
           } else {
             setConversations([]);
@@ -101,7 +100,6 @@ export default function Messages() {
         if (!isMounted) return;
         setConversations(convList);
 
-        // Target user logic: find or create conversation with targetUserId
         if (targetUserId) {
           const existing = convList.find((c) => c.peerId === targetUserId);
           if (existing) {
@@ -126,12 +124,10 @@ export default function Messages() {
     };
   }, [user, targetUserId]);
 
-  // Helper to start or get conversation with targetUserId
   const startConversationWith = async (targetId) => {
     if (!user || targetId === user.id) return;
 
     try {
-      // Create new conversation row
       const { data: newConv, error: convErr } = await supabase
         .from('conversations')
         .insert({})
@@ -143,7 +139,6 @@ export default function Messages() {
         return;
       }
 
-      // Add both members
       await supabase.from('conversation_members').insert([
         { conversation_id: newConv.id, user_id: user.id },
         { conversation_id: newConv.id, user_id: targetId },
@@ -165,7 +160,6 @@ export default function Messages() {
     }
   };
 
-  // Fetch messages and subscribe to Realtime updates for active conversation
   useEffect(() => {
     if (!activeConversation || !user) return;
 
@@ -179,19 +173,20 @@ export default function Messages() {
           .eq('conversation_id', activeConversation.id)
           .order('created_at', { ascending: true });
 
-        if (!error && data && isMounted) {
-          setMessages(data);
+        if (error) {
+          console.error('Error fetching messages:', error);
+        } else if (isMounted) {
+          setMessages(data || []);
         }
       } catch (err) {
-        console.error('Fetch messages error:', err);
+        console.error('Fetch messages exception:', err);
       }
     }
 
     fetchMessages();
 
-    // Supabase Realtime Channel Subscription for live chat updates
     const channel = supabase
-      .channel(`public:messages:conversation_id=eq.${activeConversation.id}`)
+      .channel(`conversation-${activeConversation.id}`)
       .on(
         'postgres_changes',
         {
@@ -201,24 +196,11 @@ export default function Messages() {
           filter: `conversation_id=eq.${activeConversation.id}`,
         },
         (payload) => {
-          if (payload.new && isMounted) {
+          if (payload.new) {
             setMessages((prev) => {
               if (prev.some((m) => m.id === payload.new.id)) return prev;
               return [...prev, payload.new];
             });
-
-            // Update conversation preview
-            setConversations((prev) =>
-              prev.map((c) =>
-                c.id === activeConversation.id
-                  ? {
-                      ...c,
-                      lastMessage: payload.new.content,
-                      lastMessageAt: payload.new.created_at,
-                    }
-                  : c
-              )
-            );
           }
         }
       )
@@ -230,7 +212,6 @@ export default function Messages() {
     };
   }, [activeConversation, user]);
 
-  // Send Message
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     const content = newMessage.trim();
@@ -255,7 +236,6 @@ export default function Messages() {
         setMessages((prev) => [...prev, data]);
         setNewMessage('');
 
-        // Update conversation list item preview
         setConversations((prev) =>
           prev.map((c) =>
             c.id === activeConversation.id
@@ -275,7 +255,6 @@ export default function Messages() {
     }
   };
 
-  // Keyboard shortcut: Enter to send, Shift+Enter for newline
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -285,27 +264,27 @@ export default function Messages() {
 
   if (loading) {
     return (
-      <div className="py-16 text-center text-sm font-medium text-[#6B7665] animate-pulse">
+      <div className="py-24 text-center text-sm font-medium text-slate-500 animate-pulse">
         Đang kết nối tin nhắn cộng đồng...
       </div>
     );
   }
 
   return (
-    <div className="py-4 px-4 max-w-4xl mx-auto w-full">
-      <div className="bg-white border border-[#DCE5D8] rounded-xl shadow-xs overflow-hidden flex flex-col md:flex-row min-h-[560px]">
+    <div className="py-4 px-4 max-w-5xl mx-auto w-full">
+      <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[580px]">
         {/* 1. Left Column: Conversations List (~35% width) */}
-        <div className="w-full md:w-[35%] border-b md:border-b-0 md:border-r border-[#DCE5D8] bg-[#F8FCF4] flex flex-col justify-between">
-          <div className="p-4 border-b border-[#DCE5D8]">
-            <h2 className="text-base font-bold text-[#14261C]">Tin nhắn</h2>
-            <p className="text-xs text-[#556551]">Trò chuyện 1-1 với người học khác</p>
+        <div className="w-full md:w-[35%] border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/70 flex flex-col justify-between">
+          <div className="p-4 sm:p-5 border-b border-slate-200">
+            <h2 className="text-base font-bold text-slate-900">Tin nhắn</h2>
+            <p className="text-xs text-slate-500">Trò chuyện 1-1 với người học khác</p>
           </div>
 
           {/* Conversation List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[#E8EFE5] p-2 space-y-1">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 p-2 space-y-1">
             {conversations.length === 0 ? (
               <div className="p-6 text-center space-y-3">
-                <p className="text-xs text-[#556551]">Bạn chưa có cuộc trò chuyện nào.</p>
+                <p className="text-xs text-slate-500">Bạn chưa có cuộc trò chuyện nào.</p>
                 <Link to="/community" className="inline-block">
                   <Button type="primary" size="small">
                     Khám phá cộng đồng
@@ -324,20 +303,20 @@ export default function Messages() {
                       setActiveConversation(conv);
                       navigate(`/messages/${conv.peerId || ''}`);
                     }}
-                    className={`w-full p-3 rounded-lg text-left flex items-center gap-3 transition-colors cursor-pointer ${
+                    className={`w-full p-3 rounded-xl text-left flex items-center gap-3 transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-white border border-[#24693D] shadow-xs font-semibold'
+                        ? 'bg-white border border-emerald-500 shadow-xs font-semibold'
                         : 'hover:bg-white/80 border border-transparent'
                     }`}
                   >
-                    <span className="w-9 h-9 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                    <span className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
                       U
                     </span>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs sm:text-sm font-bold text-[#14261C] block truncate">
+                      <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate">
                         Người học #{conv.peerId ? conv.peerId.substring(0, 6) : 'Partner'}
                       </span>
-                      <p className="text-[11px] text-[#556551] truncate mt-0.5">
+                      <p className="text-[11px] text-slate-500 truncate mt-0.5">
                         {conv.lastMessage || 'Bắt đầu cuộc trò chuyện...'}
                       </p>
                     </div>
@@ -353,21 +332,22 @@ export default function Messages() {
           {activeConversation ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-[#DCE5D8] flex items-center justify-between bg-white">
+              <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-white">
                 <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center">
+                  <span className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                     U
                   </span>
                   <div>
-                    <h3 className="text-sm font-bold text-[#14261C]">
+                    <h3 className="text-sm font-bold text-slate-900">
                       Người học #{activeConversation.peerId ? activeConversation.peerId.substring(0, 6) : 'Partner'}
                     </h3>
                     {activeConversation.peerId && (
                       <Link
                         to={`/users/${activeConversation.peerId}`}
-                        className="text-[11px] text-[#24693D] hover:underline"
+                        className="text-[11px] text-emerald-600 hover:text-emerald-700 hover:underline inline-flex items-center gap-1 font-medium"
                       >
-                        Xem hồ sơ public ➔
+                        <span>Xem hồ sơ public</span>
+                        <span>➔</span>
                       </Link>
                     )}
                   </div>
@@ -375,9 +355,9 @@ export default function Messages() {
               </div>
 
               {/* Chat History */}
-              <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[420px] bg-[#F8FCF4]/40">
+              <div className="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3 max-h-[440px] bg-slate-50/50">
                 {messages.length === 0 ? (
-                  <div className="py-12 text-center text-xs text-[#556551]">
+                  <div className="py-12 text-center text-xs text-slate-400">
                     Hãy gửi tin nhắn đầu tiên để chào hỏi! 👋
                   </div>
                 ) : (
@@ -390,14 +370,14 @@ export default function Messages() {
                         className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[78%] px-3.5 py-2 rounded-xl text-xs sm:text-sm leading-relaxed border ${
+                          className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
                             isMine
-                              ? 'bg-[#F0F7EE] border-[#24693D]/30 text-[#14261C] rounded-br-none'
-                              : 'bg-white border-[#DCE5D8] text-[#14261C] rounded-bl-none shadow-2xs'
+                              ? 'bg-emerald-50 border-emerald-200/80 text-slate-900 rounded-br-none'
+                              : 'bg-white border-slate-200/80 text-slate-900 rounded-bl-none shadow-2xs'
                           }`}
                         >
                           <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                          <span className="block text-[10px] text-[#8C9B86] text-right mt-1 font-mono">
+                          <span className="block text-[10px] text-slate-400 text-right mt-1 font-mono">
                             {new Date(msg.created_at).toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -414,7 +394,7 @@ export default function Messages() {
               {/* Chat Input Bar */}
               <form
                 onSubmit={handleSendMessage}
-                className="p-3.5 border-t border-[#DCE5D8] bg-white flex items-center gap-2"
+                className="p-3.5 sm:p-4 border-t border-slate-200 bg-white flex items-center gap-2"
               >
                 <textarea
                   rows={1}
@@ -422,7 +402,7 @@ export default function Messages() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Nhập tin nhắn... (Enter để gửi, Shift+Enter xuống dòng)"
-                  className="flex-1 px-3.5 py-2.5 rounded-lg border border-[#DCE5D8] bg-[#F8FCF4] text-xs sm:text-sm text-[#14261C] focus:outline-none focus:border-[#24693D] focus:bg-white transition-all resize-none"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all resize-none shadow-2xs"
                 />
                 <Button
                   htmlType="submit"
@@ -436,7 +416,7 @@ export default function Messages() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
-              <p className="text-xs sm:text-sm font-semibold text-[#556551]">
+              <p className="text-xs sm:text-sm font-semibold text-slate-500">
                 Chọn một cuộc trò chuyện từ danh sách hoặc nhắn tin từ trang Cộng đồng.
               </p>
               <Link to="/community">

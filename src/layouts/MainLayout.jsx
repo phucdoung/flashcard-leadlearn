@@ -7,7 +7,7 @@ import FloatingLeaves from '../components/FloatingLeaves';
 
 export default function MainLayout({ children }) {
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#F8FCF4] text-[#2E3A28] overflow-x-clip">
+    <div className="relative min-h-screen flex flex-col bg-[#f8fafc] text-slate-800 overflow-x-clip">
       {/* Floating Leaves Background Animation */}
       <FloatingLeaves variant="main" />
 

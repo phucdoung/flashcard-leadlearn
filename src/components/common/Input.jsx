@@ -21,18 +21,18 @@ export default function Input({
   const isError = status === 'error' || Boolean(error);
 
   const sizeClasses = {
-    small: 'h-7 text-xs px-2.5 rounded-md',
-    middle: 'h-9 text-sm px-3 rounded-lg',
-    large: 'h-10 sm:h-11 text-sm sm:text-base px-3.5 rounded-lg',
+    small: 'h-8 text-xs px-2.5 rounded-lg',
+    middle: 'h-10 text-sm px-3.5 rounded-xl',
+    large: 'h-11 sm:h-12 text-sm sm:text-base px-4 rounded-xl',
   };
 
   const borderClass = isError
-    ? 'border-[#CF1322] focus-within:border-[#CF1322] focus-within:ring-2 focus-within:ring-[#CF1322]/20'
-    : 'border-[#DCE5D8] hover:border-[#24693D] focus-within:border-[#24693D] focus-within:ring-2 focus-within:ring-[#24693D]/20';
+    ? 'border-rose-400 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20'
+    : 'border-slate-200 hover:border-emerald-500 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20';
 
   const disabledClass = disabled
-    ? 'bg-[#F5F7F4] text-[#8C9785] cursor-not-allowed border-[#E2E8DF]'
-    : 'bg-white text-[#2E3A28]';
+    ? 'bg-slate-50 text-slate-400 cursor-not-allowed border-slate-200'
+    : 'bg-white text-slate-800';
 
   const handleClear = (e) => {
     e.stopPropagation();
@@ -47,7 +47,7 @@ export default function Input({
   return (
     <div className={`flex flex-col gap-1.5 w-full ${wrapperClassName}`}>
       {label && (
-        <label className="text-xs font-semibold text-[#1F291E]">
+        <label className="text-xs font-semibold text-slate-800">
           {label}
         </label>
       )}
@@ -56,7 +56,7 @@ export default function Input({
         className={`relative flex items-center w-full border transition-all duration-150 ${sizeClasses[size] || sizeClasses.middle} ${borderClass} ${disabledClass} ${className}`}
       >
         {prefix && (
-          <span className="mr-2 text-[#66705F] shrink-0 flex items-center justify-center">
+          <span className="mr-2 text-slate-400 shrink-0 flex items-center justify-center">
             {prefix}
           </span>
         )}
@@ -65,7 +65,7 @@ export default function Input({
           disabled={disabled}
           value={value}
           onChange={onChange}
-          className="w-full h-full bg-transparent border-none outline-none text-current placeholder-[#8C9785] text-inherit"
+          className="w-full h-full bg-transparent border-none outline-none text-current placeholder:text-slate-400 text-inherit"
           {...props}
         />
 
@@ -73,7 +73,7 @@ export default function Input({
           <button
             type="button"
             onClick={handleClear}
-            className="ml-1 text-[#8C9785] hover:text-[#5A6553] cursor-pointer focus:outline-none p-0.5 rounded-full"
+            className="ml-1 text-slate-400 hover:text-slate-600 cursor-pointer focus:outline-none p-0.5 rounded-full"
             aria-label="Xóa nội dung"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -87,14 +87,14 @@ export default function Input({
         )}
 
         {suffix && (
-          <span className="ml-2 text-[#66705F] shrink-0 flex items-center justify-center">
+          <span className="ml-2 text-slate-400 shrink-0 flex items-center justify-center">
             {suffix}
           </span>
         )}
       </div>
 
       {error && (
-        <span className="text-xs text-[#CF1322] flex items-center gap-1 mt-0.5">
+        <span className="text-xs text-rose-600 flex items-center gap-1 mt-0.5">
           <svg className="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

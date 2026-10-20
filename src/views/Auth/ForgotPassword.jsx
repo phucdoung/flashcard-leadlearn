@@ -30,7 +30,6 @@ export default function ForgotPassword() {
       return false;
     }
 
-    // Strict email format validation regex
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(sanitized)) {
       setEmailError('Vui lòng nhập địa chỉ email hợp lệ.');
@@ -54,8 +53,6 @@ export default function ForgotPassword() {
 
       if (error) {
         console.error('Reset password error:', error);
-
-        // Security Error Mapping (No internal stack trace, no account enumeration)
         const errMsg = error.message ? error.message.toLowerCase() : '';
         const errStatus = error.status;
 
@@ -69,7 +66,7 @@ export default function ForgotPassword() {
       } else {
         setIsSubmitted(true);
         setSubmittedEmail(targetEmail);
-        setCountdown(60); // Start 60-second countdown lock
+        setCountdown(60);
       }
     } catch (err) {
       console.error('Reset password exception:', err);
@@ -95,10 +92,10 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="bg-white border border-[#DCE5D8] rounded-2xl shadow-xs overflow-hidden flex flex-col md:flex-row w-full my-auto">
+    <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row w-full my-auto">
       {/* 1. Left Branding Column (~48% width) */}
-      <div className="hidden md:flex md:w-[48%] bg-[#F8FCF4] border-r border-[#DCE5D8] p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#24693D]/10 blur-2xl pointer-events-none" />
+      <div className="hidden md:flex md:w-[48%] bg-slate-50/80 border-r border-slate-200/80 p-8 lg:p-11 flex-col justify-between relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
 
         {/* Logo Unit */}
         <div className="relative z-10">
@@ -114,26 +111,26 @@ export default function ForgotPassword() {
 
         {/* Value Prop */}
         <div className="space-y-4 my-8 relative z-10">
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#14261C] leading-[1.25] tracking-tight">
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-[1.25] tracking-tight">
             Khôi phục truy cập tài khoản.
           </h1>
-          <p className="text-sm lg:text-base text-[#556551] leading-relaxed">
+          <p className="text-sm lg:text-base text-slate-600 leading-relaxed">
             Chúng tôi sẽ gửi liên kết bảo mật giúp bạn thiết lập lại mật khẩu an toàn.
           </p>
 
-          <div className="space-y-3 pt-6 border-t border-[#DCE5D8]">
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+          <div className="space-y-3 pt-6 border-t border-slate-200">
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Bảo mật chống dò quét Email</span>
             </div>
-            <div className="text-xs lg:text-sm font-semibold text-[#14261C] flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#24693D] shrink-0" />
+            <div className="text-xs lg:text-sm font-semibold text-slate-800 flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span>Liên kết xác nhận có thời hạn</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-[11px] text-[#8C9B86] font-medium">
+        <div className="relative z-10 text-[11px] text-slate-400 font-medium">
           © 2026 LeafLearn. Nền tảng học từ vựng tiếng Anh tối giản.
         </div>
       </div>
@@ -155,24 +152,24 @@ export default function ForgotPassword() {
         {isSubmitted ? (
           /* Neutral Anti-Account-Enumeration Success State */
           <div className="space-y-6 text-center py-2">
-            <div className="w-14 h-14 rounded-full bg-[#F6FFED] border border-[#B7EB8F] flex items-center justify-center mx-auto text-[#24693D] font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-600 font-bold text-2xl shadow-xs">
               ✓
             </div>
 
             <div className="space-y-2.5">
-              <h2 className="text-2xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 Kiểm tra email của bạn
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed max-w-sm mx-auto">
-                Nếu tài khoản gắn với <strong className="text-[#14261C]">{submittedEmail}</strong> tồn tại, bạn sẽ nhận được liên kết đặt lại mật khẩu.
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
+                Nếu tài khoản gắn với <strong className="text-slate-900">{submittedEmail}</strong> tồn tại, bạn sẽ nhận được liên kết đặt lại mật khẩu.
               </p>
-              <p className="text-xs text-[#8C9B86] italic">
+              <p className="text-xs text-slate-400 italic">
                 (Vui lòng kiểm tra cả thư mục Spam hoặc Thư rác)
               </p>
             </div>
 
             {authError && (
-              <div className="bg-[#FFF2F0] border border-[#FFA39E] p-3 rounded-lg text-xs text-[#CF1322] font-medium text-center">
+              <div className="bg-rose-50 border border-rose-200 p-3 rounded-xl text-xs text-rose-800 font-medium text-center">
                 {authError}
               </div>
             )}
@@ -203,16 +200,16 @@ export default function ForgotPassword() {
           /* Normal Input Form State */
           <div>
             <div className="space-y-1 mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                 Quên mật khẩu?
               </h2>
-              <p className="text-xs sm:text-sm text-[#556551] leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 Nhập email đã đăng ký. LeafLearn sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
               </p>
             </div>
 
             {authError && (
-              <div className="mb-5 bg-[#FFF2F0] border border-[#FFA39E] p-3.5 rounded-lg text-xs text-[#CF1322] font-medium text-center leading-relaxed">
+              <div className="mb-5 bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-xs text-rose-800 font-medium text-center leading-relaxed">
                 {authError}
               </div>
             )}
@@ -250,8 +247,8 @@ export default function ForgotPassword() {
               </div>
             </form>
 
-            <div className="mt-8 text-center text-xs sm:text-sm text-[#556551]">
-              <Link to="/login" className="text-[#24693D] hover:underline font-semibold">
+            <div className="mt-8 text-center text-xs sm:text-sm text-slate-500">
+              <Link to="/login" className="text-emerald-600 hover:underline font-semibold">
                 Quay lại đăng nhập
               </Link>
             </div>

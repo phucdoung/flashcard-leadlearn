@@ -93,10 +93,6 @@ export default function Community() {
             const cards = s.flashcards || [];
             const creatorProfile = profilesMap[s.user_id];
 
-            if (!creatorProfile && import.meta.env.DEV) {
-              console.warn(`[Community] Missing profile for user: ${s.user_id}`);
-            }
-
             const authMeta = user && s.user_id === user.id ? user.user_metadata : null;
             const resolvedName = getCreatorDisplayName(creatorProfile, authMeta);
             const creatorName = resolvedName || 'Người học LeafLearn';
@@ -276,57 +272,59 @@ export default function Community() {
   );
 
   return (
-    <div className="py-4 px-4 max-w-4xl mx-auto space-y-6 w-full">
+    <div className="py-4 px-4 max-w-5xl mx-auto space-y-6 w-full">
       {/* Header Banner */}
-      <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 space-y-4 shadow-xs">
         <div className="space-y-2">
-          <Tag color="green">CỘNG ĐỒNG LEAFLEARN</Tag>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#14261C] tracking-tight">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">
+            CỘNG ĐỒNG LEAFLEARN
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Giao lưu, Chia sẻ & Cùng Học Tập
           </h1>
-          <p className="text-xs sm:text-sm text-[#556551] leading-relaxed">
-            Khám phá các bộ thẻ công khai, thi đua bảng xếp hạng và duy trì động lực học mỗi ngày.
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
+            Khám phá các bộ Flashcard chia sẻ công khai, thi đua bảng xếp hạng năng động và giữ vững thói quen học tập mỗi ngày.
           </p>
         </div>
 
         {/* 3 Tabs Navigation Header */}
-        <div className="flex border-b border-[#DCE5D8] gap-6 sm:gap-8 text-xs sm:text-sm font-semibold pt-2">
+        <div className="flex border-b border-slate-200 gap-6 sm:gap-8 text-xs sm:text-sm font-semibold pt-2">
           <button
             type="button"
             onClick={() => setActiveTab('public_sets')}
-            className={`pb-3 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'public_sets' ? 'text-[#24693D] font-bold' : 'text-[#556551] hover:text-[#14261C]'
+            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
+              activeTab === 'public_sets' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             Bộ thẻ cộng đồng ({publicSets.length})
             {activeTab === 'public_sets' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#24693D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('leaderboard')}
-            className={`pb-3 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'leaderboard' ? 'text-[#24693D] font-bold' : 'text-[#556551] hover:text-[#14261C]'
+            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
+              activeTab === 'leaderboard' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             Bảng xếp hạng
             {activeTab === 'leaderboard' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#24693D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('members')}
-            className={`pb-3 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'members' ? 'text-[#24693D] font-bold' : 'text-[#556551] hover:text-[#14261C]'
+            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
+              activeTab === 'members' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             Người học ({leaderboard.length})
             {activeTab === 'members' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#24693D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
             )}
           </button>
         </div>
@@ -334,8 +332,8 @@ export default function Community() {
 
       {loading ? (
         <div className="py-24 text-center max-w-md mx-auto px-4">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#24693D] border-r-transparent"></div>
-          <p className="mt-4 text-sm font-medium text-[#556551]">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+          <p className="mt-4 text-sm font-medium text-slate-500">
             Đang tải dữ liệu cộng đồng...
           </p>
         </div>
@@ -352,14 +350,14 @@ export default function Community() {
                 allowClear
                 onClear={() => setSearchSetQuery('')}
                 prefix={
-                  <svg className="w-4 h-4 text-[#8C9B86]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 }
               />
 
               {filteredPublicSets.length === 0 ? (
-                <div className="bg-white border border-[#DCE5D8] rounded-xl p-8 text-center shadow-xs">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-8 text-center shadow-xs">
                   <Empty
                     title={searchSetQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Chưa có bộ thẻ công khai nào'}
                     description={
@@ -378,55 +376,57 @@ export default function Community() {
                     return (
                       <div
                         key={set.id}
-                        className="bg-white border border-[#DCE5D8] rounded-xl p-5 hover:border-[#24693D]/50 transition-colors space-y-4 flex flex-col justify-between shadow-xs"
+                        className="bg-white border border-slate-200/80 rounded-2xl p-5 hover:border-emerald-500/50 hover:shadow-md transition-all space-y-4 flex flex-col justify-between shadow-xs"
                       >
                         <div className="space-y-3">
                           {/* Author Row */}
                           <div className="flex items-center justify-between gap-2">
                             <Link
                               to={`/users/${set.userId}`}
-                              className="inline-flex items-center gap-2.5 group text-xs font-semibold text-[#556551] hover:text-[#24693D]"
+                              className="inline-flex items-center gap-2.5 group text-xs font-semibold text-slate-600 hover:text-emerald-700"
                             >
                               <div className="relative shrink-0">
                                 {set.creatorAvatar ? (
                                   <img
                                     src={set.creatorAvatar}
                                     alt={set.creatorName}
-                                    className="w-8 h-8 rounded-full object-cover border border-[#DCE5D8] shrink-0"
+                                    className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
                                   />
                                 ) : (
-                                  <span className="w-8 h-8 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                  <span className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
                                     {set.creatorName.charAt(0).toUpperCase()}
                                   </span>
                                 )}
                                 {creatorOnline && (
                                   <span
-                                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#52C41A] border-2 border-white"
+                                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
                                     title="Đang hoạt động"
                                   />
                                 )}
                               </div>
-                              <span className="text-sm font-semibold text-[#14261C] group-hover:text-[#24693D] truncate max-w-[150px]">
-                                {set.creatorName} {isMine && <span className="text-xs text-[#24693D] font-normal">(Bạn)</span>}
+                              <span className="text-sm font-semibold text-slate-800 group-hover:text-emerald-700 truncate max-w-[150px]">
+                                {set.creatorName} {isMine && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
                               </span>
                             </Link>
 
-                            <Tag color="green">{set.totalCards} thẻ</Tag>
+                            <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                              {set.totalCards} thẻ
+                            </span>
                           </div>
 
                           {/* Set Title */}
-                          <h3 className="font-bold text-base sm:text-lg text-[#14261C] truncate leading-tight pt-1">
+                          <h3 className="font-bold text-base sm:text-lg text-slate-900 truncate leading-tight pt-1">
                             {set.title}
                           </h3>
 
                           {/* Set Description */}
-                          <p className="text-xs sm:text-sm text-[#556551] line-clamp-2 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
                             {set.description || 'Chưa có mô tả cho bộ thẻ này.'}
                           </p>
                         </div>
 
                         {/* Footer Card Actions */}
-                        <div className="flex items-center gap-2.5 pt-3 border-t border-[#E8EFE5]">
+                        <div className="flex items-center gap-2.5 pt-3 border-t border-slate-100">
                           <Link to={`/flashcard/${set.id}`} className="flex-1">
                             <Button type="default" size="middle" block>
                               Xem bộ thẻ
@@ -457,25 +457,25 @@ export default function Community() {
 
           {/* TAB 2: BẢNG XẾP HẠNG */}
           {activeTab === 'leaderboard' && (
-            <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
-              <div className="border-b border-[#DCE5D8] pb-3">
-                <h2 className="text-lg sm:text-xl font-bold text-[#14261C]">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+              <div className="border-b border-slate-200 pb-3">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
                   Bảng Xếp Hạng Động Lực
                 </h2>
-                <p className="text-xs text-[#556551] mt-0.5">
+                <p className="text-xs text-slate-500 mt-1">
                   Điểm = (Từ đã thuộc × 1) + (Quiz hoàn thành × 5) + (Điểm trung bình Quiz)
                 </p>
               </div>
 
               {leaderboard.length === 0 ? (
-                <div className="py-8 text-center text-xs sm:text-sm text-[#556551]">
+                <div className="py-8 text-center text-xs sm:text-sm text-slate-500">
                   Chưa đủ dữ liệu để xếp hạng.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[540px]">
                     <thead>
-                      <tr className="border-b border-[#DCE5D8] text-xs font-semibold text-[#556551]">
+                      <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                         <th className="pb-3 px-3 w-14 text-center">Hạng</th>
                         <th className="pb-3 px-3">Người học</th>
                         <th className="pb-3 px-3 text-center">Từ thuộc</th>
@@ -483,32 +483,32 @@ export default function Community() {
                         <th className="pb-3 px-3 text-right">Điểm học tập</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#E8EFE5] text-xs sm:text-sm">
+                    <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
                       {leaderboard.map((member, idx) => {
                         const rank = idx + 1;
                         const isMe = user && member.id === user.id;
                         const online = isUserOnline(member.id);
 
                         let rankBadge = (
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-[#F8FCF4] text-[#556551] border border-[#DCE5D8]">
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                             {rank}
                           </span>
                         );
                         if (rank === 1) {
                           rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-[#FAAD14] text-white">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-amber-500 text-white shadow-xs">
                               1
                             </span>
                           );
                         } else if (rank === 2) {
                           rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-[#8C9B86] text-white">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-slate-400 text-white shadow-xs">
                               2
                             </span>
                           );
                         } else if (rank === 3) {
                           rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-[#D46B08] text-white">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-amber-700 text-white shadow-xs">
                               3
                             </span>
                           );
@@ -517,12 +517,12 @@ export default function Community() {
                         return (
                           <tr
                             key={member.id}
-                            className={`transition-colors hover:bg-[#F8FCF4] ${
-                              isMe ? 'bg-[#F0F7EE] font-semibold' : ''
+                            className={`transition-colors hover:bg-slate-50/70 ${
+                              isMe ? 'bg-emerald-50/50 font-semibold' : ''
                             }`}
                           >
-                            <td className="py-3 px-3 text-center">{rankBadge}</td>
-                            <td className="py-3 px-3">
+                            <td className="py-3.5 px-3 text-center">{rankBadge}</td>
+                            <td className="py-3.5 px-3">
                               <Link
                                 to={`/users/${member.id}`}
                                 className="inline-flex items-center gap-2.5 group focus:outline-none"
@@ -532,36 +532,36 @@ export default function Community() {
                                     <img
                                       src={member.avatar}
                                       alt={member.name}
-                                      className="w-8 h-8 rounded-full object-cover border border-[#DCE5D8] shrink-0"
+                                      className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
                                     />
                                   ) : (
-                                    <span className="w-8 h-8 rounded-full bg-[#24693D] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                    <span className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
                                       {member.name.charAt(0).toUpperCase()}
                                     </span>
                                   )}
                                   {online && (
                                     <span
-                                      className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#52C41A] border-2 border-white"
+                                      className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
                                       title="Đang hoạt động"
                                     />
                                   )}
                                 </div>
-                                <span className="text-[#14261C] group-hover:text-[#24693D] font-semibold text-sm truncate max-w-[140px] sm:max-w-[200px]">
-                                  {member.name} {isMe && <span className="text-xs text-[#24693D] font-normal">(Bạn)</span>}
+                                <span className="text-slate-800 group-hover:text-emerald-700 font-semibold text-sm truncate max-w-[140px] sm:max-w-[200px]">
+                                  {member.name} {isMe && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
                                 </span>
                               </Link>
                             </td>
-                            <td className="py-3 px-3 text-center text-[#14261C] font-mono">
+                            <td className="py-3.5 px-3 text-center text-slate-700 font-mono font-medium">
                               {member.masteredCards} từ
                             </td>
-                            <td className="py-3 px-3 text-center text-[#14261C] font-mono">
+                            <td className="py-3.5 px-3 text-center text-slate-700 font-mono font-medium">
                               {member.quizCount} bài
                             </td>
-                            <td className="py-3 px-3 text-right">
-                              <span className="font-bold text-[#24693D] text-sm sm:text-base font-mono">
+                            <td className="py-3.5 px-3 text-right">
+                              <span className="font-bold text-emerald-600 text-sm sm:text-base font-mono">
                                 {member.learningScore}
                               </span>
-                              <span className="text-[11px] text-[#8C9B86] block">điểm</span>
+                              <span className="text-[11px] text-slate-400 block font-normal">điểm</span>
                             </td>
                           </tr>
                         );
@@ -575,9 +575,9 @@ export default function Community() {
 
           {/* TAB 3: NGƯỜI HỌC */}
           {activeTab === 'members' && (
-            <div className="bg-white border border-[#DCE5D8] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
-              <div className="border-b border-[#DCE5D8] pb-3">
-                <h2 className="text-lg sm:text-xl font-bold text-[#14261C]">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+              <div className="border-b border-slate-200 pb-3">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
                   Danh Sách Thành Viên ({leaderboard.length})
                 </h2>
               </div>
@@ -590,7 +590,7 @@ export default function Community() {
                   return (
                     <div
                       key={member.id}
-                      className="border border-[#DCE5D8] rounded-xl p-4 bg-[#F8FCF4] hover:border-[#24693D]/50 transition-colors space-y-3 flex flex-col justify-between"
+                      className="border border-slate-200/80 rounded-2xl p-4 bg-slate-50/50 hover:bg-white hover:border-emerald-500/50 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between"
                     >
                       <div className="flex items-center gap-3">
                         <div className="relative shrink-0">
@@ -598,16 +598,16 @@ export default function Community() {
                             <img
                               src={member.avatar}
                               alt={member.name}
-                              className="w-10 h-10 rounded-full object-cover border border-[#DCE5D8] shrink-0"
+                              className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
                             />
                           ) : (
-                            <span className="w-10 h-10 rounded-full bg-[#24693D] text-white font-bold text-sm flex items-center justify-center shrink-0">
+                            <span className="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
                               {member.name.charAt(0).toUpperCase()}
                             </span>
                           )}
                           {online && (
                             <span
-                              className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#52C41A] border-2 border-white"
+                              className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
                               title="Đang hoạt động"
                             />
                           )}
@@ -616,31 +616,31 @@ export default function Community() {
                         <div className="truncate min-w-0">
                           <Link
                             to={`/users/${member.id}`}
-                            className="font-semibold text-sm text-[#14261C] hover:text-[#24693D] truncate flex items-center gap-1"
+                            className="font-semibold text-sm text-slate-900 hover:text-emerald-700 truncate flex items-center gap-1"
                           >
                             <span className="truncate">{member.name}</span>
-                            {isMe && <span className="text-xs text-[#24693D] font-normal shrink-0">(Bạn)</span>}
+                            {isMe && <span className="text-xs text-emerald-600 font-normal shrink-0">(Bạn)</span>}
                           </Link>
                           {online ? (
-                            <span className="text-[11px] font-semibold text-[#52C41A] flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#52C41A]" /> Đang hoạt động
+                            <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 mt-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Đang hoạt động
                             </span>
                           ) : (
-                            <span className="text-[11px] text-[#556551]">
+                            <span className="text-[11px] text-slate-500 block mt-0.5">
                               {member.publicSetsCount} bộ thẻ công khai
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-center pt-2 border-t border-[#DCE5D8] text-xs">
-                        <div className="bg-white rounded-lg p-1.5 border border-[#DCE5D8]">
-                          <span className="text-[10px] text-[#8C9B86] block">Đã thuộc</span>
-                          <span className="font-bold text-[#14261C] font-mono">{member.masteredCards} từ</span>
+                      <div className="grid grid-cols-2 gap-2 text-center pt-2 border-t border-slate-200/80 text-xs">
+                        <div className="bg-white rounded-xl p-2 border border-slate-200/80 shadow-2xs">
+                          <span className="text-[10px] text-slate-400 block font-medium">Đã thuộc</span>
+                          <span className="font-bold text-slate-800 font-mono text-sm">{member.masteredCards} từ</span>
                         </div>
-                        <div className="bg-white rounded-lg p-1.5 border border-[#DCE5D8]">
-                          <span className="text-[10px] text-[#8C9B86] block">Điểm học</span>
-                          <span className="font-bold text-[#24693D] font-mono">{member.learningScore}</span>
+                        <div className="bg-white rounded-xl p-2 border border-slate-200/80 shadow-2xs">
+                          <span className="text-[10px] text-slate-400 block font-medium">Điểm học</span>
+                          <span className="font-bold text-emerald-600 font-mono text-sm">{member.learningScore}</span>
                         </div>
                       </div>
 
