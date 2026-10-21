@@ -7,6 +7,15 @@ import { supabase } from '@/src/lib/supabaseClient';
 import { useAuth } from '@/src/context/AuthContext';
 import { Button, Input, Modal, Tag, Empty } from '@/src/components';
 import {
+  Play,
+  FileQuestion,
+  Plus,
+  Trash2,
+  Edit2,
+  Bookmark,
+  ArrowLeft,
+} from 'lucide-react';
+import {
   generateBulkFlashcardDetails,
   generateSingleFlashcardDetails,
 } from '@/src/lib/geminiQuizService';
@@ -638,7 +647,8 @@ export default function FlashcardSetDetail() {
           href="/"
           className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-900 bg-white border border-slate-200/80 px-3.5 py-1.5 rounded-xl transition-all hover:border-emerald-600 shadow-2xs gap-1.5"
         >
-          <span>←</span> Quay lại danh sách
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Quay lại danh sách</span>
         </Link>
       </div>
 
@@ -647,12 +657,18 @@ export default function FlashcardSetDetail() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
+              <h1 className="font-serif text-2xl font-bold text-slate-900 tracking-tight leading-tight">
                 {setDetail?.title || 'Đang tải thông tin...'}
               </h1>
-              <Tag color={setDetail?.visibility === 'public' ? 'leaf' : 'default'}>
-                {setDetail?.visibility === 'public' ? 'Công khai' : 'Riêng tư'}
-              </Tag>
+              {setDetail?.visibility === 'public' ? (
+                <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-medium">
+                  Công khai
+                </span>
+              ) : (
+                <span className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium">
+                  Riêng tư
+                </span>
+              )}
             </div>
 
             <p className="text-xs text-slate-500 font-medium">
@@ -668,46 +684,51 @@ export default function FlashcardSetDetail() {
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             {!isOwner && (
-              <Button
-                type="default"
-                size="large"
+              <button
+                type="button"
                 onClick={handleSaveToLibrary}
-                loading={submitting}
+                disabled={submitting}
+                className="inline-flex items-center justify-center gap-1.5 h-10 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 text-xs sm:text-sm font-semibold rounded-xl transition-all active:scale-[0.98] disabled:opacity-60 cursor-pointer"
               >
-                Lưu vào thư viện
-              </Button>
+                <Bookmark className="w-3.5 h-3.5" />
+                <span>{submitting ? 'Đang lưu...' : 'Lưu vào thư viện'}</span>
+              </button>
             )}
 
-            <Link href={`/study/${id}`}>
-              <Button type="primary" size="large">
-                Học Flashcard
-              </Button>
+            <Link
+              href={`/study/${id}`}
+              className="inline-flex items-center justify-center gap-2 h-10 px-4 py-2 bg-[#1b4332] hover:bg-[#143427] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm shadow-[#1b4332]/20 transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <Play className="w-[15px] h-[15px] fill-current" />
+              <span>Học Flashcard</span>
             </Link>
 
-            <Link href={`/quiz/create/${id}`}>
-              <Button type="outlined" size="large">
-                Tạo bài kiểm tra
-              </Button>
+            <Link
+              href={`/quiz/create/${id}`}
+              className="inline-flex items-center justify-center gap-2 h-10 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 text-xs sm:text-sm font-semibold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <FileQuestion className="w-[15px] h-[15px]" />
+              <span>Tạo bài kiểm tra</span>
             </Link>
           </div>
         </div>
 
         {/* Compact Horizontal Statistics */}
-        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
+        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-500">
           <span>
-            Tổng số: <strong className="text-slate-900 font-bold">{totalCardsCount}</strong>
+            Tổng số: <strong className="text-slate-800 font-bold ml-1">{totalCardsCount}</strong>
           </span>
           <span className="text-slate-300">•</span>
           <span>
-            Đã thuộc: <strong className="text-emerald-600 font-bold">{masteredCardsCount}</strong>
+            Đã thuộc: <strong className="text-[#10b981] font-bold ml-1">{masteredCardsCount}</strong>
           </span>
           <span className="text-slate-300">•</span>
           <span>
-            Chưa thuộc: <strong className="text-rose-600 font-bold">{unmasteredCardsCount}</strong>
+            Chưa thuộc: <strong className="text-[#f43f5e] font-bold ml-1">{unmasteredCardsCount}</strong>
           </span>
           <span className="text-slate-300">•</span>
           <span>
-            Bài kiểm tra: <strong className="text-slate-900 font-bold">{quizzes.length}</strong>
+            Bài kiểm tra: <strong className="text-slate-800 font-bold ml-1">{quizzes.length}</strong>
           </span>
         </div>
       </div>
@@ -732,20 +753,20 @@ export default function FlashcardSetDetail() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base">{quiz.title}</h3>
+                      <h3 className="text-sm font-bold text-slate-800">{quiz.title}</h3>
                       <p className="text-xs text-slate-500 mt-0.5">
                         {qCount} câu hỏi
                       </p>
                     </div>
 
-                    <Button
-                      type="text"
-                      danger
-                      size="small"
+                    <button
+                      type="button"
                       onClick={() => handleOpenDeleteQuizModal(quiz)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      title="Xóa bài kiểm tra"
                     >
-                      Xóa
-                    </Button>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
@@ -754,7 +775,7 @@ export default function FlashcardSetDetail() {
                         <span className="text-rose-600 font-medium">Chưa có câu hỏi</span>
                       ) : latestResult ? (
                         <>
-                          Điểm: <strong className="text-emerald-600 font-bold">{latestResult.score}/{latestResult.total_questions}</strong>
+                          Điểm: <strong className="text-[#10b981] font-bold">{latestResult.score}/{latestResult.total_questions}</strong>
                         </>
                       ) : (
                         'Chưa làm'
@@ -763,23 +784,28 @@ export default function FlashcardSetDetail() {
 
                     <div className="flex items-center gap-2">
                       {hasQuestions && latestResult && (
-                        <Link href={`/result/${latestResult.id}?details=true`}>
-                          <Button type="default" size="small">
-                            Chi tiết
-                          </Button>
+                        <Link
+                          href={`/result/${latestResult.id}?details=true`}
+                          className="inline-flex items-center justify-center h-8 px-3 text-xs rounded-lg font-semibold bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                        >
+                          Chi tiết
                         </Link>
                       )}
 
                       {hasQuestions ? (
-                        <Link href={`/quiz/${quiz.id}`}>
-                          <Button type="primary" size="small">
-                            {latestResult ? 'Làm lại' : 'Làm bài'}
-                          </Button>
+                        <Link
+                          href={`/quiz/${quiz.id}`}
+                          className="inline-flex items-center justify-center h-8 px-3 text-xs rounded-lg font-semibold bg-[#1b4332] hover:bg-[#143427] text-white shadow-2xs transition-colors cursor-pointer"
+                        >
+                          {latestResult ? 'Làm lại' : 'Làm bài'}
                         </Link>
                       ) : (
-                        <Button disabled size="small">
+                        <button
+                          disabled
+                          className="inline-flex items-center justify-center h-8 px-3 text-xs rounded-lg font-semibold bg-slate-100 text-slate-400 cursor-not-allowed"
+                        >
                           Làm bài
-                        </Button>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -796,17 +822,14 @@ export default function FlashcardSetDetail() {
           <h2 className="text-base sm:text-lg font-bold text-slate-900">
             Danh sách Flashcard ({flashcards.length})
           </h2>
-          <Button
-            type="primary"
+          <button
+            type="button"
             onClick={handleOpenAddModal}
-            icon={
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
-              </svg>
-            }
+            className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 py-1.5 bg-[#1b4332] hover:bg-[#143427] text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
-            Thêm Flashcard
-          </Button>
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm Flashcard</span>
+          </button>
         </div>
 
         {loading ? (
@@ -822,9 +845,14 @@ export default function FlashcardSetDetail() {
             title="Bộ Flashcard này chưa có thẻ nào"
             description="Bấm nút bên dưới để bắt đầu thêm từ vựng mới hoặc nhập nhiều từ cùng lúc."
             action={
-              <Button type="primary" onClick={handleOpenAddModal}>
-                Thêm Flashcard
-              </Button>
+              <button
+                type="button"
+                onClick={handleOpenAddModal}
+                className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 py-1.5 bg-[#1b4332] hover:bg-[#143427] text-white rounded-xl text-xs font-semibold shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Thêm Flashcard</span>
+              </button>
             }
           />
         ) : (
@@ -833,12 +861,12 @@ export default function FlashcardSetDetail() {
             {flashcards.map((card) => (
               <div
                 key={card.id}
-                className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 hover:border-emerald-300 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between shadow-2xs"
+                className="bg-white border border-slate-200/70 rounded-xl p-4 hover:border-emerald-300 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between shadow-2xs"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                      <h3 className="text-base font-bold text-slate-800">
                         {card.term}
                       </h3>
                       {card.phonetic && (
@@ -851,37 +879,46 @@ export default function FlashcardSetDetail() {
                     <button
                       type="button"
                       onClick={() => handleToggleStatus(card.id)}
-                      className="cursor-pointer focus:outline-none"
+                      className="cursor-pointer focus:outline-none transition-transform active:scale-95"
                       title="Nhấn để đổi trạng thái"
                     >
-                      <Tag color={card.isMastered ? 'green' : 'red'}>
-                        {card.isMastered ? 'Đã thuộc' : 'Chưa thuộc'}
-                      </Tag>
+                      {card.isMastered ? (
+                        <span className="inline-flex items-center gap-1 rounded-md text-[11px] font-medium px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          Đã thuộc
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-md text-[11px] font-medium px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200/60">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                          Chưa thuộc
+                        </span>
+                      )}
                     </button>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed border-t border-slate-100 pt-2">
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2">
                     {card.definition || 'Chưa có định nghĩa.'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
-                  <Button
-                    type="text"
-                    size="small"
+                <div className="flex items-center justify-end gap-1 pt-2 border-t border-slate-100 text-xs">
+                  <button
+                    type="button"
                     onClick={() => handleOpenEditModal(card)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer font-medium"
                   >
+                    <Edit2 className="w-3 h-3" />
                     Chỉnh sửa
-                  </Button>
-                  <span className="text-slate-300">•</span>
-                  <Button
-                    type="text"
-                    danger
-                    size="small"
+                  </button>
+                  <span className="text-slate-200">|</span>
+                  <button
+                    type="button"
                     onClick={() => handleOpenDeleteModal(card)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer font-medium"
                   >
+                    <Trash2 className="w-3 h-3" />
                     Xóa
-                  </Button>
+                  </button>
                 </div>
               </div>
             ))}
