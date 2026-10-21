@@ -81,22 +81,22 @@ export default function DecksPage() {
     setLoading(true);
 
     try {
-      // 1. Fetch Folders
+      // 1. Fetch Folders from flashcard_folders
       let foldersList = [];
       try {
         const { data: fData, error: fError } = await supabase
-          .from('folders')
+          .from('flashcard_folders')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
         if (fError) {
-          console.warn('Folders table query note:', fError.message);
+          console.warn('flashcard_folders query note:', fError.message);
         } else if (fData) {
           foldersList = fData;
         }
       } catch (err) {
-        console.warn('Folders table not accessible yet:', err);
+        console.warn('flashcard_folders table not accessible:', err);
       }
 
       // 2. Fetch Flashcard Sets with cards
@@ -211,9 +211,9 @@ export default function DecksPage() {
         parent_id: currentFolderId || null,
       };
 
-      const { error } = await supabase.from('folders').insert(payload);
+      const { error } = await supabase.from('flashcard_folders').insert(payload);
       if (error) {
-        alert(`Không thể tạo thư mục: ${error.message}\n(Vui lòng đảm bảo đã chạy file migration SQL trong Supabase)`);
+        alert(`Không thể tạo thư mục: ${error.message}`);
       } else {
         setIsCreateFolderOpen(false);
         setFolderName('');
@@ -241,7 +241,7 @@ export default function DecksPage() {
 
     try {
       const { error } = await supabase
-        .from('folders')
+        .from('flashcard_folders')
         .update({ name: folderName.trim() })
         .eq('id', selectedFolder.id);
 
@@ -270,7 +270,7 @@ export default function DecksPage() {
     setSubmittingFolder(true);
 
     try {
-      const { error } = await supabase.from('folders').delete().eq('id', selectedFolder.id);
+      const { error } = await supabase.from('flashcard_folders').delete().eq('id', selectedFolder.id);
       if (error) {
         alert(`Không thể xóa thư mục: ${error.message}`);
       } else {
