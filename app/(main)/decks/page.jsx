@@ -59,6 +59,29 @@ export default function DecksPage() {
   const [openFolderMenuId, setOpenFolderMenuId] = useState(null);
   const [openDeckMenuId, setOpenDeckMenuId] = useState(null);
 
+  // Close open dropdown menus on outside click or Escape key
+  useEffect(() => {
+    const handleDocumentClick = (e) => {
+      if (!e.target.closest('[data-dropdown-container]')) {
+        setOpenFolderMenuId(null);
+        setOpenDeckMenuId(null);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setOpenFolderMenuId(null);
+        setOpenDeckMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocumentClick);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   // Sync currentFolderId with URL query
   useEffect(() => {
     const fId = searchParams.get('folder') || null;
@@ -489,70 +512,77 @@ export default function DecksPage() {
                   THƯ MỤC
                 </h2>
 
-                <div className="bg-white rounded-2xl border border-slate-200/70 shadow-2xs divide-y divide-slate-100 overflow-hidden">
-                  {currentFolders.map((folder) => (
-                    <div
-                      key={folder.id}
-                      onClick={() => handleNavigateToFolder(folder.id)}
-                      className="px-5 py-3.5 flex items-center justify-between hover:bg-slate-50/80 cursor-pointer transition-colors group relative"
-                    >
-                      {/* Left: Icon Thư mục nét mảnh + Tên thư mục */}
-                      <div className="flex items-center gap-3 min-w-0 pr-3">
-                        <Folder className="w-5 h-5 text-[#1b4332] shrink-0" strokeWidth={1.8} />
-                        <span className="text-sm font-semibold text-slate-800 group-hover:text-[#1b4332] transition-colors truncate">
-                          {folder.name}
-                        </span>
-                      </div>
-
-                      {/* Right: Số lượng chi tiết + Chevron icon + Context menu */}
-                      <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
-                        <span className="text-xs text-slate-400 font-medium">
-                          {getFolderDetailText(folder.id)}
-                        </span>
-
-                        {/* 3-dots Menu for Folder */}
-                        <div className="relative">
-                          <button
-                            type="button"
-                            onClick={() => setOpenFolderMenuId(openFolderMenuId === folder.id ? null : folder.id)}
-                            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                            title="Tùy chọn thư mục"
-                          >
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
-
-                          {openFolderMenuId === folder.id && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setOpenFolderMenuId(null)}
-                              />
-                              <div className="absolute right-0 mt-1 w-36 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1 z-20 animate-fadeIn">
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleOpenEditFolder(folder, e)}
-                                  className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5 text-slate-400" />
-                                  <span>Đổi tên</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleOpenDeleteFolder(folder, e)}
-                                  className="w-full text-left px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                                  <span>Xóa thư mục</span>
-                                </button>
-                              </div>
-                            </>
-                          )}
+                <div className="bg-white rounded-2xl border border-slate-200/70 shadow-2xs divide-y divide-slate-100">
+                  {currentFolders.map((folder, index) => {
+                    const isLast = index >= currentFolders.length - 1;
+                    return (
+                      <div
+                        key={folder.id}
+                        onClick={() => handleNavigateToFolder(folder.id)}
+                        className="px-5 py-3.5 flex items-center justify-between hover:bg-slate-50/80 cursor-pointer transition-colors group relative first:rounded-t-2xl last:rounded-b-2xl"
+                      >
+                        {/* Left: Icon Thư mục nét mảnh + Tên thư mục */}
+                        <div className="flex items-center gap-3 min-w-0 pr-3">
+                          <Folder className="w-5 h-5 text-[#1b4332] shrink-0" strokeWidth={1.8} />
+                          <span className="text-sm font-semibold text-slate-800 group-hover:text-[#1b4332] transition-colors truncate">
+                            {folder.name}
+                          </span>
                         </div>
 
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                        {/* Right: Số lượng chi tiết + Chevron icon + Context menu */}
+                        <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          <span className="text-xs text-slate-400 font-medium">
+                            {getFolderDetailText(folder.id)}
+                          </span>
+
+                          {/* 3-dots Menu for Folder */}
+                          <div className="relative" data-dropdown-container>
+                            <button
+                              type="button"
+                              onClick={() => setOpenFolderMenuId(openFolderMenuId === folder.id ? null : folder.id)}
+                              className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                              title="Tùy chọn thư mục"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+
+                            {openFolderMenuId === folder.id && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-40"
+                                  onClick={() => setOpenFolderMenuId(null)}
+                                />
+                                <div
+                                  className={`absolute right-0 ${
+                                    isLast ? 'bottom-full mb-2' : 'top-full mt-1'
+                                  } w-44 bg-white rounded-xl shadow-xl border border-slate-200/80 z-50 py-1.5 animate-fadeIn`}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleOpenEditFolder(folder, e)}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>Đổi tên</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleOpenDeleteFolder(folder, e)}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                                    <span>Xóa thư mục</span>
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -586,81 +616,88 @@ export default function DecksPage() {
                   </button>
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl border border-slate-200/70 shadow-2xs divide-y divide-slate-100 overflow-hidden">
-                  {currentDecks.map((deck) => (
-                    <div
-                      key={deck.id}
-                      onClick={() => router.push(`/flashcard/${deck.id}`)}
-                      className="px-5 py-3.5 flex items-center justify-between hover:bg-slate-50/80 cursor-pointer transition-colors group relative"
-                    >
-                      {/* Left: Icon màn hình/thẻ + Tên bộ thẻ */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
-                        <Layers className="w-5 h-5 text-[#1b4332] shrink-0" strokeWidth={1.8} />
-                        <span className="text-sm font-semibold text-slate-800 group-hover:text-[#1b4332] transition-colors truncate">
-                          {deck.title}
-                        </span>
-                      </div>
-
-                      {/* Center: Số lượng từ */}
-                      <div className="w-20 sm:w-28 text-left shrink-0">
-                        <span className="text-xs text-slate-400 font-medium">
-                          {deck.totalCards} từ
-                        </span>
-                      </div>
-
-                      {/* Right: Progress bar + Percentage + Context Menu */}
-                      <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
-                        <div className="w-16 sm:w-28 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-[#1b4332] rounded-full transition-all duration-300"
-                            style={{ width: `${deck.progress}%` }}
-                          />
+                <div className="bg-white rounded-2xl border border-slate-200/70 shadow-2xs divide-y divide-slate-100">
+                  {currentDecks.map((deck, index) => {
+                    const isLast = index >= currentDecks.length - 1;
+                    return (
+                      <div
+                        key={deck.id}
+                        onClick={() => router.push(`/flashcard/${deck.id}`)}
+                        className="px-5 py-3.5 flex items-center justify-between hover:bg-slate-50/80 cursor-pointer transition-colors group relative first:rounded-t-2xl last:rounded-b-2xl"
+                      >
+                        {/* Left: Icon màn hình/thẻ + Tên bộ thẻ */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
+                          <Layers className="w-5 h-5 text-[#1b4332] shrink-0" strokeWidth={1.8} />
+                          <span className="text-sm font-semibold text-slate-800 group-hover:text-[#1b4332] transition-colors truncate">
+                            {deck.title}
+                          </span>
                         </div>
-                        <span className="text-xs font-semibold text-slate-600 w-8 sm:w-10 text-right">
-                          {deck.progress}%
-                        </span>
 
-                        {/* 3-dots Menu for Deck */}
-                        <div className="relative">
-                          <button
-                            type="button"
-                            onClick={() => setOpenDeckMenuId(openDeckMenuId === deck.id ? null : deck.id)}
-                            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                            title="Tùy chọn bộ thẻ"
-                          >
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
+                        {/* Center: Số lượng từ */}
+                        <div className="w-20 sm:w-28 text-left shrink-0">
+                          <span className="text-xs text-slate-400 font-medium">
+                            {deck.totalCards} từ
+                          </span>
+                        </div>
 
-                          {openDeckMenuId === deck.id && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setOpenDeckMenuId(null)}
-                              />
-                              <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1 z-20 animate-fadeIn">
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleOpenMoveSet(deck, e)}
-                                  className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                        {/* Right: Progress bar + Percentage + Context Menu */}
+                        <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          <div className="w-16 sm:w-28 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-[#1b4332] rounded-full transition-all duration-300"
+                              style={{ width: `${deck.progress}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-semibold text-slate-600 w-8 sm:w-10 text-right">
+                            {deck.progress}%
+                          </span>
+
+                          {/* 3-dots Menu for Deck */}
+                          <div className="relative" data-dropdown-container>
+                            <button
+                              type="button"
+                              onClick={() => setOpenDeckMenuId(openDeckMenuId === deck.id ? null : deck.id)}
+                              className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                              title="Tùy chọn bộ thẻ"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+
+                            {openDeckMenuId === deck.id && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-40"
+                                  onClick={() => setOpenDeckMenuId(null)}
+                                />
+                                <div
+                                  className={`absolute right-0 ${
+                                    isLast ? 'bottom-full mb-2' : 'top-full mt-1'
+                                  } w-44 bg-white rounded-xl shadow-xl border border-slate-200/80 z-50 py-1.5 animate-fadeIn`}
                                 >
-                                  <FolderInput className="w-3.5 h-3.5 text-slate-400" />
-                                  <span>Di chuyển thư mục</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => router.push(`/flashcard/${deck.id}`)}
-                                  className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5 text-slate-400" />
-                                  <span>Xem & Chỉnh sửa</span>
-                                </button>
-                              </div>
-                            </>
-                          )}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleOpenMoveSet(deck, e)}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                  >
+                                    <FolderInput className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>Di chuyển thư mục</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => router.push(`/flashcard/${deck.id}`)}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>Xem & Chỉnh sửa</span>
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
