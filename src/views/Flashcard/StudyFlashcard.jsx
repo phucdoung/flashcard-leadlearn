@@ -190,7 +190,7 @@ export default function StudyFlashcard() {
   }, [currentIndex, totalCards, isCompleted]);
 
   return (
-    <div className="py-4 px-4 max-w-4xl mx-auto space-y-5">
+    <div className="max-w-4xl mx-auto space-y-5 w-full">
       {/* Header Container */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

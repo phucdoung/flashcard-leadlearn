@@ -137,7 +137,7 @@ export default function PublicProfile() {
   const isSelf = currentUser && currentUser.id === id;
 
   return (
-    <div className="py-4 px-4 max-w-4xl mx-auto space-y-6 w-full">
+    <div className="max-w-4xl mx-auto space-y-6 w-full">
       {/* Profile Header Main Card */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">

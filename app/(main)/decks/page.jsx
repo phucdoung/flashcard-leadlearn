@@ -403,8 +403,7 @@ export default function DecksPage() {
   const totalFoldersCount = allFolders.length;
 
   return (
-    <div className="min-h-screen bg-[#fbfbfa] py-8 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto w-full space-y-6">
+    <div className="max-w-4xl mx-auto w-full space-y-6 font-sans">
         {/* 1. HEADER & ACTION BUTTONS */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200/60">
           <div>
@@ -875,6 +874,5 @@ export default function DecksPage() {
           loading={submittingSet}
         />
       </div>
-    </div>
   );
 }

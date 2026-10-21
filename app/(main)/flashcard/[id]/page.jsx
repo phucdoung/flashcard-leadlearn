@@ -631,7 +631,7 @@ export default function FlashcardSetDetail() {
   const isOwner = user && setDetail?.userId === user.id;
 
   return (
-    <div className="py-2 max-w-4xl mx-auto space-y-6 px-4 sm:px-6 w-full">
+    <div className="max-w-4xl mx-auto space-y-6 w-full">
       {/* Back Navigation Link */}
       <div>
         <Link

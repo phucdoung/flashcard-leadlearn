@@ -284,7 +284,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="py-4 px-4 max-w-5xl mx-auto w-full">
+    <div className="max-w-5xl mx-auto w-full">
       <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[580px]">
         {/* 1. Left Column: Conversations List (~35% width) */}
         <div className="w-full md:w-[35%] border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/70 flex flex-col justify-between">

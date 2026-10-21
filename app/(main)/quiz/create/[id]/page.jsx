@@ -307,7 +307,7 @@ export default function CreateQuiz() {
   };
 
   return (
-    <div className="py-6 max-w-4xl mx-auto space-y-6 px-4 sm:px-6 w-full">
+    <div className="max-w-4xl mx-auto space-y-6 w-full">
       {/* Header Section */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

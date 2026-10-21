@@ -436,7 +436,7 @@ export default function Profile() {
     showPhone !== initialShowPhone;
 
   return (
-    <div className="py-4 px-4 max-w-2xl mx-auto space-y-6 w-full">
+    <div className="max-w-2xl mx-auto space-y-6 w-full">
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">

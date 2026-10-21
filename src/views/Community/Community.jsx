@@ -272,7 +272,7 @@ export default function Community() {
   );
 
   return (
-    <div className="py-4 px-4 max-w-5xl mx-auto space-y-6 w-full">
+    <div className="max-w-5xl mx-auto space-y-6 w-full">
       {/* Header Banner */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 space-y-4 shadow-xs">
         <div className="space-y-2">

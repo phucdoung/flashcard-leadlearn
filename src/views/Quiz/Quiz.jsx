@@ -294,7 +294,7 @@ export default function Quiz() {
   const answeredPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6 w-full">
       {/* Quiz Progress & Timer Header */}
       <div className="rounded-2xl bg-white p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

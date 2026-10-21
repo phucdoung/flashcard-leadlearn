@@ -375,7 +375,7 @@ export default function QuizResult() {
   const strokeDashoffset = circumference * (1 - (totalQuestions > 0 ? correctCount / totalQuestions : 0));
 
   return (
-    <div className="py-6 px-4 max-w-4xl mx-auto space-y-6 w-full">
+    <div className="max-w-4xl mx-auto space-y-6 w-full">
       {/* Quiz Summary Main Card */}
       <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center space-y-6 shadow-xs">
         {/* Top Header Tag */}
