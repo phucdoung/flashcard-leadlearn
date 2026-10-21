@@ -6,3 +6,4 @@ export { default as Input } from './common/Input';
 export { default as Modal } from './common/Modal';
 export { default as Tag } from './common/Tag';
 export { default as Empty } from './common/Empty';
+export { default as MoveDeckModal } from './MoveDeckModal';

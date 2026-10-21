@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/src/lib/supabaseClient';
 import { useAuth } from '@/src/context/AuthContext';
-import { Button, Modal } from '@/src/components';
+import { Button, Modal, MoveDeckModal } from '@/src/components';
 import {
   Folder,
   FolderPlus,
@@ -54,7 +54,6 @@ export default function DecksPage() {
 
   const [isMoveSetOpen, setIsMoveSetOpen] = useState(false);
   const [selectedSet, setSelectedSet] = useState(null);
-  const [destinationFolderId, setDestinationFolderId] = useState('');
 
   // Dropdown Action Menus
   const [openFolderMenuId, setOpenFolderMenuId] = useState(null);
@@ -299,18 +298,25 @@ export default function DecksPage() {
     setIsCreateSetOpen(true);
   };
 
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
   const handleCreateSet = async (e) => {
     e.preventDefault();
     if (!setName.trim() || !user) return;
     setSubmittingSet(true);
 
     try {
+      const sanitizedFolderId =
+        targetFolderId && typeof targetFolderId === 'string' && UUID_REGEX.test(targetFolderId.trim())
+          ? targetFolderId.trim()
+          : null;
+
       const payload = {
         name: setName.trim(),
         description: setDescription.trim(),
         user_id: user.id,
         visibility: visibility || 'private',
-        folder_id: targetFolderId || null,
+        folder_id: sanitizedFolderId,
       };
 
       const { error } = await supabase.from('flashcard_sets').insert(payload);
@@ -342,27 +348,24 @@ export default function DecksPage() {
   const handleOpenMoveSet = (deck, e) => {
     e.stopPropagation();
     setSelectedSet(deck);
-    setDestinationFolderId(deck.folder_id || '');
     setOpenDeckMenuId(null);
     setIsMoveSetOpen(true);
   };
 
-  const handleMoveSet = async (e) => {
-    e.preventDefault();
-    if (!selectedSet) return;
+  const handleSaveMoveDeck = async (deckId, finalFolderId) => {
     setSubmittingSet(true);
-
     try {
-      const folderVal = destinationFolderId === '' ? null : destinationFolderId;
       const { error } = await supabase
         .from('flashcard_sets')
-        .update({ folder_id: folderVal })
-        .eq('id', selectedSet.id);
+        .update({ folder_id: finalFolderId })
+        .eq('id', deckId);
 
       if (error) {
+        console.error('Error moving deck:', error);
         alert(`Không thể chuyển thư mục: ${error.message}`);
       } else {
         setIsMoveSetOpen(false);
+        setSelectedSet(null);
         fetchData();
       }
     } catch (err) {
@@ -823,35 +826,17 @@ export default function DecksPage() {
         </Modal>
 
         {/* MODAL: MOVE FLASHCARD SET TO FOLDER */}
-        <Modal
+        <MoveDeckModal
           open={isMoveSetOpen}
-          title="Di chuyển bộ thẻ vào thư mục"
-          onCancel={() => setIsMoveSetOpen(false)}
-          onOk={handleMoveSet}
-          okText={submittingSet ? 'Đang lưu...' : 'Lưu vị trí'}
-          confirmLoading={submittingSet}
-        >
-          <form onSubmit={handleMoveSet} className="space-y-4">
-            <p className="text-xs text-slate-600">
-              Chọn thư mục đích cho bộ thẻ <strong className="text-slate-900">"{selectedSet?.title}"</strong>:
-            </p>
-
-            <div className="space-y-1.5">
-              <select
-                value={destinationFolderId}
-                onChange={(e) => setDestinationFolderId(e.target.value)}
-                className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] outline-none text-sm text-slate-800 bg-white"
-              >
-                <option value="">(Thư mục gốc - Không thuộc thư mục nào)</option>
-                {allFolders.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    📁 {f.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </form>
-        </Modal>
+          deck={selectedSet}
+          folders={allFolders}
+          onClose={() => {
+            setIsMoveSetOpen(false);
+            setSelectedSet(null);
+          }}
+          onSave={handleSaveMoveDeck}
+          loading={submittingSet}
+        />
       </div>
     </div>
   );
