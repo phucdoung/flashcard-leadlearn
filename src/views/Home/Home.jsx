@@ -523,14 +523,6 @@ export default function Home() {
   const totalQuizzes = sets.reduce((acc, s) => acc + (s.quizCount || 0), 0);
   const weeklyProgress = totalWords > 0 ? Math.min(100, Math.round((totalLearned / totalWords) * 100)) : 0;
 
-  // Greeting logic
-  const getGreetingTime = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Chào buổi sáng';
-    if (hour < 18) return 'Chào buổi chiều';
-    return 'Chào buổi tối';
-  };
-
   const userName =
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
@@ -538,15 +530,11 @@ export default function Home() {
     'bạn';
 
   return (
-    <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 font-sans">
+    <div className="w-full space-y-6 sm:space-y-7 font-sans">
       {/* A. GREETING HERO SECTION */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-slate-200/60">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase text-[#1f4e38]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1f4e38]"></span>
-            <span>{getGreetingTime()}</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 font-serif tracking-tight leading-tight">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/60">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 font-serif tracking-tight leading-tight">
             Xin chào, {userName}
           </h1>
           <p className="text-sm text-slate-500 font-normal leading-relaxed">
