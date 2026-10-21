@@ -643,16 +643,13 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="text-xs font-semibold text-[#1f4e38] hover:text-[#173b2a] hover:underline inline-flex items-center gap-1 cursor-pointer"
-              >
-                <span>Xem tất cả</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <Link
+              to="/decks"
+              className="text-xs font-semibold text-[#1f4e38] hover:text-[#173b2a] hover:underline inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Xem tất cả</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
 

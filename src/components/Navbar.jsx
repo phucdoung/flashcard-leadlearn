@@ -20,7 +20,7 @@ export default function Navbar() {
   const displayName = user?.user_metadata?.full_name || user?.email || 'User';
 
   const isHomeActive = pathname === '/';
-  const isFlashcardsActive = pathname.startsWith('/flashcard');
+  const isDecksActive = pathname.startsWith('/decks') || pathname.startsWith('/flashcard');
   const isCommunityActive =
     pathname.startsWith('/community') ||
     pathname.startsWith('/users') ||
@@ -72,9 +72,9 @@ export default function Navbar() {
 
           {/* Bộ Flashcard */}
           <Link
-            href="/#sets-section"
+            href="/decks"
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-              isFlashcardsActive
+              isDecksActive
                 ? 'bg-slate-100 text-[#1f4e38] font-semibold border border-slate-200/80 shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
             }`}

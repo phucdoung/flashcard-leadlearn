@@ -13,6 +13,7 @@ import Register from '../views/Auth/Register';
 import ForgotPassword from '../views/Auth/ForgotPassword';
 import ResetPassword from '../views/Auth/ResetPassword';
 import Home from '../views/Home/Home';
+import DecksPage from '../views/Decks/DecksPage';
 import Statistics from '../views/Statistics/Statistics';
 import Community from '../views/Community/Community';
 import PublicProfile from '../views/Community/PublicProfile';
@@ -41,6 +42,8 @@ export default function AppRoutes() {
             <Route element={<MainLayout />}>
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/decks" element={<DecksPage />} />
+                <Route path="/flashcard" element={<DecksPage />} />
                 <Route path="/explore" element={<Navigate to="/community" replace />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/users/:id" element={<PublicProfile />} />
