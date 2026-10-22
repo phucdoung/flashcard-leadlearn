@@ -126,7 +126,7 @@ export default function Statistics() {
 
       {loading ? (
         <div className="py-24 text-center max-w-md mx-auto px-4">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#1b4332] border-r-transparent"></div>
           <p className="mt-4 text-sm font-medium text-slate-500">
             Đang tải dữ liệu thống kê...
           </p>
@@ -152,9 +152,9 @@ export default function Statistics() {
             </div>
 
             {/* Card 3: Đã thuộc */}
-            <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-4 text-center shadow-xs space-y-1 hover:shadow-sm transition-shadow">
-              <span className="block text-xs font-semibold text-emerald-800 uppercase tracking-wider">Đã thuộc</span>
-              <span className="text-2xl sm:text-3xl font-bold text-emerald-700 block font-mono">
+            <div className="bg-[#1b4332]/8 border border-[#1b4332]/15 rounded-2xl p-4 text-center shadow-xs space-y-1 hover:shadow-sm transition-shadow">
+              <span className="block text-xs font-semibold text-[#1b4332] uppercase tracking-wider">Đã thuộc</span>
+              <span className="text-2xl sm:text-3xl font-bold text-[#1b4332] block font-mono">
                 {stats.masteredCards}
               </span>
             </div>
@@ -184,11 +184,11 @@ export default function Statistics() {
                 <span className="font-semibold text-slate-600">
                   Đã thuộc {stats.masteredCards} / {stats.totalCards} từ
                 </span>
-                <span className="font-bold text-emerald-600 font-mono text-base">{progress}%</span>
+                <span className="font-bold text-[#1b4332] font-mono text-base">{progress}%</span>
               </div>
               <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-emerald-600 transition-all duration-500"
+                  className="h-full rounded-full bg-[#1b4332] transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -203,7 +203,7 @@ export default function Statistics() {
                   Kết quả bài kiểm tra gần nhất
                 </h2>
                 {stats.avgScore !== null && (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1b4332]/8 text-[#1b4332] border border-[#1b4332]/15">
                     Điểm TB: {stats.avgScore}%
                   </span>
                 )}
@@ -214,19 +214,19 @@ export default function Statistics() {
                   <Link
                     key={res.id}
                     to={`/result/${res.id}?details=true`}
-                    className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-slate-50/70 hover:bg-emerald-50/40 border border-slate-200/80 hover:border-emerald-300 text-xs sm:text-sm transition-all group cursor-pointer shadow-2xs"
+                    className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-slate-50/70 hover:bg-[#1b4332]/5 border border-slate-200/80 hover:border-[#1b4332]/30 text-xs sm:text-sm transition-all group cursor-pointer shadow-2xs"
                   >
-                    <span className="font-semibold text-slate-800 group-hover:text-emerald-700 truncate flex-1 pr-3 transition-colors">
+                    <span className="font-semibold text-slate-800 group-hover:text-[#1b4332] truncate flex-1 pr-3 transition-colors">
                       {res.title}
                     </span>
                     <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-[#1b4332]/8 text-[#1b4332] border border-[#1b4332]/15">
                         {res.score} / {res.totalQuestions}
                       </span>
                       <span className="text-slate-400 text-xs font-mono hidden sm:inline-block">
                         {res.date}
                       </span>
-                      <span className="text-xs font-semibold text-emerald-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                      <span className="text-xs font-semibold text-[#1b4332] group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                         <span>Chi tiết</span>
                         <span>&rarr;</span>
                       </span>

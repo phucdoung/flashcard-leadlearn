@@ -14,8 +14,8 @@ export default function Tag({
   ...props
 }) {
   const colorMap = {
-    leaf: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-    green: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    leaf: 'bg-[#1b4332]/8 border-[#1b4332]/15 text-[#1b4332]',
+    green: 'bg-[#1b4332]/8 border-[#1b4332]/15 text-[#1b4332]',
     blue: 'bg-sky-50 border-sky-200 text-sky-700',
     gold: 'bg-amber-50 border-amber-200 text-amber-700',
     red: 'bg-rose-50 border-rose-200 text-rose-700',
@@ -27,7 +27,7 @@ export default function Tag({
 
   return (
     <span
-      className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-lg font-medium leading-normal gap-1 select-none shrink-0 ${borderClass} ${selectedColor} ${className}`}
+      className={`inline-flex items-center text-xs px-2.5 py-0.5 rounded-md font-medium leading-normal gap-1 select-none shrink-0 ${borderClass} ${selectedColor} ${className}`}
       {...props}
     >
       {icon && <span className="shrink-0 flex items-center justify-center">{icon}</span>}

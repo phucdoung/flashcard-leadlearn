@@ -485,7 +485,7 @@ export default function DecksPage() {
             <button
               type="button"
               onClick={handleOpenCreateSet}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1b4332] hover:bg-[#143326] active:bg-[#0e241b] text-white text-xs sm:text-sm font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1b4332] hover:bg-[#143326] active:bg-[#0e241b] text-white text-xs sm:text-sm font-semibold shadow-sm shadow-[#1b4332]/20 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Bộ Flashcard</span>

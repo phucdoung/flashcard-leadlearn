@@ -378,15 +378,15 @@ export default function CreateQuiz() {
                 onClick={() => setScope('all')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'all'
-                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
-                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
+                    ? 'border-[#1b4332] bg-[#1b4332]/8 ring-1 ring-[#1b4332]/30'
+                    : 'border-slate-200/80 bg-white hover:border-[#1b4332]/40'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-slate-900">Tất cả</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'all' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
+                      scope === 'all' ? 'border-[#1b4332] bg-[#1b4332]' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'all' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -403,15 +403,15 @@ export default function CreateQuiz() {
                 onClick={() => setScope('unlearned')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'unlearned'
-                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
-                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
+                    ? 'border-[#1b4332] bg-[#1b4332]/8 ring-1 ring-[#1b4332]/30'
+                    : 'border-slate-200/80 bg-white hover:border-[#1b4332]/40'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-slate-900">Từ chưa thuộc</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'unlearned' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
+                      scope === 'unlearned' ? 'border-[#1b4332] bg-[#1b4332]' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'unlearned' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -428,15 +428,15 @@ export default function CreateQuiz() {
                 onClick={() => setScope('custom')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                   scope === 'custom'
-                    ? 'border-emerald-600 bg-emerald-50/80 ring-1 ring-emerald-500/30'
-                    : 'border-slate-200/80 bg-white hover:border-emerald-400'
+                    ? 'border-[#1b4332] bg-[#1b4332]/8 ring-1 ring-[#1b4332]/30'
+                    : 'border-slate-200/80 bg-white hover:border-[#1b4332]/40'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-slate-900">Chọn chi tiết</span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      scope === 'custom' ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
+                      scope === 'custom' ? 'border-[#1b4332] bg-[#1b4332]' : 'border-slate-300'
                     }`}
                   >
                     {scope === 'custom' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -459,7 +459,7 @@ export default function CreateQuiz() {
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="text-xs font-medium text-emerald-700 hover:underline cursor-pointer"
+                      className="text-xs font-medium text-[#1b4332] hover:underline cursor-pointer"
                     >
                       Chọn tất cả
                     </button>
@@ -487,7 +487,7 @@ export default function CreateQuiz() {
                         key={card.id}
                         className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
                           isChecked
-                            ? 'bg-white border-emerald-500/50 shadow-2xs'
+                            ? 'bg-white border-[#1b4332]/40 shadow-2xs'
                             : 'bg-white/60 border-slate-200 text-slate-500'
                         }`}
                       >
@@ -496,7 +496,7 @@ export default function CreateQuiz() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleToggleCard(card.id)}
-                            className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-300 accent-[#1b4332] cursor-pointer"
                           />
                           <span className="font-semibold text-slate-900 truncate">{word}</span>
                           <span className="text-slate-500 truncate">- {meaning}</span>
@@ -516,7 +516,7 @@ export default function CreateQuiz() {
           {/* Dynamic AI Question Count Guidance Box */}
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4 sm:p-5 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-600 text-[10px] font-bold text-white shadow-2xs">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#1b4332] text-[10px] font-bold text-white shadow-2xs">
                 AI
               </span>
               <h4 className="text-xs font-bold text-slate-900">
@@ -586,7 +586,7 @@ export default function CreateQuiz() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
             <div className="text-xs text-slate-500">
               Flashcard hợp lệ sẵn sàng:{' '}
-              <strong className={validCardsPool.length < 10 ? 'text-rose-600' : 'text-emerald-700'}>
+              <strong className={validCardsPool.length < 10 ? 'text-rose-600' : 'text-[#1b4332]'}>
                 {validCardsPool.length} / 10 thẻ tối thiểu
               </strong>
             </div>
@@ -633,7 +633,7 @@ export default function CreateQuiz() {
                     {isError ? 'Lỗi nghiêm trọng' : 'Cảnh báo'}
                   </Tag>
 
-                  {isApplied && <span className="text-xs font-semibold text-emerald-700">✓ Đã áp dụng gợi ý</span>}
+                  {isApplied && <span className="text-xs font-semibold text-[#1b4332]">✓ Đã áp dụng gợi ý</span>}
                   {isIgnored && <span className="text-xs font-semibold text-amber-700">✓ Giữ nguyên (Cảnh báo)</span>}
                   {isExcluded && <span className="text-xs font-semibold text-rose-600">✕ Đã loại bỏ khỏi bài</span>}
                 </div>

@@ -546,7 +546,7 @@ export default function Home() {
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white text-sm font-semibold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1b4332] hover:bg-[#143326] active:bg-[#0f281d] text-white text-sm font-semibold shadow-sm shadow-[#1b4332]/20 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Tạo bộ thẻ mới</span>
@@ -558,7 +558,7 @@ export default function Home() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         {/* Stat 1: Bộ Flashcard */}
         <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1b4332]/10 text-[#1b4332] flex items-center justify-center shrink-0">
             <Layers className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -573,7 +573,7 @@ export default function Home() {
 
         {/* Stat 2: Từ đã học */}
         <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1b4332]/10 text-[#1b4332] flex items-center justify-center shrink-0">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -588,7 +588,7 @@ export default function Home() {
 
         {/* Stat 3: Bài kiểm tra */}
         <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1b4332]/10 text-[#1b4332] flex items-center justify-center shrink-0">
             <Award className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -603,7 +603,7 @@ export default function Home() {
 
         {/* Stat 4: Tiến độ tuần */}
         <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition-all flex items-center gap-3.5">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1f4e38]/10 text-[#1f4e38] flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1b4332]/10 text-[#1b4332] flex items-center justify-center shrink-0">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -633,7 +633,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <Link
               to="/decks"
-              className="text-xs font-semibold text-[#1f4e38] hover:text-[#173b2a] hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-[#1b4332] hover:text-[#143326] hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <span>Xem tất cả</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -650,7 +650,7 @@ export default function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Tìm kiếm bộ thẻ theo tên hoặc nội dung..."
-              className="w-full h-10 sm:h-11 pl-10 pr-9 bg-white border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all shadow-2xs"
+              className="w-full h-10 sm:h-11 pl-10 pr-9 bg-white border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all shadow-2xs"
             />
             {searchQuery && (
               <button
@@ -688,7 +688,7 @@ export default function Home() {
                     }}
                     className={`w-full h-8 px-3 rounded-lg text-xs sm:text-sm text-left flex items-center transition-colors cursor-pointer ${
                       sortBy === opt.value
-                        ? 'bg-[#1f4e38]/10 text-[#1f4e38] font-bold'
+                        ? 'bg-[#1b4332]/10 text-[#1b4332] font-bold'
                         : 'text-slate-700 hover:bg-slate-50 font-medium'
                     }`}
                   >
@@ -703,7 +703,7 @@ export default function Home() {
         {/* Decks Grid or Empty/Loading State */}
         {loading ? (
           <div className="py-20 text-center text-sm text-slate-500 font-medium animate-pulse flex items-center justify-center gap-2.5">
-            <svg className="animate-spin h-5 w-5 text-[#1f4e38]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin h-5 w-5 text-[#1b4332]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
@@ -797,7 +797,7 @@ export default function Home() {
 
                     {/* Title & Description */}
                     <div>
-                      <h3 className="font-semibold text-base sm:text-lg text-slate-900 group-hover:text-[#1f4e38] transition-colors line-clamp-1">
+                      <h3 className="font-semibold text-base sm:text-lg text-slate-900 group-hover:text-[#1b4332] transition-colors line-clamp-1">
                         {set.title}
                       </h3>
                       {set.description ? (
@@ -823,12 +823,12 @@ export default function Home() {
                           </div>
                           <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                             <div
-                              className="h-full rounded-full bg-[#1f4e38] transition-all duration-300"
+                              className="h-full rounded-full bg-[#1b4332] transition-all duration-300"
                               style={{ width: `${progress}%` }}
                             />
                           </div>
                           <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-0.5">
-                            <span className="text-[#1f4e38] font-medium">{set.masteredCards} đã thuộc</span>
+                            <span className="text-[#1b4332] font-semibold">{set.masteredCards} đã thuộc</span>
                             <span>•</span>
                             <span>{set.unmasteredCards} chưa thuộc</span>
                             <span>•</span>
@@ -839,7 +839,7 @@ export default function Home() {
                         <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
                           <Link
                             to={`/study/${set.id}`}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-xl bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white text-xs font-semibold shadow-2xs transition-all"
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-xl bg-[#1b4332] hover:bg-[#143326] active:bg-[#0f281d] text-white text-xs font-semibold shadow-sm shadow-[#1b4332]/20 transition-all"
                           >
                             <BookOpen className="w-3.5 h-3.5" />
                             <span>Học ngay</span>
@@ -866,7 +866,7 @@ export default function Home() {
                               e.stopPropagation();
                               handleOpenAddCardModal(set);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-[#1f4e38] text-xs font-medium text-slate-700 hover:text-[#1f4e38] shadow-2xs transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-[#1b4332] text-xs font-medium text-slate-700 hover:text-[#1b4332] shadow-2xs transition-all cursor-pointer"
                           >
                             <Plus className="w-3 h-3" />
                             <span>Thêm thẻ đầu tiên</span>
@@ -902,7 +902,7 @@ export default function Home() {
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
               placeholder="Ví dụ: Từ vựng IELTS Listening Band 7.0"
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -912,7 +912,7 @@ export default function Home() {
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
               placeholder="Nhập mô tả ngắn gọn cho bộ thẻ..."
-              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
@@ -926,7 +926,7 @@ export default function Home() {
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-[#1f4e38]"
+                  className="accent-[#1b4332]"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
@@ -937,7 +937,7 @@ export default function Home() {
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-[#1f4e38]"
+                  className="accent-[#1b4332]"
                 />
                 Công khai (Chia sẻ cộng đồng)
               </label>
@@ -965,7 +965,7 @@ export default function Home() {
               required
               value={setName}
               onChange={(e) => setSetName(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+              className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -974,7 +974,7 @@ export default function Home() {
               rows={3}
               value={setDescription}
               onChange={(e) => setSetDescription(e.target.value)}
-              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+              className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
             />
           </div>
 
@@ -988,7 +988,7 @@ export default function Home() {
                   value="private"
                   checked={visibility === 'private'}
                   onChange={() => setVisibility('private')}
-                  className="accent-[#1f4e38]"
+                  className="accent-[#1b4332]"
                 />
                 Riêng tư (Chỉ mình bạn)
               </label>
@@ -999,7 +999,7 @@ export default function Home() {
                   value="public"
                   checked={visibility === 'public'}
                   onChange={() => setVisibility('public')}
-                  className="accent-[#1f4e38]"
+                  className="accent-[#1b4332]"
                 />
                 Công khai (Chia sẻ cộng đồng)
               </label>
@@ -1058,7 +1058,7 @@ export default function Home() {
                     onClick={handleFetchSingleAISuggestion}
                     disabled={!singleCard.term.trim() || fetchingSingleAI}
                     loading={fetchingSingleAI}
-                    icon={<Sparkles className="w-3.5 h-3.5 text-[#1f4e38]" />}
+                    icon={<Sparkles className="w-3.5 h-3.5 text-[#1b4332]" />}
                   >
                     AI gợi ý
                   </Button>
@@ -1069,7 +1069,7 @@ export default function Home() {
                   value={singleCard.term}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: take care of hoặc serendipity"
-                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
@@ -1083,7 +1083,7 @@ export default function Home() {
                   value={singleCard.phonetic}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: /ˌser.ənˈdɪp.ə.ti/"
-                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
@@ -1097,12 +1097,12 @@ export default function Home() {
                   value={singleCard.definition}
                   onChange={handleSingleInputChange}
                   placeholder="Ví dụ: Sự may mắn tình cờ tìm thấy điều quý giá..."
-                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm text-slate-800 transition-all"
+                  className="w-full p-3 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm text-slate-800 transition-all"
                 />
               </div>
 
               <div className="bg-slate-50 border border-slate-200/60 px-3.5 py-2.5 rounded-xl text-xs text-slate-600">
-                Trạng thái học mặc định: <strong className="text-[#1f4e38]">Chưa thuộc</strong>
+                Trạng thái học mặc định: <strong className="text-[#1b4332]">Chưa thuộc</strong>
               </div>
             </div>
 
@@ -1144,7 +1144,7 @@ export default function Home() {
                 value={bulkText}
                 onChange={(e) => setBulkText(e.target.value)}
                 placeholder={`neighbor\nmeticulous\ntake care of\nlook forward to`}
-                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-[#1f4e38] focus:ring-2 focus:ring-[#1f4e38]/10 outline-none text-sm font-mono text-slate-800 transition-all"
+                className="w-full p-3.5 rounded-xl border border-slate-200/80 focus:border-[#1b4332] focus:ring-2 focus:ring-[#1b4332]/10 outline-none text-sm font-mono text-slate-800 transition-all"
               />
               <p className="text-xs text-slate-500">
                 Mỗi dòng sẽ được AI Gemini hỗ trợ gợi ý nghĩa tiếng Việt và phiên âm ở bước xem trước.
@@ -1199,7 +1199,7 @@ export default function Home() {
                         type="text"
                         value={item.term}
                         onChange={(e) => handlePreviewItemChange(idx, 'term', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1b4332] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
@@ -1211,7 +1211,7 @@ export default function Home() {
                         type="text"
                         value={item.phonetic}
                         onChange={(e) => handlePreviewItemChange(idx, 'phonetic', e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1b4332] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
 
@@ -1224,7 +1224,7 @@ export default function Home() {
                         value={item.definition}
                         onChange={(e) => handlePreviewItemChange(idx, 'definition', e.target.value)}
                         placeholder="Nhập nghĩa..."
-                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1f4e38] outline-none bg-white text-xs text-slate-800 transition-all"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200/80 focus:border-[#1b4332] outline-none bg-white text-xs text-slate-800 transition-all"
                       />
                     </div>
                   </div>

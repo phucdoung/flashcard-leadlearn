@@ -200,7 +200,7 @@ export default function QuizResult() {
   if (loading) {
     return (
       <div className="py-24 text-center max-w-md mx-auto px-4">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#1b4332] border-r-transparent"></div>
         <p className="mt-4 text-sm font-medium text-slate-500">
           Đang tải kết quả bài kiểm tra...
         </p>
@@ -339,7 +339,7 @@ export default function QuizResult() {
               <React.Fragment key={pIdx}>
                 {part}
                 {pIdx < parts.length - 1 && (
-                  <strong className="font-bold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-md border border-emerald-300/80 mx-0.5 shadow-2xs">
+                  <strong className="font-bold text-[#1b4332] bg-[#1b4332]/10 px-2 py-0.5 rounded-md border border-[#1b4332]/20 mx-0.5 shadow-2xs">
                     {correctWord}
                   </strong>
                 )}
@@ -357,7 +357,7 @@ export default function QuizResult() {
           <React.Fragment key={pIdx}>
             {part}
             {pIdx < parts.length - 1 && (
-              <strong className="font-bold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-md border border-emerald-300/80 mx-0.5 shadow-2xs">
+              <strong className="font-bold text-[#1b4332] bg-[#1b4332]/10 px-2 py-0.5 rounded-md border border-[#1b4332]/20 mx-0.5 shadow-2xs">
                 {correctWord}
               </strong>
             )}
@@ -396,13 +396,13 @@ export default function QuizResult() {
                 stroke="#f1f5f9"
                 strokeWidth="10"
               />
-              {/* Animated Emerald Progress Arc */}
+              {/* Animated Forest Green Progress Arc */}
               <circle
                 cx="64"
                 cy="64"
                 r="54"
                 fill="transparent"
-                stroke="#059669"
+                stroke="#1b4332"
                 strokeWidth="10"
                 strokeLinecap="round"
                 strokeDasharray={circumference}
@@ -420,7 +420,7 @@ export default function QuizResult() {
                   /{totalQuestions}
                 </span>
               </div>
-              <span className="mt-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+              <span className="mt-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#1b4332]/10 text-[#1b4332] border border-[#1b4332]/20 shadow-2xs">
                 {percentage}%
               </span>
             </div>
@@ -428,8 +428,8 @@ export default function QuizResult() {
 
           {/* Encouraging Message Pill */}
           <div className="pt-0.5 max-w-md mx-auto">
-            <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-50/70 border border-emerald-200/70 text-emerald-800 text-xs sm:text-[13px] font-medium leading-relaxed shadow-2xs">
-              <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#1b4332]/8 border border-[#1b4332]/15 text-[#1b4332] text-xs sm:text-[13px] font-medium leading-relaxed shadow-2xs">
+              <svg className="w-4 h-4 text-[#1b4332] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>{getEncouragingMessage()}</span>
@@ -455,16 +455,16 @@ export default function QuizResult() {
           </div>
 
           {/* Card 2: Trả lời đúng */}
-          <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-3.5 sm:p-4 text-center flex flex-col items-center justify-center shadow-2xs transition-all hover:border-emerald-300">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-1.5">
+          <div className="bg-[#1b4332]/8 border border-[#1b4332]/15 rounded-xl p-3.5 sm:p-4 text-center flex flex-col items-center justify-center shadow-2xs transition-all hover:border-[#1b4332]/30">
+            <div className="w-8 h-8 rounded-lg bg-[#1b4332]/15 text-[#1b4332] flex items-center justify-center mb-1.5">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-xs font-semibold text-emerald-700">
+            <span className="text-xs font-semibold text-[#1b4332]">
               Trả lời đúng
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-emerald-700 mt-0.5 block">
+            <span className="text-xl sm:text-2xl font-bold text-[#1b4332] mt-0.5 block">
               {correctCount}
             </span>
           </div>
@@ -507,11 +507,11 @@ export default function QuizResult() {
             block
             type="default"
             onClick={handleToggleDetails}
-            className={`sm:flex-1 rounded-xl transition-all ${showDetails ? 'border-emerald-600 text-emerald-700 bg-emerald-50/40' : 'border-slate-200 text-slate-700'}`}
+            className={`sm:flex-1 rounded-xl transition-all ${showDetails ? 'border-[#1b4332] text-[#1b4332] bg-[#1b4332]/5' : 'border-slate-200 text-slate-700'}`}
             icon={
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  showDetails ? 'rotate-180 text-emerald-600' : 'text-slate-500'
+                  showDetails ? 'rotate-180 text-[#1b4332]' : 'text-slate-500'
                 }`}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -559,7 +559,7 @@ export default function QuizResult() {
         <div className="pt-1">
           <Link
             to={parentSetId ? `/flashcard/${parentSetId}` : '/'}
-            className="inline-flex items-center justify-center text-xs sm:text-sm font-medium text-slate-500 hover:text-emerald-700 transition-colors gap-1.5 py-1.5 px-3.5 rounded-xl hover:bg-slate-100"
+            className="inline-flex items-center justify-center text-xs sm:text-sm font-medium text-slate-500 hover:text-[#1b4332] transition-colors gap-1.5 py-1.5 px-3.5 rounded-xl hover:bg-slate-100"
           >
             <svg
               className="w-4 h-4"
@@ -699,9 +699,9 @@ export default function QuizResult() {
                     </div>
 
                     {/* 2. Completed Sentence / Dialogue with Answer Filled In */}
-                    <div className="rounded-xl bg-emerald-50/30 p-3.5 border border-emerald-200/70 shadow-2xs space-y-1.5">
-                      <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-600" />
+                    <div className="rounded-xl bg-[#1b4332]/5 p-3.5 border border-[#1b4332]/15 shadow-2xs space-y-1.5">
+                      <span className="text-[11px] font-bold text-[#1b4332] uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#1b4332]" />
                         Câu hoàn chỉnh (đáp án đúng)
                       </span>
                       <div className="space-y-1 pt-0.5">
@@ -728,7 +728,7 @@ export default function QuizResult() {
                           <div className="flex items-center justify-between">
                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                               <svg
-                                className="w-3.5 h-3.5 text-emerald-600"
+                                className="w-3.5 h-3.5 text-[#1b4332]"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -816,8 +816,8 @@ export default function QuizResult() {
                           if (question.isCorrect && isUserChoice) {
                             // Correct Answer selected by user
                             optionStyle =
-                              'border-emerald-500 bg-emerald-50/70 text-emerald-900 font-semibold shadow-2xs';
-                            badgeStyle = 'bg-emerald-600 text-white font-bold';
+                              'border-[#1b4332] bg-[#1b4332]/8 text-slate-900 font-semibold shadow-2xs';
+                            badgeStyle = 'bg-[#1b4332] text-white font-bold';
                             labelText = 'Bạn đã chọn';
                             labelColor = 'green';
                           } else if (!question.isCorrect) {
@@ -831,8 +831,8 @@ export default function QuizResult() {
                             } else if (isCorrectChoice) {
                               // Correct Answer that user missed
                               optionStyle =
-                                'border-emerald-500 bg-emerald-50/50 text-emerald-900 font-semibold border-dashed shadow-2xs';
-                              badgeStyle = 'bg-emerald-600 text-white font-bold';
+                                'border-[#1b4332] bg-[#1b4332]/5 text-slate-900 font-semibold border-dashed shadow-2xs';
+                              badgeStyle = 'bg-[#1b4332] text-white font-bold';
                               labelText = 'Đáp án đúng';
                               labelColor = 'green';
                             }
@@ -877,7 +877,7 @@ export default function QuizResult() {
                           <>
                             <p>
                               "
-                              <strong className="font-semibold text-emerald-700">
+                              <strong className="font-semibold text-[#1b4332]">
                                 {question.explanation.correctWord || question.answer}
                               </strong>
                               "

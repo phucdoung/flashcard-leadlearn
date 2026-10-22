@@ -49,16 +49,16 @@ export default function Button({
   } else {
     switch (type) {
       case 'primary':
-        variantClass = 'bg-[#1f4e38] hover:bg-[#173b2a] active:bg-[#133022] text-white font-medium shadow-xs hover:shadow-sm focus-visible:ring-2 focus-visible:ring-[#1f4e38]/30';
+        variantClass = 'bg-[#1b4332] hover:bg-[#143326] active:bg-[#0f281d] text-white font-semibold shadow-sm shadow-[#1b4332]/20 focus-visible:ring-2 focus-visible:ring-[#1b4332]/30 transition-all';
         break;
       case 'outlined':
-        variantClass = 'bg-transparent border border-[#1f4e38] text-[#1f4e38] font-medium hover:bg-[#1f4e38]/5 active:bg-[#1f4e38]/10 focus-visible:ring-2 focus-visible:ring-[#1f4e38]/20';
+        variantClass = 'bg-transparent border border-[#1b4332] text-[#1b4332] font-semibold hover:bg-[#1b4332]/5 active:bg-[#1b4332]/10 focus-visible:ring-2 focus-visible:ring-[#1b4332]/20 transition-all';
         break;
       case 'text':
         variantClass = 'bg-transparent border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200';
         break;
       case 'link':
-        variantClass = 'bg-transparent border-transparent text-[#1f4e38] hover:text-[#173b2a] hover:underline p-0 h-auto shadow-none';
+        variantClass = 'bg-transparent border-transparent text-[#1b4332] hover:text-[#143326] hover:underline p-0 h-auto shadow-none font-medium';
         break;
       case 'default':
       default:

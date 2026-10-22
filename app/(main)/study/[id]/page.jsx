@@ -214,8 +214,8 @@ export default function StudyFlashcard() {
 
           {!isCompleted && totalCards > 0 && (
             <div className="shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1b4332]/8 text-[#1b4332] border border-[#1b4332]/15">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1b4332]" />
                 Thẻ {currentIndex + 1} / {totalCards}
               </span>
             </div>
@@ -225,7 +225,7 @@ export default function StudyFlashcard() {
         {/* Progress Bar */}
         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div
-            className="bg-emerald-600 h-full transition-all duration-300 rounded-full"
+            className="bg-[#1b4332] h-full transition-all duration-300 rounded-full"
             style={{
               width:
                 totalCards === 0
@@ -241,7 +241,7 @@ export default function StudyFlashcard() {
       {/* Loading State */}
       {loading ? (
         <div className="py-20 text-center text-sm text-slate-500 font-medium flex items-center justify-center gap-2.5">
-          <svg className="animate-spin h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-5 w-5 text-[#1b4332]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
@@ -262,12 +262,12 @@ export default function StudyFlashcard() {
       ) : isCompleted ? (
         /* Completion Panel */
         <div className="bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-10 text-center space-y-6 max-w-lg mx-auto shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">
+          <div className="w-16 h-16 rounded-full bg-[#1b4332]/10 border border-[#1b4332]/20 text-[#1b4332] flex items-center justify-center mx-auto text-2xl font-bold shadow-xs">
             ✓
           </div>
 
           <div className="space-y-2">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#1b4332]/10 text-[#1b4332] border border-[#1b4332]/20">
               HOÀN THÀNH
             </span>
             <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -279,9 +279,9 @@ export default function StudyFlashcard() {
           </div>
 
           <div className="grid grid-cols-2 gap-3.5 py-1">
-            <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-4">
-              <span className="block text-xs font-semibold text-emerald-800">Đã thuộc</span>
-              <span className="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1 block">
+            <div className="bg-[#1b4332]/8 border border-[#1b4332]/15 rounded-xl p-4">
+              <span className="block text-xs font-semibold text-[#1b4332]">Đã thuộc</span>
+              <span className="text-2xl sm:text-3xl font-bold text-[#1b4332] mt-1 block">
                 {masteredCount}
               </span>
             </div>
@@ -337,9 +337,9 @@ export default function StudyFlashcard() {
                     MẶT TRƯỚC
                   </span>
                   <span
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border ${
                       currentCard?.isMastered
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        ? 'bg-[#1b4332]/8 text-[#1b4332] border-[#1b4332]/15'
                         : 'bg-rose-50 text-rose-700 border-rose-200'
                     }`}
                   >
@@ -361,8 +361,8 @@ export default function StudyFlashcard() {
                         title="Nghe phát âm"
                         className={`shrink-0 p-2 rounded-xl transition-all active:scale-95 cursor-pointer border ${
                           isSpeaking
-                            ? 'text-emerald-700 bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/20'
-                            : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/70 border-slate-200 hover:border-emerald-200'
+                            ? 'text-[#1b4332] bg-[#1b4332]/10 border-[#1b4332]/30 ring-2 ring-[#1b4332]/20'
+                            : 'text-slate-500 hover:text-[#1b4332] hover:bg-[#1b4332]/5 border-slate-200 hover:border-[#1b4332]/20'
                         }`}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -399,13 +399,13 @@ export default function StudyFlashcard() {
                 }}
               >
                 <div className="w-full flex items-center justify-between text-xs">
-                  <span className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider rounded-md bg-[#1b4332]/8 text-[#1b4332] border border-[#1b4332]/15">
                     MẶT SAU
                   </span>
                   <span
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border ${
                       currentCard?.isMastered
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        ? 'bg-[#1b4332]/8 text-[#1b4332] border-[#1b4332]/15'
                         : 'bg-rose-50 text-rose-700 border-rose-200'
                     }`}
                   >
@@ -431,8 +431,8 @@ export default function StudyFlashcard() {
                         title="Nghe phát âm"
                         className={`shrink-0 p-1.5 rounded-lg transition-all active:scale-95 cursor-pointer border ${
                           isSpeaking
-                            ? 'text-emerald-700 bg-emerald-50 border-emerald-300'
-                            : 'text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/70 border-slate-200'
+                            ? 'text-[#1b4332] bg-[#1b4332]/10 border-[#1b4332]/30'
+                            : 'text-slate-500 hover:text-[#1b4332] hover:bg-[#1b4332]/5 border-slate-200'
                         }`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -479,7 +479,7 @@ export default function StudyFlashcard() {
             <button
               type="button"
               onClick={() => handleMarkStatus(true)}
-              className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600 active:scale-[0.98] shadow-xs"
+              className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-[#1b4332] hover:bg-[#143326] text-white border border-[#1b4332] active:scale-[0.98] shadow-sm shadow-[#1b4332]/20"
             >
               Đã thuộc
             </button>

@@ -270,7 +270,7 @@ export default function Quiz() {
   if (loading) {
     return (
       <div className="py-24 text-center max-w-md mx-auto px-4">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-emerald-600 border-r-transparent"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-3 border-solid border-[#1b4332] border-r-transparent"></div>
         <p className="mt-4 text-sm font-medium text-slate-500">
           Đang chuẩn bị đề thi bài kiểm tra từ AI...
         </p>
@@ -342,7 +342,7 @@ export default function Quiz() {
         {/* Linear Progress Bar */}
         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div
-            className="bg-emerald-600 h-full transition-all duration-300 rounded-full"
+            className="bg-[#1b4332] h-full transition-all duration-300 rounded-full"
             style={{ width: `${answeredPercent}%` }}
           />
         </div>
@@ -457,14 +457,14 @@ export default function Quiz() {
                         onClick={() => handleSelectOption(qIdx, optIdx)}
                         className={`w-full flex items-center gap-3 rounded-xl border p-3 text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-xs ring-1 ring-emerald-500/30'
-                            : 'border-slate-200/80 bg-white text-slate-800 hover:border-emerald-400 hover:bg-slate-50'
+                            ? 'border-[#1b4332] bg-[#1b4332]/8 text-slate-900 shadow-xs ring-1 ring-[#1b4332]/30'
+                            : 'border-slate-200/80 bg-white text-slate-800 hover:border-[#1b4332]/40 hover:bg-slate-50'
                         }`}
                       >
                         <span
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-colors ${
                             isSelected
-                              ? 'bg-emerald-600 text-white'
+                              ? 'bg-[#1b4332] text-white'
                               : 'bg-slate-100 text-slate-600 border border-slate-200/80'
                           }`}
                         >
@@ -472,7 +472,7 @@ export default function Quiz() {
                         </span>
                         <span
                           className={`text-sm truncate ${
-                            isSelected ? 'font-semibold text-emerald-950' : 'font-normal text-slate-800'
+                            isSelected ? 'font-semibold text-slate-900' : 'font-normal text-slate-800'
                           }`}
                         >
                           {optText}
