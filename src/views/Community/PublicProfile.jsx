@@ -26,7 +26,7 @@ export default function PublicProfile() {
         // 1. Fetch user profile directly from public.profiles table by userId from URL parameter
         const { data: dbProfile, error: profileErr } = await supabase
           .from('profiles')
-          .select('id, full_name, avatar_url, phone, show_phone')
+          .select('id, full_name, avatar_url')
           .eq('id', id)
           .single();
 
@@ -96,15 +96,11 @@ export default function PublicProfile() {
 
         const displayName = rawFullName || 'Người học LeafLearn';
         const avatarUrl = dbProfile?.avatar_url || null;
-        const phone = dbProfile?.phone ? String(dbProfile.phone).trim() : '';
-        const showPhone = Boolean(dbProfile?.show_phone);
 
         setProfileUser({
           id,
           name: displayName,
           avatar: avatarUrl,
-          phone,
-          showPhone,
         });
 
         setPublicSets(setList);
@@ -164,26 +160,6 @@ export default function PublicProfile() {
                 Hồ sơ học tập công khai
               </span>
             </div>
-
-            {/* Optional Public Phone Section */}
-            {profileUser?.phone && (profileUser?.showPhone || isSelf) && (
-              <div className="pt-1.5">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800">
-                  <span className="text-emerald-700">Liên hệ:</span>
-                  <a
-                    href={`tel:${profileUser.phone}`}
-                    className="font-mono text-slate-900 hover:text-emerald-700 hover:underline transition-colors"
-                  >
-                    {profileUser.phone}
-                  </a>
-                  {isSelf && !profileUser.showPhone && (
-                    <span className="text-[11px] text-slate-400 font-normal italic">
-                      (Chỉ bạn nhìn thấy)
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* 4 Key Statistics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">

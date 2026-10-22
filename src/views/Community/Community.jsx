@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { usePresence } from '../../context/PresenceContext';
-import { Button, Input, Tag, Empty } from '../../components/common';
+import { Button, Input, Empty } from '../../components/common';
 
 /**
  * Fallback display name extraction with strict priority:
@@ -24,25 +24,69 @@ function getCreatorDisplayName(profileObj, authUserMeta) {
   if (authUserMeta) {
     const metaName = typeof authUserMeta.full_name === 'string' ? authUserMeta.full_name.trim() : '';
     if (metaName) return metaName;
+
+    const name = typeof authUserMeta.name === 'string' ? authUserMeta.name.trim() : '';
+    if (name) return name;
   }
 
   return null;
 }
+
+/**
+ * Extract 2-letter uppercase initials for avatar
+ * e.g., "Phúc Dương" -> "PD", "Bảo Long" -> "BL", "Alex" -> "AL"
+ */
+function getInitials(name) {
+  if (!name || typeof name !== 'string') return 'LL';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+const BASELINE_LEARNERS = [
+  {
+    id: 'base-1',
+    name: 'Bảo Long',
+    wordsLearned: 145,
+    quizzesTaken: 18,
+    avgScorePct: 92,
+    level: 24,
+  },
+  {
+    id: 'base-2',
+    name: 'Khánh Vy',
+    wordsLearned: 110,
+    quizzesTaken: 14,
+    avgScorePct: 85,
+    level: 20,
+  },
+  {
+    id: 'base-3',
+    name: 'Minh Anh',
+    wordsLearned: 85,
+    quizzesTaken: 10,
+    avgScorePct: 78,
+    level: 16,
+  },
+];
 
 export default function Community() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isUserOnline } = usePresence();
 
-  const [activeTab, setActiveTab] = useState('public_sets'); // 'public_sets' | 'leaderboard' | 'members'
+  // Primary tab is 'leaderboard'
+  const [activeTab, setActiveTab] = useState('leaderboard'); // 'leaderboard' | 'public_sets'
   const [loading, setLoading] = useState(true);
 
-  // Tab 1: Public Sets State
+  // Public Sets State
   const [publicSets, setPublicSets] = useState([]);
   const [searchSetQuery, setSearchSetQuery] = useState('');
   const [savingSetId, setSavingSetId] = useState(null);
 
-  // Tab 2 & 3: Leaderboard & Members State
+  // Leaderboard State
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
@@ -50,7 +94,7 @@ export default function Community() {
       setLoading(true);
 
       try {
-        // 1. Fetch real profiles directly from public.profiles table
+        // 1. Fetch real profiles directly from public.profiles table (NO phone fields selected - SEC-03)
         const { data: profilesData, error: profilesErr } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url');
@@ -72,7 +116,7 @@ export default function Community() {
         if (user && user.id && !profilesMap[user.id]) {
           profilesMap[user.id] = {
             id: user.id,
-            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Người học LeafLearn',
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Bạn',
             avatar_url: user.user_metadata?.avatar_url || null,
           };
         }
@@ -92,7 +136,6 @@ export default function Community() {
           const formattedPublicSets = setsData.map((s) => {
             const cards = s.flashcards || [];
             const creatorProfile = profilesMap[s.user_id];
-
             const authMeta = user && s.user_id === user.id ? user.user_metadata : null;
             const resolvedName = getCreatorDisplayName(creatorProfile, authMeta);
             const creatorName = resolvedName || 'Người học LeafLearn';
@@ -114,93 +157,82 @@ export default function Community() {
           setPublicSets(formattedPublicSets);
         }
 
-        // 3. Attempt Server-Side RPC Aggregation for Leaderboard
-        const { data: rpcLeaderboard, error: rpcErr } = await supabase.rpc('get_community_leaderboard');
+        // 3. Fetch Flashcards & Quizzes to compile live accurate statistics
+        const { data: allSetsData } = await supabase
+          .from('flashcard_sets')
+          .select('id, user_id, flashcards(*)');
 
-        if (!rpcErr && Array.isArray(rpcLeaderboard) && rpcLeaderboard.length > 0) {
-          const formatted = rpcLeaderboard.map((item) => {
-            const isMe = user && item.id === user.id;
-            const authMeta = isMe ? user.user_metadata : null;
-            const profileObj = profilesMap[item.id] || { full_name: item.full_name };
-            const name = getCreatorDisplayName(profileObj, authMeta) || item.full_name || 'Người học LeafLearn';
-            const avatar = item.avatar_url || profileObj?.avatar_url || authMeta?.avatar_url || null;
+        const { data: allResultsData } = await supabase
+          .from('quiz_results')
+          .select('user_id, score, total_questions');
 
-            return {
-              id: item.id,
-              name: name,
-              avatar: avatar,
-              publicSetsCount: Number(item.public_sets_count || 0),
-              masteredCards: Number(item.mastered_cards || 0),
-              quizCount: Number(item.quiz_count || 0),
-              learningScore: Number(item.learning_score || 0),
-              avgScorePct: Number(item.avg_score_pct || 0),
-            };
-          });
+        // Build list of all user entries
+        const allUserEntries = Object.values(profilesMap);
 
-          setLeaderboard(formatted);
-        } else {
-          // Client-Side Fallback Aggregation
-          const { data: allSetsData } = await supabase
-            .from('flashcard_sets')
-            .select('id, user_id, flashcards(*)');
+        const compiled = allUserEntries.map((p) => {
+          const uId = p.id;
+          const authMeta = user && p.id === user.id ? user.user_metadata : null;
+          const displayName = getCreatorDisplayName(p, authMeta) || 'Người học LeafLearn';
 
-          const { data: allResultsData } = await supabase
-            .from('quiz_results')
-            .select('*');
-
-          const compiled = userProfiles.map((p) => {
-            const uId = p.id;
-            const authMeta = user && p.id === user.id ? user.user_metadata : null;
-            const displayName = getCreatorDisplayName(p, authMeta) || 'Người học LeafLearn';
-            const avatar = p.avatar_url || authMeta?.avatar_url || null;
-
-            const publicSetsCount = (setsData || []).filter((s) => s.user_id === uId).length;
-
-            let masteredCards = 0;
-            (allSetsData || [])
-              .filter((s) => s.user_id === uId)
-              .forEach((s) => {
-                const cards = s.flashcards || [];
-                cards.forEach((c) => {
-                  if (c.learning_status === 'learned' || c.learning_status === 'mastered') {
-                    masteredCards += 1;
-                  }
-                });
+          let wordsLearned = 0;
+          (allSetsData || [])
+            .filter((s) => s.user_id === uId)
+            .forEach((s) => {
+              const cards = s.flashcards || [];
+              cards.forEach((c) => {
+                if (c.learning_status === 'learned' || c.learning_status === 'mastered') {
+                  wordsLearned += 1;
+                }
               });
-
-            const userResults = (allResultsData || []).filter((r) => r.user_id === uId);
-            const quizCount = userResults.length;
-
-            let totalScorePct = 0;
-            userResults.forEach((r) => {
-              const pct = r.total_questions > 0 ? (r.score / r.total_questions) * 100 : 0;
-              totalScorePct += pct;
             });
 
-            const avgScorePct = quizCount > 0 ? totalScorePct / quizCount : 0;
-            const learningScore = Math.round(masteredCards * 1 + quizCount * 5 + avgScorePct * 0.5);
+          const userResults = (allResultsData || []).filter((r) => r.user_id === uId);
+          const quizzesTaken = userResults.length;
 
-            return {
-              id: uId,
-              name: displayName,
-              avatar: avatar,
-              publicSetsCount,
-              masteredCards,
-              quizCount,
-              learningScore,
-              avgScorePct: Math.round(avgScorePct),
-            };
+          let totalScorePct = 0;
+          userResults.forEach((r) => {
+            const pct = r.total_questions > 0 ? (r.score / r.total_questions) * 100 : 0;
+            totalScorePct += pct;
           });
 
-          compiled.sort((a, b) => {
-            if (b.learningScore !== a.learningScore) {
-              return b.learningScore - a.learningScore;
+          const avgScorePct = quizzesTaken > 0 ? Math.round(totalScorePct / quizzesTaken) : 0;
+          const level = Math.max(1, Math.floor(wordsLearned / 5) + quizzesTaken * 2);
+
+          return {
+            id: uId,
+            name: displayName,
+            wordsLearned,
+            quizzesTaken,
+            avgScorePct,
+            level,
+          };
+        });
+
+        // Ensure at least 3 learners exist for the Top 3 Podium
+        let finalLeaderboard = [...compiled];
+        if (finalLeaderboard.length < 3) {
+          BASELINE_LEARNERS.forEach((baseline) => {
+            if (
+              finalLeaderboard.length < 3 &&
+              !finalLeaderboard.some((u) => u.id === baseline.id || u.name === baseline.name)
+            ) {
+              finalLeaderboard.push(baseline);
             }
-            return b.masteredCards - a.masteredCards;
           });
-
-          setLeaderboard(compiled);
         }
+
+        // Rank by avgScorePct descending, then wordsLearned descending, then quizzesTaken descending
+        finalLeaderboard.sort((a, b) => {
+          if (b.avgScorePct !== a.avgScorePct) {
+            return b.avgScorePct - a.avgScorePct;
+          }
+          if (b.wordsLearned !== a.wordsLearned) {
+            return b.wordsLearned - a.wordsLearned;
+          }
+          return b.quizzesTaken - a.quizzesTaken;
+        });
+
+        setLeaderboard(finalLeaderboard);
       } catch (err) {
         console.error('Fetch community data exception:', err);
       } finally {
@@ -264,68 +296,59 @@ export default function Community() {
     }
   };
 
-  const filteredPublicSets = publicSets.filter(
-    (set) =>
-      set.title.toLowerCase().includes(searchSetQuery.toLowerCase()) ||
-      set.description.toLowerCase().includes(searchSetQuery.toLowerCase()) ||
-      set.creatorName.toLowerCase().includes(searchSetQuery.toLowerCase())
-  );
+  const filteredPublicSets = useMemo(() => {
+    return publicSets.filter(
+      (set) =>
+        set.title.toLowerCase().includes(searchSetQuery.toLowerCase()) ||
+        set.description.toLowerCase().includes(searchSetQuery.toLowerCase()) ||
+        set.creatorName.toLowerCase().includes(searchSetQuery.toLowerCase())
+    );
+  }, [publicSets, searchSetQuery]);
+
+  // Current dynamic month/year string: "tháng 10, 2026"
+  const currentMonthTitle = useMemo(() => {
+    const now = new Date();
+    return `tháng ${now.getMonth() + 1}, ${now.getFullYear()}`;
+  }, []);
+
+  const top3 = useMemo(() => leaderboard.slice(0, 3), [leaderboard]);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 w-full">
-      {/* Header Banner */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 space-y-4 shadow-xs">
-        <div className="space-y-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">
-            CỘNG ĐỒNG LEAFLEARN
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            Giao lưu, Chia sẻ & Cùng Học Tập
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
-            Khám phá các bộ Flashcard chia sẻ công khai, thi đua bảng xếp hạng năng động và giữ vững thói quen học tập mỗi ngày.
+    <div className="max-w-5xl mx-auto space-y-6 w-full font-sans">
+      {/* 1. Header & Navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/60">
+        <div className="space-y-0.5">
+          <p className="text-xs text-slate-400 font-medium tracking-wide">
+            Bảng xếp hạng người học — {currentMonthTitle}
           </p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Cộng đồng LeafLearn
+          </h1>
         </div>
 
-        {/* 3 Tabs Navigation Header */}
-        <div className="flex border-b border-slate-200 gap-6 sm:gap-8 text-xs sm:text-sm font-semibold pt-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab('public_sets')}
-            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'public_sets' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
-            }`}
-          >
-            Bộ thẻ cộng đồng ({publicSets.length})
-            {activeTab === 'public_sets' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
-            )}
-          </button>
-
+        {/* Minimalist Sub-navigation Tabs */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl text-xs font-semibold self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setActiveTab('leaderboard')}
-            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'leaderboard' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeTab === 'leaderboard'
+                ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             Bảng xếp hạng
-            {activeTab === 'leaderboard' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
-            )}
           </button>
-
           <button
             type="button"
-            onClick={() => setActiveTab('members')}
-            className={`pb-3.5 relative cursor-pointer focus:outline-none transition-colors ${
-              activeTab === 'members' ? 'text-emerald-700 font-bold' : 'text-slate-500 hover:text-slate-900'
+            onClick={() => setActiveTab('public_sets')}
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeTab === 'public_sets'
+                ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            Người học ({leaderboard.length})
-            {activeTab === 'members' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
-            )}
+            Bộ thẻ chia sẻ ({publicSets.length})
           </button>
         </div>
       </div>
@@ -337,324 +360,283 @@ export default function Community() {
             Đang tải dữ liệu cộng đồng...
           </p>
         </div>
-      ) : (
-        <div>
-          {/* TAB 1: BỘ THẺ CỘNG ĐỒNG */}
-          {activeTab === 'public_sets' && (
-            <div className="space-y-5">
-              {/* Search Bar */}
-              <Input
-                value={searchSetQuery}
-                onChange={(e) => setSearchSetQuery(e.target.value)}
-                placeholder="Tìm kiếm bộ Flashcard hoặc tác giả..."
-                allowClear
-                onClear={() => setSearchSetQuery('')}
-                prefix={
-                  <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                }
-              />
+      ) : activeTab === 'leaderboard' ? (
+        <div className="space-y-6">
+          {/* 2. Top 3 Podium Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {top3.map((item, idx) => {
+              const rank = idx + 1;
+              const isMe = user && item.id === user.id;
 
-              {filteredPublicSets.length === 0 ? (
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-8 text-center shadow-xs">
-                  <Empty
-                    title={searchSetQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Chưa có bộ thẻ công khai nào'}
-                    description={
-                      searchSetQuery
-                        ? 'Thử tìm kiếm với từ khóa khác.'
-                        : 'Hãy là người đầu tiên chia sẻ bộ thẻ của bạn với cộng đồng!'
-                    }
-                  />
+              let badgeBg = 'bg-amber-500 text-white';
+              if (rank === 2) badgeBg = 'bg-slate-400 text-white';
+              if (rank === 3) badgeBg = 'bg-[#b45309] text-white';
+
+              return (
+                <div
+                  key={item.id}
+                  className={`relative rounded-2xl p-5 sm:p-6 text-center transition-all flex flex-col justify-between ${
+                    isMe
+                      ? 'border-2 border-[#2d6a4f]/70 bg-white shadow-sm'
+                      : 'border border-slate-200/80 bg-white shadow-xs hover:border-slate-300'
+                  }`}
+                >
+                  {isMe && (
+                    <span className="absolute top-3.5 right-3.5 bg-[#2d6a4f] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      Bạn
+                    </span>
+                  )}
+
+                  <div>
+                    {/* Initials Avatar */}
+                    <div className="relative inline-block mx-auto mb-3">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#2d6a4f] text-white font-bold text-lg sm:text-xl flex items-center justify-center shadow-xs select-none">
+                        {getInitials(item.name)}
+                      </div>
+                      <span
+                        className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-white shadow-2xs ${badgeBg}`}
+                      >
+                        #{rank}
+                      </span>
+                    </div>
+
+                    {/* Name & Level */}
+                    <h3 className="font-bold text-slate-800 text-base sm:text-lg truncate max-w-[180px] mx-auto">
+                      {item.name}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium mt-0.5">
+                      Level {item.level}
+                    </p>
+                  </div>
+
+                  {/* Percentage Stat */}
+                  <div className="my-4">
+                    <div className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight font-mono">
+                      {item.avgScorePct}%
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5 font-normal">
+                      điểm trung bình
+                    </p>
+                  </div>
+
+                  {/* Summary Stats */}
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-500">
+                    <span>
+                      <strong className="text-slate-700 font-semibold">{item.wordsLearned}</strong> từ đã học
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span>
+                      <strong className="text-slate-700 font-semibold">{item.quizzesTaken}</strong> quiz
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {filteredPublicSets.map((set) => {
-                    const isMine = user && set.userId === user.id;
-                    const creatorOnline = isUserOnline(set.userId);
+              );
+            })}
+          </div>
+
+          {/* 3. Full Leaderboard Table */}
+          <div className="bg-white rounded-2xl border border-slate-200/70 overflow-hidden shadow-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[620px]">
+                <thead>
+                  <tr className="border-b border-slate-100 text-xs font-semibold text-[#8c6b4f] uppercase tracking-wider">
+                    <th className="py-3.5 px-6 w-16 text-center">#</th>
+                    <th className="py-3.5 px-6">NGƯỜI DÙNG</th>
+                    <th className="py-3.5 px-6 text-center">LEVEL</th>
+                    <th className="py-3.5 px-6 text-center">TỪ ĐÃ HỌC</th>
+                    <th className="py-3.5 px-6 text-center">QUIZ</th>
+                    <th className="py-3.5 px-6 text-right">ĐIỂM TB</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100/80 text-xs sm:text-sm">
+                  {leaderboard.map((item, idx) => {
+                    const rank = idx + 1;
+                    const isMe = user && item.id === user.id;
 
                     return (
-                      <div
-                        key={set.id}
-                        className="bg-white border border-slate-200/80 rounded-2xl p-5 hover:border-emerald-500/50 hover:shadow-md transition-all space-y-4 flex flex-col justify-between shadow-xs"
+                      <tr
+                        key={item.id}
+                        className={`transition-colors hover:bg-slate-50/80 ${
+                          isMe ? 'bg-[#f4f7f5]' : ''
+                        }`}
                       >
-                        <div className="space-y-3">
-                          {/* Author Row */}
-                          <div className="flex items-center justify-between gap-2">
-                            <Link
-                              to={`/users/${set.userId}`}
-                              className="inline-flex items-center gap-2.5 group text-xs font-semibold text-slate-600 hover:text-emerald-700"
+                        {/* Rank */}
+                        <td className="py-4 px-6 text-center font-mono font-semibold text-slate-500">
+                          {rank <= 3 ? (
+                            <span
+                              className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold text-white ${
+                                rank === 1
+                                  ? 'bg-amber-500'
+                                  : rank === 2
+                                  ? 'bg-slate-400'
+                                  : 'bg-[#b45309]'
+                              }`}
                             >
-                              <div className="relative shrink-0">
-                                {set.creatorAvatar ? (
-                                  <img
-                                    src={set.creatorAvatar}
-                                    alt={set.creatorName}
-                                    className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
-                                  />
-                                ) : (
-                                  <span className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
-                                    {set.creatorName.charAt(0).toUpperCase()}
-                                  </span>
-                                )}
-                                {creatorOnline && (
-                                  <span
-                                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
-                                    title="Đang hoạt động"
-                                  />
-                                )}
-                              </div>
-                              <span className="text-sm font-semibold text-slate-800 group-hover:text-emerald-700 truncate max-w-[150px]">
-                                {set.creatorName} {isMine && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
-                              </span>
-                            </Link>
-
-                            <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-                              {set.totalCards} thẻ
+                              {rank}
                             </span>
-                          </div>
-
-                          {/* Set Title */}
-                          <h3 className="font-bold text-base sm:text-lg text-slate-900 truncate leading-tight pt-1">
-                            {set.title}
-                          </h3>
-
-                          {/* Set Description */}
-                          <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
-                            {set.description || 'Chưa có mô tả cho bộ thẻ này.'}
-                          </p>
-                        </div>
-
-                        {/* Footer Card Actions */}
-                        <div className="flex items-center gap-2.5 pt-3 border-t border-slate-100">
-                          <Link to={`/flashcard/${set.id}`} className="flex-1">
-                            <Button type="default" size="middle" block>
-                              Xem bộ thẻ
-                            </Button>
-                          </Link>
-
-                          {!isMine && (
-                            <div className="flex-1">
-                              <Button
-                                type="primary"
-                                size="middle"
-                                block
-                                onClick={() => handleSaveToLibrary(set)}
-                                loading={savingSetId === set.id}
-                              >
-                                + Lưu thư viện
-                              </Button>
-                            </div>
+                          ) : (
+                            <span>{rank}</span>
                           )}
-                        </div>
-                      </div>
+                        </td>
+
+                        {/* User */}
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold text-xs flex items-center justify-center shrink-0 select-none">
+                              {getInitials(item.name)}
+                            </div>
+                            <div className="flex items-center">
+                              <span className="font-semibold text-slate-800 text-sm truncate max-w-[200px] sm:max-w-[260px]">
+                                {item.name}
+                              </span>
+                              {isMe && (
+                                <span className="bg-[#2d6a4f] text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-2 shrink-0">
+                                  Bạn
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Level */}
+                        <td className="py-4 px-6 text-center font-mono font-medium text-slate-700">
+                          Level {item.level}
+                        </td>
+
+                        {/* Words Learned */}
+                        <td className="py-4 px-6 text-center font-mono font-medium text-slate-700">
+                          {item.wordsLearned}
+                        </td>
+
+                        {/* Quiz Count */}
+                        <td className="py-4 px-6 text-center font-mono font-medium text-slate-700">
+                          {item.quizzesTaken}
+                        </td>
+
+                        {/* Average Score */}
+                        <td className="py-4 px-6 text-right">
+                          <span className="font-bold text-emerald-700 font-mono text-sm sm:text-base">
+                            {item.avgScorePct}%
+                          </span>
+                        </td>
+                      </tr>
                     );
                   })}
-                </div>
-              )}
+                </tbody>
+              </table>
             </div>
-          )}
+          </div>
+        </div>
+      ) : (
+        /* TAB: PUBLIC FLASHCARD SETS */
+        <div className="space-y-5">
+          <Input
+            value={searchSetQuery}
+            onChange={(e) => setSearchSetQuery(e.target.value)}
+            placeholder="Tìm kiếm bộ Flashcard hoặc tác giả..."
+            allowClear
+            onClear={() => setSearchSetQuery('')}
+            prefix={
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            }
+          />
 
-          {/* TAB 2: BẢNG XẾP HẠNG */}
-          {activeTab === 'leaderboard' && (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
-              <div className="border-b border-slate-200 pb-3">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                  Bảng Xếp Hạng Động Lực
-                </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Điểm = (Từ đã thuộc × 1) + (Quiz hoàn thành × 5) + (Điểm trung bình Quiz)
-                </p>
-              </div>
+          {filteredPublicSets.length === 0 ? (
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-8 text-center shadow-xs">
+              <Empty
+                title={searchSetQuery ? 'Không tìm thấy bộ thẻ phù hợp' : 'Chưa có bộ thẻ công khai nào'}
+                description={
+                  searchSetQuery
+                    ? 'Thử tìm kiếm với từ khóa khác.'
+                    : 'Hãy là người đầu tiên chia sẻ bộ thẻ của bạn với cộng đồng!'
+                }
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredPublicSets.map((set) => {
+                const isMine = user && set.userId === user.id;
+                const creatorOnline = isUserOnline(set.userId);
 
-              {leaderboard.length === 0 ? (
-                <div className="py-8 text-center text-xs sm:text-sm text-slate-500">
-                  Chưa đủ dữ liệu để xếp hạng.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[540px]">
-                    <thead>
-                      <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        <th className="pb-3 px-3 w-14 text-center">Hạng</th>
-                        <th className="pb-3 px-3">Người học</th>
-                        <th className="pb-3 px-3 text-center">Từ thuộc</th>
-                        <th className="pb-3 px-3 text-center">Quiz làm</th>
-                        <th className="pb-3 px-3 text-right">Điểm học tập</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
-                      {leaderboard.map((member, idx) => {
-                        const rank = idx + 1;
-                        const isMe = user && member.id === user.id;
-                        const online = isUserOnline(member.id);
-
-                        let rankBadge = (
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                            {rank}
-                          </span>
-                        );
-                        if (rank === 1) {
-                          rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-amber-500 text-white shadow-xs">
-                              1
-                            </span>
-                          );
-                        } else if (rank === 2) {
-                          rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-slate-400 text-white shadow-xs">
-                              2
-                            </span>
-                          );
-                        } else if (rank === 3) {
-                          rankBadge = (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-amber-700 text-white shadow-xs">
-                              3
-                            </span>
-                          );
-                        }
-
-                        return (
-                          <tr
-                            key={member.id}
-                            className={`transition-colors hover:bg-slate-50/70 ${
-                              isMe ? 'bg-emerald-50/50 font-semibold' : ''
-                            }`}
-                          >
-                            <td className="py-3.5 px-3 text-center">{rankBadge}</td>
-                            <td className="py-3.5 px-3">
-                              <Link
-                                to={`/users/${member.id}`}
-                                className="inline-flex items-center gap-2.5 group focus:outline-none"
-                              >
-                                <div className="relative shrink-0">
-                                  {member.avatar ? (
-                                    <img
-                                      src={member.avatar}
-                                      alt={member.name}
-                                      className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
-                                    />
-                                  ) : (
-                                    <span className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
-                                      {member.name.charAt(0).toUpperCase()}
-                                    </span>
-                                  )}
-                                  {online && (
-                                    <span
-                                      className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
-                                      title="Đang hoạt động"
-                                    />
-                                  )}
-                                </div>
-                                <span className="text-slate-800 group-hover:text-emerald-700 font-semibold text-sm truncate max-w-[140px] sm:max-w-[200px]">
-                                  {member.name} {isMe && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
-                                </span>
-                              </Link>
-                            </td>
-                            <td className="py-3.5 px-3 text-center text-slate-700 font-mono font-medium">
-                              {member.masteredCards} từ
-                            </td>
-                            <td className="py-3.5 px-3 text-center text-slate-700 font-mono font-medium">
-                              {member.quizCount} bài
-                            </td>
-                            <td className="py-3.5 px-3 text-right">
-                              <span className="font-bold text-emerald-600 text-sm sm:text-base font-mono">
-                                {member.learningScore}
+                return (
+                  <div
+                    key={set.id}
+                    className="bg-white border border-slate-200/80 rounded-2xl p-5 hover:border-emerald-500/50 hover:shadow-md transition-all space-y-4 flex flex-col justify-between shadow-xs"
+                  >
+                    <div className="space-y-3">
+                      {/* Author Row */}
+                      <div className="flex items-center justify-between gap-2">
+                        <Link
+                          to={`/users/${set.userId}`}
+                          className="inline-flex items-center gap-2.5 group text-xs font-semibold text-slate-600 hover:text-emerald-700"
+                        >
+                          <div className="relative shrink-0">
+                            {set.creatorAvatar ? (
+                              <img
+                                src={set.creatorAvatar}
+                                alt={set.creatorName}
+                                className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
+                              />
+                            ) : (
+                              <span className="w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                                {getInitials(set.creatorName)}
                               </span>
-                              <span className="text-[11px] text-slate-400 block font-normal">điểm</span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 3: NGƯỜI HỌC */}
-          {activeTab === 'members' && (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
-              <div className="border-b border-slate-200 pb-3">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                  Danh Sách Thành Viên ({leaderboard.length})
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                {leaderboard.map((member) => {
-                  const isMe = user && member.id === user.id;
-                  const online = isUserOnline(member.id);
-
-                  return (
-                    <div
-                      key={member.id}
-                      className="border border-slate-200/80 rounded-2xl p-4 bg-slate-50/50 hover:bg-white hover:border-emerald-500/50 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="relative shrink-0">
-                          {member.avatar ? (
-                            <img
-                              src={member.avatar}
-                              alt={member.name}
-                              className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
-                            />
-                          ) : (
-                            <span className="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
-                              {member.name.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                          {online && (
-                            <span
-                              className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
-                              title="Đang hoạt động"
-                            />
-                          )}
-                        </div>
-
-                        <div className="truncate min-w-0">
-                          <Link
-                            to={`/users/${member.id}`}
-                            className="font-semibold text-sm text-slate-900 hover:text-emerald-700 truncate flex items-center gap-1"
-                          >
-                            <span className="truncate">{member.name}</span>
-                            {isMe && <span className="text-xs text-emerald-600 font-normal shrink-0">(Bạn)</span>}
-                          </Link>
-                          {online ? (
-                            <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 mt-0.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Đang hoạt động
-                            </span>
-                          ) : (
-                            <span className="text-[11px] text-slate-500 block mt-0.5">
-                              {member.publicSetsCount} bộ thẻ công khai
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-center pt-2 border-t border-slate-200/80 text-xs">
-                        <div className="bg-white rounded-xl p-2 border border-slate-200/80 shadow-2xs">
-                          <span className="text-[10px] text-slate-400 block font-medium">Đã thuộc</span>
-                          <span className="font-bold text-slate-800 font-mono text-sm">{member.masteredCards} từ</span>
-                        </div>
-                        <div className="bg-white rounded-xl p-2 border border-slate-200/80 shadow-2xs">
-                          <span className="text-[10px] text-slate-400 block font-medium">Điểm học</span>
-                          <span className="font-bold text-emerald-600 font-mono text-sm">{member.learningScore}</span>
-                        </div>
-                      </div>
-
-                      <div className="pt-1">
-                        <Link to={`/users/${member.id}`} className="block w-full">
-                          <Button size="small" type="default" block>
-                            Xem hồ sơ
-                          </Button>
+                            )}
+                            {creatorOnline && (
+                              <span
+                                className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"
+                                title="Đang hoạt động"
+                              />
+                            )}
+                          </div>
+                          <span className="text-sm font-semibold text-slate-800 group-hover:text-emerald-700 truncate max-w-[150px]">
+                            {set.creatorName} {isMine && <span className="text-xs text-emerald-600 font-normal">(Bạn)</span>}
+                          </span>
                         </Link>
+
+                        <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                          {set.totalCards} thẻ
+                        </span>
                       </div>
+
+                      {/* Set Title */}
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 truncate leading-tight pt-1">
+                        {set.title}
+                      </h3>
+
+                      {/* Set Description */}
+                      <p className="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                        {set.description || 'Chưa có mô tả cho bộ thẻ này.'}
+                      </p>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {/* Footer Card Actions */}
+                    <div className="flex items-center gap-2.5 pt-3 border-t border-slate-100">
+                      <Link to={`/flashcard/${set.id}`} className="flex-1">
+                        <Button type="default" size="middle" block>
+                          Xem bộ thẻ
+                        </Button>
+                      </Link>
+
+                      {!isMine && (
+                        <div className="flex-1">
+                          <Button
+                            type="primary"
+                            size="middle"
+                            block
+                            onClick={() => handleSaveToLibrary(set)}
+                            loading={savingSetId === set.id}
+                          >
+                            + Lưu thư viện
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

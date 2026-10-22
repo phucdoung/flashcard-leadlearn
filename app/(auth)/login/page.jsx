@@ -114,7 +114,7 @@ function LoginForm() {
           errMsg.includes('connection')
         ) {
           setAuthError(
-            'Không thể kết nối đến máy chủ Supabase. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.'
+            'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.'
           );
         }
         // 3. Rate limit / too many requests

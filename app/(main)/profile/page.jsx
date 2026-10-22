@@ -18,14 +18,9 @@ export default function Profile() {
   const [avatarMessage, setAvatarMessage] = useState({ type: '', text: '' });
   const [showConfirmRemove, setShowConfirmRemove] = useState(false);
 
-  // Name & Phone form state
+  // Name form state
   const [fullName, setFullName] = useState('');
   const [initialFullName, setInitialFullName] = useState('');
-
-  const [phone, setPhone] = useState('');
-  const [initialPhone, setInitialPhone] = useState('');
-  const [showPhone, setShowPhone] = useState(false);
-  const [initialShowPhone, setInitialShowPhone] = useState(false);
 
   const [infoSubmitting, setInfoSubmitting] = useState(false);
   const [infoSuccess, setInfoSuccess] = useState('');
@@ -50,31 +45,6 @@ export default function Profile() {
       const currentName = user.user_metadata?.full_name || user.user_metadata?.name || '';
       setFullName(currentName);
       setInitialFullName(currentName);
-
-      // Fetch phone & show_phone from public.profiles
-      async function fetchProfileData() {
-        try {
-          const { data: dbProfile } = await supabase
-            .from('profiles')
-            .select('phone, show_phone')
-            .eq('id', user.id)
-            .single();
-
-          if (dbProfile) {
-            const userPhone = dbProfile.phone || user.user_metadata?.phone || '';
-            const userShowPhone = Boolean(dbProfile.show_phone ?? user.user_metadata?.show_phone ?? false);
-
-            setPhone(userPhone);
-            setInitialPhone(userPhone);
-            setShowPhone(userShowPhone);
-            setInitialShowPhone(userShowPhone);
-          }
-        } catch (err) {
-          console.error('Fetch profile data error:', err);
-        }
-      }
-
-      fetchProfileData();
     }
   }, [user]);
 
@@ -271,7 +241,7 @@ export default function Profile() {
     }
   };
 
-  // Save Account Information (Full Name + Phone + Show Phone)
+  // Save Account Information (Full Name)
   const handleSaveInfo = async (e) => {
     e.preventDefault();
     setInfoError('');
@@ -287,23 +257,12 @@ export default function Profile() {
       return;
     }
 
-    const sanitizedPhone = phone.trim();
-    if (sanitizedPhone) {
-      const phoneRegex = /^[0-9+\-\s()]{9,15}$/;
-      if (!phoneRegex.test(sanitizedPhone)) {
-        setInfoError('Số điện thoại không hợp lệ.');
-        return;
-      }
-    }
-
     setInfoSubmitting(true);
 
     try {
       const { error } = await supabase.auth.updateUser({
         data: {
           full_name: trimmedName,
-          phone: sanitizedPhone,
-          show_phone: showPhone,
         },
       });
 
@@ -317,8 +276,6 @@ export default function Profile() {
             id: user.id,
             full_name: trimmedName,
             avatar_url: user.user_metadata?.avatar_url || null,
-            phone: sanitizedPhone || null,
-            show_phone: showPhone,
             updated_at: new Date().toISOString(),
           });
         } catch (syncErr) {
@@ -327,8 +284,6 @@ export default function Profile() {
 
         setInfoSuccess('Đã cập nhật thông tin cá nhân.');
         setInitialFullName(trimmedName);
-        setInitialPhone(sanitizedPhone);
-        setInitialShowPhone(showPhone);
         setTimeout(() => setInfoSuccess(''), 4000);
       }
     } catch (err) {
@@ -432,10 +387,7 @@ export default function Profile() {
     }
   };
 
-  const isInfoChanged =
-    fullName.trim() !== initialFullName ||
-    phone.trim() !== initialPhone ||
-    showPhone !== initialShowPhone;
+  const isInfoChanged = fullName.trim() !== initialFullName;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 w-full">
@@ -608,28 +560,6 @@ export default function Profile() {
               <p className="text-[11px] text-slate-400">
                 Email được dùng làm định danh đăng nhập và không thể thay đổi.
               </p>
-            </div>
-
-            {/* Phone Number Field */}
-            <Input
-              label="Số điện thoại (tùy chọn)"
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Nhập số điện thoại của bạn..."
-            />
-
-            {/* Public Phone Visibility Checkbox */}
-            <div className="pt-1">
-              <label className="inline-flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={showPhone}
-                  onChange={(e) => setShowPhone(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
-                />
-                <span>Hiển thị số điện thoại trên hồ sơ cộng đồng</span>
-              </label>
             </div>
 
             {isInfoChanged && (
