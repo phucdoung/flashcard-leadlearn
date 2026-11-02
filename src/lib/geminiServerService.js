@@ -4,7 +4,7 @@ import {
   normalizeVietnameseTranslation,
 } from './speakerUtils';
 
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-3.8-flash';
 
 /**
  * Custom Error class for classified quiz generation errors
