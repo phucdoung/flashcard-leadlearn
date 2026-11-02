@@ -4,7 +4,9 @@ import {
   normalizeVietnameseTranslation,
 } from './speakerUtils';
 
-const GEMINI_MODEL = 'gemini-3.8-flash';
+// Cấu hình model chính và model dự phòng khi máy chủ Google quá tải (503)
+const PRIMARY_MODEL = 'gemini-3.8-flash';
+const FALLBACK_MODELS = ['gemini-2.5-flash', 'gemini-1.5-flash'];
 
 /**
  * Custom Error class for classified quiz generation errors
@@ -36,6 +38,50 @@ export function getServerGeminiApiKey() {
   }
 
   return apiKey.trim();
+}
+
+/**
+ * Helper gọi API có cơ chế Retry khi gặp 503 và tự động chuyển Model dự phòng
+ */
+async function generateContentWithRetry(ai, promptText, config = {}, maxRetries = 2) {
+  const modelsToTry = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+  let lastError = null;
+
+  for (const model of modelsToTry) {
+    let delay = 1000;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: promptText,
+          config,
+        });
+        return response;
+      } catch (err) {
+        lastError = err;
+        const errStr = String(err?.message || '');
+        const is503 =
+          err?.status === 503 ||
+          errStr.includes('503') ||
+          errStr.includes('high demand') ||
+          errStr.includes('UNAVAILABLE');
+
+        if (is503 && attempt < maxRetries) {
+          console.warn(
+            `[Gemini Server] Model ${model} quá tải (503). Đang thử lại lần ${attempt + 1}/${maxRetries} sau ${delay}ms...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2;
+          continue;
+        }
+
+        console.warn(`[Gemini Server] Lỗi với model ${model} (lần thử ${attempt}):`, errStr);
+        break; // Chuyển sang model tiếp theo trong danh sách dự phòng
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 /**
@@ -241,12 +287,8 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
 
   let parsedList = [];
   try {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: promptText,
-      config: {
-        responseMimeType: 'application/json',
-      },
+    const response = await generateContentWithRetry(ai, promptText, {
+      responseMimeType: 'application/json',
     });
 
     const responseText = response.text;
@@ -268,12 +310,11 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
     if (
       err?.status === 404 ||
       errStr.includes('404') ||
-      errStr.toLowerCase().includes('not found') ||
-      errStr.toLowerCase().includes('no longer available')
+      errStr.toLowerCase().includes('not found')
     ) {
       throw new QuizGenerationError(
         'MODEL_NOT_FOUND',
-        'Model AI hiện tại không còn khả dụng. Vui lòng cập nhật model Gemini.'
+        'Model AI hiện tại không còn khả dụng. Vui lòng thử lại sau.'
       );
     }
 
@@ -367,12 +408,8 @@ RETURN ONLY A JSON ARRAY matching this exact schema (no markdown formatting, no 
   }
 ]`;
 
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-      },
+    const response = await generateContentWithRetry(ai, prompt, {
+      responseMimeType: 'application/json',
     });
 
     let parsed = null;
@@ -494,12 +531,8 @@ ${JSON.stringify(linesToTranslate, null, 2)}
 
 Return ONLY a JSON array of objects with the exact structure [{ "speaker": "...", "text": "..." }] with Vietnamese translated lines. No markdown, no code blocks:`;
 
-    const res = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-      },
+    const res = await generateContentWithRetry(ai, prompt, {
+      responseMimeType: 'application/json',
     });
 
     const parsed = JSON.parse(res.text);
