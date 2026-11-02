@@ -4,9 +4,11 @@ import {
   normalizeVietnameseTranslation,
 } from './speakerUtils';
 
-// Cấu hình model chính và model dự phòng khi máy chủ Google quá tải (503)
-const PRIMARY_MODEL = 'gemini-3.8-flash';
-const FALLBACK_MODELS = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+// Cấu hình model Gemini chính (ưu tiên biến môi trường GEMINI_MODEL, mặc định gemini-3.1-pro-preview)
+const PRIMARY_MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-pro-preview';
+
+// Các khoảng thời gian chờ Exponential Backoff Retry (1.5s, 3s, 6s) khi gặp lỗi 503 / High Demand
+const RETRY_DELAYS = [1500, 3000, 6000];
 
 /**
  * Custom Error class for classified quiz generation errors
@@ -41,47 +43,44 @@ export function getServerGeminiApiKey() {
 }
 
 /**
- * Helper gọi API có cơ chế Retry khi gặp 503 và tự động chuyển Model dự phòng
+ * Helper gọi Gemini API có cơ chế Exponential Backoff Retry khi gặp 503 / High Demand.
+ * Thử lại tối đa 3 lần với khoảng thời gian chờ: 1.5s, 3s, 6s trước khi ném lỗi ra ngoài.
  */
-async function generateContentWithRetry(ai, promptText, config = {}, maxRetries = 2) {
-  const modelsToTry = [PRIMARY_MODEL, ...FALLBACK_MODELS];
-  let lastError = null;
+async function generateContentWithRetry(ai, promptText, config = {}) {
+  let attempt = 0;
 
-  for (const model of modelsToTry) {
-    let delay = 1000;
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        const response = await ai.models.generateContent({
-          model,
-          contents: promptText,
-          config,
-        });
-        return response;
-      } catch (err) {
-        lastError = err;
-        const errStr = String(err?.message || '');
-        const is503 =
-          err?.status === 503 ||
-          errStr.includes('503') ||
-          errStr.includes('high demand') ||
-          errStr.includes('UNAVAILABLE');
+  while (true) {
+    try {
+      const response = await ai.models.generateContent({
+        model: PRIMARY_MODEL,
+        contents: promptText,
+        config,
+      });
+      return response;
+    } catch (err) {
+      const errStr = String(err?.message || err?.statusText || err || '');
+      const is503 =
+        err?.status === 503 ||
+        err?.code === 503 ||
+        errStr.includes('503') ||
+        errStr.toLowerCase().includes('high demand') ||
+        errStr.toLowerCase().includes('unavailable') ||
+        errStr.toLowerCase().includes('overloaded');
 
-        if (is503 && attempt < maxRetries) {
-          console.warn(
-            `[Gemini Server] Model ${model} quá tải (503). Đang thử lại lần ${attempt + 1}/${maxRetries} sau ${delay}ms...`
-          );
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          delay *= 2;
-          continue;
-        }
-
-        console.warn(`[Gemini Server] Lỗi với model ${model} (lần thử ${attempt}):`, errStr);
-        break; // Chuyển sang model tiếp theo trong danh sách dự phòng
+      if (is503 && attempt < RETRY_DELAYS.length) {
+        const delay = RETRY_DELAYS[attempt];
+        attempt++;
+        console.warn(
+          `[Gemini Server] Model ${PRIMARY_MODEL} quá tải (503 / High Demand). Đang thử lại lần ${attempt}/${RETRY_DELAYS.length} sau ${delay}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
       }
+
+      console.error(`[Gemini Server] Lỗi khi gọi model ${PRIMARY_MODEL}:`, errStr);
+      throw err;
     }
   }
-
-  throw lastError;
 }
 
 /**
@@ -305,6 +304,9 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
     }
   } catch (err) {
     console.error('[Gemini Server] Raw API error:', err);
+    if (err instanceof QuizGenerationError) {
+      throw err;
+    }
     const errStr = String(err?.message || err);
 
     if (
@@ -327,6 +329,19 @@ RETURN ONLY A JSON ARRAY matching this exact JSON schema (no markdown, no code b
       throw new QuizGenerationError(
         'RESOURCE_EXHAUSTED',
         'AI hiện đã đạt giới hạn sử dụng. Vui lòng thử lại sau.'
+      );
+    }
+
+    if (
+      err?.status === 503 ||
+      errStr.includes('503') ||
+      errStr.toLowerCase().includes('high demand') ||
+      errStr.toLowerCase().includes('unavailable') ||
+      errStr.toLowerCase().includes('overloaded')
+    ) {
+      throw new QuizGenerationError(
+        'SERVICE_UNAVAILABLE',
+        'Hệ thống AI đang quá tải do lượng truy cập cao. Vui lòng thử lại sau ít phút.'
       );
     }
 
