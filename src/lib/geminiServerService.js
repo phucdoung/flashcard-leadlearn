@@ -4,8 +4,8 @@ import {
   normalizeVietnameseTranslation,
 } from './speakerUtils';
 
-// Cấu hình model Gemini chính (ưu tiên biến môi trường GEMINI_MODEL, mặc định gemini-3.1-pro-preview)
-const PRIMARY_MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-pro-preview';
+// Cấu hình model Gemini chính (ưu tiên biến môi trường GEMINI_MODEL, mặc định gemini-3.8-flash)
+const PRIMARY_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 // Các khoảng thời gian chờ Exponential Backoff Retry (1.5s, 3s, 6s) khi gặp lỗi 503 / High Demand
 const RETRY_DELAYS = [1500, 3000, 6000];
@@ -59,6 +59,19 @@ async function generateContentWithRetry(ai, promptText, config = {}) {
       return response;
     } catch (err) {
       const errStr = String(err?.message || err?.statusText || err || '');
+
+      const is429 =
+        err?.status === 429 ||
+        err?.code === 429 ||
+        errStr.includes('429') ||
+        errStr.includes('RESOURCE_EXHAUSTED') ||
+        errStr.toLowerCase().includes('quota');
+
+      if (is429) {
+        console.warn(`[Gemini Server] AI đạt giới hạn yêu cầu (429):`, errStr);
+        throw err;
+      }
+
       const is503 =
         err?.status === 503 ||
         err?.code === 503 ||
